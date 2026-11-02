@@ -1,0 +1,7 @@
+node_modules
+frontend/dist
+package-lock.json
+.data
+backend/.data
+.env
+**/.env

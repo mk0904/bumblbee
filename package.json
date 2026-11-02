@@ -1,0 +1,35 @@
+{
+  "name": "drone-mission-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=24 <27"
+  },
+  "scripts": {
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "test": "npm run test --workspace backend && npm run test --workspace frontend",
+    "lint": "eslint .",
+    "doctor": "node scripts/doctor.js",
+    "check": "npm run lint && npm test && npm run build",
+    "dev": "node scripts/dev.js",
+    "start": "npm start --workspace backend",
+    "db:migrate": "node --env-file-if-exists=backend/.env scripts/migrate.js",
+    "format": "prettier --write backend/src backend/tests frontend/src frontend/tests scripts"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.65.1",
+    "eslint": "9.39.5",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.14.0",
+    "prettier": "3.10.1"
+  }
+}
