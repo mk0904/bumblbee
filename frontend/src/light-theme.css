@@ -1,0 +1,136 @@
+/* Site-wide appearance. Media and world coordinates retain their source colors. */
+:root { color-scheme: dark; --chart-line:#cdbadc; --chart-grid:#2a2c2f; --chart-label:#aaa2b4; --chart-axis:#676c71; --chart-tooltip:#232426; --chart-text:#e1e2e3; }
+.theme-toggle { display:grid;place-items:center;width:36px;height:36px;border:1px solid #ffffff20;border-radius:8px;background:#28262d;color:#d7c4e5;flex-shrink:0; }
+.theme-toggle:hover { background:#39333f; }
+.app-shell .sidebar-bottom { display:flex;flex-direction:column;align-items:center; }
+.sidebar-bottom .theme-toggle { margin:12px 0 16px; }
+.pairing-theme-toggle { margin-left:auto;order:10; }
+:root[data-theme='light'] {
+ color-scheme:light;color:#282535;background:#f4f3f7;
+ --bg:#f4f3f7;--panel:#fff;--line:#e0dce7;--muted:#6e687b;--accent:#8052a3;
+ --chart-line:#8052a3;--chart-grid:#e5dfeb;--chart-label:#6e687b;--chart-axis:#787182;--chart-tooltip:#fff;--chart-text:#282535;
+}
+/* Explicit surface and text roles override the original per-page dark styling. */
+:root[data-theme='light'] :is(.app-shell,.workspace-main,.content,.loading-page,.desktop-required) { background:#f4f3f7;color:#282535; }
+:root[data-theme='light'] .app-shell .sidebar { background:#fff;border-right:1px solid #e7e2ed; }
+:root[data-theme='light'] .app-shell .topbar { background:#f4f3f7f2;color:#6e687b; }
+:root[data-theme='light'] .app-shell .sidebar .brand-symbol { background:#8052a3;color:#fff; }
+:root[data-theme='light'] .app-shell .sidebar .nav-item { color:#82778f; }
+:root[data-theme='light'] .app-shell .sidebar .nav-item:hover { background:#f4eff8;color:#704393; }
+:root[data-theme='light'] .app-shell .sidebar .nav-item.active { background:#eee4f6;color:#764497; }
+:root[data-theme='light'] :is(.nav-label,.map-status-tooltip) { background:#fff;color:#393044;border:1px solid #dfd6e7;box-shadow:0 4px 18px #37234415; }
+:root[data-theme='light'] .theme-toggle { background:#f2edf7;color:#764497;border-color:#dfd4e8; }
+:root[data-theme='light'] .theme-toggle:hover { background:#e6daef; }
+:root[data-theme='light'] :is(.panel,.console-panel,.mission-card,.stat-card,.modal,.report-modal,.confirm-modal,.toast,.notification,.planner-sidebar,.saved-plans-panel,.history-panel,.alert-item,.system-panel) { background:#fff;color:#282535;border-color:#e2dce9;box-shadow:none; }
+:root[data-theme='light'] .console-layout > .telemetry-card { background:linear-gradient(135deg,#fff,#f9f7fc);border-color:#e2dce9; }
+:root[data-theme='light'] :is(h1,h2,h3,.flight-deck-title,.desk-title,.mission-summary h2,.mission-card h3,.panel-heading h2,.table-wrap td strong,.report-metrics strong,.breadcrumb strong,.system-panel dd,.waypoint-editor strong,.compass-header strong,.altitude-gauge-heading strong,.primary-flight-readouts strong,.parameter-attitude strong) { color:#282535; }
+:root[data-theme='light'] :is(.page-title p,.panel-subtitle,.mission-card > p,.mission-card-meta,.empty-state,.empty-state p,.empty-state > svg,.date-label,.breadcrumb,.source-label,.muted,.eyebrow,.bounds-note,.map-note,.coordinate-inputs label,.mission-details > label,.table-wrap th,.table-wrap td small,.system-panel dt,.system-panel > p,.demo-tools > small,.report-top p,.report-data-note,.command-timeline small,.incident-line,.pagination,.desk-controls > p,.desk-control-note,.console-command-status,.console-signal,.altitude-gauge-condition,.altitude-gauge-labels,.altitude-gauge-heading > span,.telemetry-identity > span,.primary-flight-readouts span,.primary-flight-readouts small,.parameter-attitude span,.parameter-attitude small,.chart-empty,.chart-dashes) { color:#746b80; }
+:root[data-theme='light'] :is(.console-battery,.console-state,.parameter-attitude,.desk-controls,.desk-history,.panel-heading,.mission-card-actions,.mission-card-meta,.system-panel dl > div,.command-timeline > div,.table-wrap td,.table-wrap th,.waypoint-editor,.list-toolbar,.report-metrics > div,.incident-line,.integration-path,.planner-sidebar,.report-data-note) { border-color:#e7e0ed; }
+:root[data-theme='light'] .telemetry-card .primary-flight-readouts > div { border-color:#e7e0ed; }
+:root[data-theme='light'] .telemetry-card .console-battery { background:#f1edf6;border-color:#e7e0ed; }
+:root[data-theme='light'] .console-battery :is(strong,small) { color:#8052a3; }
+:root[data-theme='light'] .console-battery strong.battery-low { color:#a94f1c; }
+:root[data-theme='light'] .console-meter { background:#dfd7e6; }
+:root[data-theme='light'] .console-meter i { background:#9a74b6; }
+:root[data-theme='light'] .console-state strong { background:#f2eef6;color:#64576e;border-color:#e0d6e8; }
+:root[data-theme='light'] .telemetry-card.is-stale :is(.primary-flight-readouts strong,.parameter-attitude strong) { color:#97671b; }
+:root[data-theme='light'] :is(.app-shell input,.app-shell textarea,.app-shell select,input,textarea,select) { background:#fff;color:#30263b;border-color:#d9cfe3; }
+:root[data-theme='light'] :is(input,textarea)::placeholder { color:#8e829a; }
+:root[data-theme='light'] :is(input,textarea,select):focus { border-color:#8052a3;box-shadow:0 0 0 2px #8052a315; }
+:root[data-theme='light'] .app-shell :is(.button.primary,.console-plan-button,.selected-start) { background:#8052a3;color:#fff;border-color:#8052a3;box-shadow:none; }
+:root[data-theme='light'] .app-shell :is(.button.primary,.console-plan-button,.selected-start):hover:not(:disabled) { background:#6c408d; }
+:root[data-theme='light'] :is(.button.secondary,.console-mission-select,.console-round-button,.segmented button,.report-tabs button,.report-chart-tabs button,.report-section-tabs button,.report-metric-tabs button) { background:#f4f0f8;color:#655171;border-color:#ddd2e6;box-shadow:none; }
+:root[data-theme='light'] :is(.button.secondary,.console-mission-select,.console-round-button):hover:not(:disabled) { background:#e9dff1;border-color:#bda8cd; }
+:root[data-theme='light'] :is(.icon-button,.text-button,.desk-history,.report-tabs button,.report-chart-tabs button) { color:#785191; }
+:root[data-theme='light'] .icon-button:hover:not(:disabled) { background:#eee5f5; }
+:root[data-theme='light'] :is(.danger-text,.form-error,.error-text) { color:#b03c3c; }
+:root[data-theme='light'] :is(.waypoint-editor,.mission-number,.waypoint-index,.integration-path > span,.report-metrics,.report-metrics > div,.command-status,.demo-tools,.alert-icon,.environment-tag,.operator-avatar,.search-box,.segmented,.pagination button,.selected-waypoints) { background:#f7f4fa;color:#65556f;border-color:#e4dbea; }
+:root[data-theme='light'] :is(.waypoint-editor.selected,.integration-path > .selected,.mission-card.selected,.segmented button.active) { background:#f0e7f6;border-color:#b797cf;color:#704393; }
+:root[data-theme='light'] :is(.table-wrap td,.selected-waypoints td) { color:#4b4056;border-color:#ebe5f1; }
+:root[data-theme='light'] .table-wrap tbody tr:hover { background:#f7f3fb; }
+:root[data-theme='light'] :is(.badge,.badge.neutral) { color:#6a5b78;background:#eee8f3;border-color:#ded3e7; }
+:root[data-theme='light'] .badge.green { color:#2f7357;background:#e8f4ed;border-color:#c7e4d4; }
+:root[data-theme='light'] .badge.amber { color:#94621d;background:#fbf1dc;border-color:#ead7aa; }
+:root[data-theme='light'] :is(.toast.error,.toast.warning) { background:#fff7ed;color:#915227;border-color:#ead0af; }
+:root[data-theme='light'] :is(.modal-backdrop,.modal-overlay) { background:#30243855; }
+/* Map and video remain unfiltered; only their surrounding controls change. */
+:root[data-theme='light'] :is(.console-viewport,.world-map,.planner-map .world-map) { border-color:#d7d2dd; }
+:root[data-theme='light'] .console-viewport .map-tools { background:#fffffff2;border-color:#d9d0e3; }
+:root[data-theme='light'] .console-viewport .map-tools button { background:#fff;color:#665371; }
+:root[data-theme='light'] :is(.map-panel-name,.camera-panel-name) { background:#fffffff0;color:#655171;border-color:#ddd2e6; }
+:root[data-theme='light'] .live-camera-image { background:#eeebf2; }
+:root[data-theme='light'] .camera-feed { background:#eeebf2;color:#746b80; }
+:root[data-theme='light'] .camera-feed-placeholder { color:#746b80; }
+:root[data-theme='light'] .altitude-gauge-track { background:repeating-linear-gradient(to top,transparent 0,transparent calc(5% - 1px),#8052a320 calc(5% - 1px),#8052a320 5%),#eee7f4;border-color:#d7c9e2; }
+:root[data-theme='light'] .altitude-gauge-fill { background:linear-gradient(to top,#bda1d1,#8052a3); }
+:root[data-theme='light'] .altitude-gauge-track > i { background:#704393; }
+:root[data-theme='light'] .empty-telemetry-graph svg > g:first-child { stroke:#ddd5e6; }
+:root[data-theme='light'] .empty-telemetry-graph svg > path { stroke:#b6a8c2; }
+:root[data-theme='light'] .empty-telemetry-graph svg > g:last-child { fill:#746b80; }
+/* The entry card is already porcelain; brighten the surrounding page as well. */
+:root[data-theme='light'] .pairing-page { background:radial-gradient(ellipse at 18% 20%,#e9def3,#f6f4f8 65%);color:#282535; }
+:root[data-theme='light'] .pairing-brand strong { color:#282535; }
+:root[data-theme='light'] .pairing-brand > .pairing-monogram { background:#8052a3;color:#fff;border-color:#8052a3; }
+:root[data-theme='light'] .pairing-layout { border-color:#ddd1e6;box-shadow:0 24px 65px #54396815; }
+:root[data-theme='light'] .pairing-card { background:linear-gradient(145deg,#fff,#f2edf7);color:#282535; }
+:root[data-theme='light'] .pairing-story h1 { color:#f5f4ef; }
+:root[data-theme='light'] .pairing-story h1 > span { color:#bea6d0; }
+:root[data-theme='light'] .camera-feed-state strong { color:#51425f; }
+:root[data-theme='light'] .camera-feed-state > span { color:#746b80; }
+:root[data-theme='light'] :is(.report-tabs,.report-chart-tabs) button.selected { background:#e9ddf2;color:#704393;border-color:#cbb5dc; }
+:root[data-theme='light'] .app-shell label { color:#65556f; }
+:root[data-theme='light'] .selected-mission-state { color:#8052a3!important; }
+:root[data-theme='light'] .app-shell .desk-controls > p { color:#746b80; }
+/* Shared subcomponents and the current tile-based flight instruments. */
+:root[data-theme='light'] .pairing-page .pairing-story h1 { color:#f5f4ef; }
+:root[data-theme='light'] :is(.telemetry-tile > span,.uav-condition,.live-panel-title > span:only-child,.altitude-limit-label,.altitude-ruler-tick > span,.compass-details,.heading-coordinates,.waypoint-empty,.waypoint-navigation) { color:#746b80; }
+:root[data-theme='light'] .telemetry-tile strong { color:#282535; }
+:root[data-theme='light'] .telemetry-tile strong small { color:#746b80; }
+:root[data-theme='light'] .telemetry-tile > span small { color:#8052a3; }
+:root[data-theme='light'] .telemetry-tile.is-stale strong { color:#97671b; }
+:root[data-theme='light'] .altitude-ruler-tick i { background:#c3b6ce; }
+:root[data-theme='light'] .altitude-ruler-pointer > span { background:#e9ddf2;color:#704393; }
+:root[data-theme='light'] .live-camera-panel::after { background:none; }
+:root[data-theme='light'] :is(.mission-tile-actions,.waypoint-action-tray) { background:#fffffff2;border-color:#ded3e7;box-shadow:0 3px 12px #4b325f12; }
+:root[data-theme='light'] .app-shell .mission-planning-workspace :is(.mission-details input,.coordinate-inputs label input) { background:#fff;color:#30263b;border-color:#d9cfe3; }
+:root[data-theme='light'] .app-shell .mission-planning-workspace :is(.coordinate-inputs label > span,.field-border-label) { background:#fff;color:#65556f; }
+:root[data-theme='light'] .app-shell .mission-planning-workspace :is(.field-unit,.coordinate-inputs label::after,.waypoint-focus) { color:#65556f; }
+:root[data-theme='light'] .waypoint-focus > span { background:#eee4f6;color:#704393; }
+:root[data-theme='light'] .map-status-tooltip strong { color:#393044; }
+:root[data-theme='light'] .app-shell button.danger-action { color:#b83d4b; }
+:root[data-theme='light'] :is(thead,.table-wrap th) { background:#f2edf7;color:#746b80; }
+:root[data-theme='light'] .pagination { border-color:#e2dce9; }
+:root[data-theme='light'] .app-shell .sidebar .nav-item.active svg { color:#764497; }
+:root[data-theme='light'] .live-camera-image::after { background:none; }
+:root[data-theme='light'] .planner-map .map-tools { background:#fffffff2;border-color:#d9d0e3; }
+:root[data-theme='light'] .planner-map .map-tools button { background:#fff;color:#665371; }
+:root[data-theme='light'] .compass-body svg > circle:first-child { fill:#f6f2fa;stroke:#d9cde4; }
+:root[data-theme='light'] .compass-body svg > circle:last-child { stroke:#e7deee; }
+:root[data-theme='light'] .compass-body svg > g line { stroke:#a291af; }
+:root[data-theme='light'] .compass-body svg text { fill:#6e587e; }
+:root[data-theme='light'] .compass-body svg > path { fill:#8052a3; }
+/* Camera unavailable state remains legible without dimming the entire panel. */
+:root[data-theme='light'] .live-camera-image,
+:root[data-theme='light'] .live-camera-image .camera-feed {background:#f2eff5;opacity:1;filter:none;}
+:root[data-theme='light'] .live-camera-image .camera-feed-state {background:#f2eff5;color:#62566f;opacity:1;}
+:root[data-theme='light'] .live-camera-image .camera-feed-state > svg {color:#82708f;opacity:1;}
+:root[data-theme='light'] .live-camera-image .camera-feed-state strong {color:#40334e;opacity:1;}
+:root[data-theme='light'] .live-camera-image .camera-feed-state > span {color:#71637d;opacity:1;}
+:root[data-theme='light'] .live-camera-image .camera-feed-badge {background:#e8e0ef;color:#5c466e;border-color:#d3c6dd;}
+:root[data-theme='light'] .camera-panel-name {color:#40334e;text-shadow:none;}
+:root[data-theme='light'] .app-shell .history-report-button {background:#e9def3;border-color:#d0bbdf;color:#663c85;font-weight:600;}
+:root[data-theme='light'] .app-shell .history-report-button:hover {background:#ddcbea;border-color:#b89acb;color:#512a6e;}
+:root[data-theme='light'] .app-shell .report-modal .report-metrics,
+:root[data-theme='light'] .app-shell .report-modal .report-tabs {background:transparent;border:0;box-shadow:none;padding:0;}
+:root[data-theme='light'] .console-control-desk .selected-waypoints {border-color:#e1d7e9;}
+:root[data-theme='light'] .console-control-desk .selected-waypoints table {background:#fff;}
+:root[data-theme='light'] .console-control-desk .selected-waypoints thead {background:#f1eaf7;}
+:root[data-theme='light'] .console-control-desk .selected-waypoints th {background:transparent;color:#6b557c;}
+:root[data-theme='light'] .console-control-desk .selected-waypoints td {color:#35283f;border-color:#ece4f1;}
+:root[data-theme='light'] .console-control-desk .selected-waypoints tbody tr:nth-child(even) {background:#faf7fc;}
+:root[data-theme='light'] .console-control-desk .selected-waypoints .pagination {background:#fff;color:#6b557c;border-color:#ece4f1;}
+:root[data-theme='light'] .health-tiles span,:root[data-theme='light'] .health-configuration dt {color:#786784;}
+:root[data-theme='light'] .health-tiles strong,:root[data-theme='light'] .health-content h2,:root[data-theme='light'] .health-incident h3,:root[data-theme='light'] .health-configuration dd {color:#302337;}
+:root[data-theme='light'] .health-incident p {color:#65556f;}
+:root[data-theme='light'] .health-incident span {color:#81718c;}
+:root[data-theme='light'] :is(.health-section-heading,.health-incident,.health-configuration dl > div) {border-color:#e9e0ef;}
