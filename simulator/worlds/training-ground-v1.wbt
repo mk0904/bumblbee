@@ -1,0 +1,101 @@
+#VRML_SIM R2025b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/c85603f2280c68ebdcc0a4102e43026fcbf2bc71/projects/robots/dji/mavic/protos/Mavic2Pro.proto"
+
+WorldInfo {
+  coordinateSystem "ENU"
+  info [
+    "WORLD_LOCAL_V1: x/y horizontal, z up; origin at pad surface. Sensor-driven mission controller; authenticated backend bridge."
+  ]
+  title "SDSE Training Ground — mission control"
+  basicTimeStep 8
+  defaultDamping Damping {
+    linear 0.5
+    angular 0.5
+  }
+  randomSeed 1
+}
+Viewpoint {
+  orientation -0.35740674433659325 0.3574067443365933 0.8628562094610168 1.7177715174584016
+  position 0 -6 6
+  follow "SDSE Mavic"
+  followType "Tracking Shot"
+  followSmoothness 0.2
+}
+Background {
+  skyColor [
+    0.12 0.17 0.23
+  ]
+}
+DirectionalLight {
+  ambientIntensity 0.5
+  direction -0.4 0.3 -1
+  intensity 2
+}
+# A single visual atlas above the unchanged ground collider. No obstacle geometry.
+Solid {
+  translation 0 0 -0.1
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.38 0.42 0.36
+        roughness 1
+        metalness 0
+      }
+      geometry Box { size 120 120 0.2 }
+    }
+  ]
+  name "training ground"
+  boundingObject Box { size 120 120 0.2 }
+}
+Shape {
+  appearance PBRAppearance {
+    baseColorMap ImageTexture {
+      url [ "../../shared/worlds/training-yard.jpg" ]
+      repeatS FALSE
+      repeatT FALSE
+      filtering 4
+    }
+    roughness 1
+    metalness 0
+  }
+  geometry IndexedFaceSet {
+    coord Coordinate { point [ -60 -60 0.001, 60 -60 0.001, 60 60 0.001, -60 60 0.001 ] }
+    coordIndex [ 0 1 2 3 -1 ]
+    texCoord TextureCoordinate { point [ 0 0, 1 0, 1 1, 0 1 ] }
+    texCoordIndex [ 0 1 2 3 -1 ]
+  }
+}
+DEF SDSE_DRONE Mavic2Pro {
+  translation 0 0 0.1
+  rotation 0 0 1 0
+  name "SDSE Mavic"
+  controller "mission_control"
+  customData "training-ground-v1/WORLD_LOCAL_V1"
+  cameraSlot [
+    Camera {
+      name "camera"
+      width 640
+      height 360
+      fieldOfView 1.2
+      near 0.05
+    }
+  ]
+  # Visual-only marker: no collision geometry, mass, sensor or motor changes.
+  bodySlot [
+    Pose {
+      translation 0 0 0.06
+      children [
+        Shape {
+          appearance PBRAppearance {
+            baseColor 1 0.28 0.02
+            emissiveColor 0.7 0.12 0
+            roughness 1
+            metalness 0
+          }
+          geometry Box { size 0.12 0.08 0.025 }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+Motor stabilization/mixing adapted from Cyberbotics Webots mavic2pro_patrol.py
+Copyright 1996-2025 Cyberbotics Ltd. Licensed under Apache License 2.0.
+Source shipped with Webots R2025b, commit c85603f2280c68ebdcc0a4102e43026fcbf2bc71.
+Project additions: bounded bridge transport, durable command journal, validation,
+mission lifecycle, position/velocity feedback, telemetry and local contact-loss landing.
