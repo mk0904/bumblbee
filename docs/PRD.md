@@ -1,6 +1,8 @@
 # Drone Mission Control & Simulation Platform
 
-Version: 0.2 — proposed implementation baseline, not a statement of completed work.
+> Current delivery order: dashboard/backend first using a labelled demo adapter; Webots integration last (ADR-002). No login/signup: four-character bridge pairing replaces password entry (ADR-003). See IMPLEMENTATION.md for actual classes, schema, behaviour and remaining verification gates. This document uses the revised milestones; IMPLEMENTATION.md distinguishes delivered and pending requirements.
+
+Version: 0.3 — proposed implementation baseline, not a statement of completed work.
 
 ## 1. Objective
 Build a hosted mission-control dashboard connected to a drone simulated in Webots on a separate computer. Demonstrate requirements engineering, object-oriented low-level design, distributed communication, database integrity, failure handling, and a tested end-to-end implementation.
@@ -21,7 +23,7 @@ The supplied assessment notice mentions the first week of November but does not 
 ## 3. Actors and use cases
 | Actor | Use cases |
 |---|---|
-| Operator | Sign in, create/edit mission, start flight, pause/resume, land, monitor, acknowledge alert, inspect history |
+| Operator | Pair bridge session, create/edit mission, start flight, pause/resume, land, monitor, acknowledge alert, inspect history |
 | Simulator agent | Authenticate, register session, accept/reject commands, execute mission, report telemetry/events, reconcile after reconnect |
 
 MVP has one operator role, one configured drone, one active flight, and multiple read-only browser views of that flight. Any authenticated authorized operator can issue commands; conflicting requests are serialized/rejected by server-side rules. No administrator UI or approval workflow.
@@ -42,7 +44,7 @@ Physical drones, MAVLink/PX4 integration, AI/ML, collision avoidance, swarms, sc
 ## 5. Functional requirements and acceptance
 | ID | Requirement | Observable acceptance criterion |
 |---|---|---|
-| FR-01 | Authenticate operator | Protected REST/WS access fails without valid credentials; logout ends browser access |
+| FR-01 | Pair operator session | Four-character alphanumeric bridge code expires after 120 seconds, is single-use and rate-limited; protected REST/WS needs resulting session; disconnect revokes it |
 | FR-02 | Create and edit missions | Name and ordered waypoints persist and reload; revision changes on edit |
 | FR-03 | Validate mission | Reject empty route, non-finite values, duplicate sequence, and targets outside configured bounds; return field-specific reasons |
 | FR-04 | Register simulator | Valid scoped credential establishes one active session for configured drone; stale sessions cannot send accepted events |
@@ -98,7 +100,7 @@ These are acceptance targets to measure, not claimed performance. Normal demo lo
 Do not subtract unsynchronized laptop/browser clocks to claim end-to-end latency. Use backend-observable round-trip measurements and instrumentation, and distinguish simulation time from wall time.
 
 ## 9. UX requirements
-Screens: sign-in; mission list/editor; live mission dashboard; flight list/report. Use a clickable top-down local XY environment map matching Webots origin, scale, orientation and footprint metadata. Place/move/reorder waypoints visually and edit altitude; coordinates are stored underneath. This is not a geographic/GPS map. Show pending commands, disabled illegal controls, explicit error reasons, telemetry age, synthetic battery label, and simulator availability. On narrow screens preserve basic flight status and landing action.
+Screens: bridge pairing; mission list/editor; live mission dashboard; flight list/report. Use a clickable top-down local XY environment map matching Webots origin, scale, orientation and footprint metadata. Place/move/reorder waypoints visually and edit altitude; coordinates are stored underneath. This is not a geographic/GPS map. Show pending commands, disabled illegal controls, explicit error reasons, telemetry age, synthetic battery label, and simulator availability. On narrow screens preserve basic flight status and landing action.
 
 ## 10. Stack baseline
 | Layer | Choice | Purpose |
@@ -106,7 +108,7 @@ Screens: sign-in; mission list/editor; live mission dashboard; flight list/repor
 | Dashboard | React + JavaScript + Vite | Web UI with JSDoc contracts, runtime boundary validation and static build |
 | UI/plots | Plain CSS or CSS modules; Recharts | Small styling surface and telemetry charts; SVG local XY route editor |
 | Backend | Node.js + Express + ws + Zod | Validated REST/WS boundaries and application orchestration |
-| Persistence | PostgreSQL + pg + node-pg-migrate | Constraints, transactions, repository implementations and migrations |
+| Persistence | PostgreSQL + pg + versioned SQL migrations | Constraints, transactions, repository implementations and migrations |
 | Simulator | Webots + Python controller | Local 3D simulation, sensors and flight-control loop |
 | Bridge | Python WebSocket client + bounded queues | Outbound command/event transport without blocking control |
 | Tests | Node.js test runner, Supertest, pytest (simulator), Vitest, React Testing Library, Playwright | Domain, integration, UI behaviour and workflow checks |
@@ -121,15 +123,15 @@ Why JavaScript: frontend and backend use the team’s preferred language, with E
 ## 11. Delivery milestones and gates
 | Gate | Deliverable | Exit evidence |
 |---|---|---|
-| M0 | Requirements and feasibility assumptions | Team understands scope, coordinate frame and controller risk |
-| M1 | Local flight | Repeatable takeoff, hover, target movement and land; record controller/model versions |
-| M2 | Local vertical slice | Browser command -> backend -> bridge -> Webots -> acknowledged state and altitude in browser |
-| M3 | Hosted round trip | Phone browser controls laptop simulation via hosted backend; credentials/TLS verified |
-| M4 | Mission product | Mission CRUD, snapshots, waypoint execution, flight lifecycle and persistence |
-| M5 | Reliability | Duplicate command, stale telemetry, reconnect, browser reload and concurrent-start evidence |
-| M6 | Evaluation | Flight report, tests, diagrams, traceability and per-member walkthrough |
+| M0 | Foundation | Workspace, reproducible startup and checks |
+| M1 | Domain and persistence | Mission/flight/command invariants, schema and repository tests |
+| M2 | Complete dashboard | Visual planner, demo execution, telemetry, alerts and report |
+| M3 | Pairing and adapter contract | Short-code sessions, CSRF/origin checks and external-agent protocol tests |
+| M4 | Hosted PostgreSQL | Supabase session pooler connection, migration and real concurrency evidence |
+| M5 | Actual Webots | Controller/world mapping, flight accuracy, watchdog and restart reconciliation |
+| M6 | Hosted release/evaluation | TLS deployment, latency measurements, final rubric evidence and member walkthroughs |
 
-M1 is a feasibility gate. Do not build a polished dashboard before the selected Webots controller can reliably navigate targets. If it cannot, revise scope or evaluate a flight-stack-backed simulator through a recorded design decision.
+Dashboard/backend-first order is authorized by the user. M1–M3 may use the clearly labelled demo adapter; they do not prove M5. No automatic fallback from Webots mode to demo.
 
 ## 12. Demonstration and definition of done
 Demo: create three-waypoint route -> start -> watch 3D motion and telemetry -> pause/resume -> inject low battery -> land -> open report. Then show one failure scenario and its corresponding test/design.
@@ -151,4 +153,4 @@ A feature is done when its requirement acceptance passes, relevant tests pass, a
 - WebSocket library: https://github.com/websockets/ws
 - React documentation: https://react.dev/learn
 - PostgreSQL client: https://node-postgres.com/
-- Migrations: https://salsita.github.io/node-pg-migrate/
+- Migrations: https://salsita.github.io/versioned SQL migrations/

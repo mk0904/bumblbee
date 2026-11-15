@@ -17,7 +17,7 @@ export default [
     rules: { 'no-unused-vars': ['error', { argsIgnorePattern: '^_' }] },
   },
   {
-    files: ['frontend/src/**/*.{js,jsx}'],
+    files: ['frontend/src/**/*.{js,jsx}', 'frontend/tests/**/*.{js,jsx}'],
     languageOptions: { globals: globals.browser },
     plugins: { react, 'react-hooks': reactHooks },
     rules: {

@@ -1,15 +1,24 @@
-# Implementation status
+# Current implementation status
 
-## Phase 0 — repository foundation
-- Local branch: codex/project-foundation.
-- React/JavaScript frontend, Express/JavaScript backend and npm workspaces.
-- Health endpoint, redacted HTTP errors, body limit, lint/test/build scripts.
-- CI definition, dependency lockfile, environment checker and run instructions.
-- Supabase remains the candidate managed PostgreSQL provider; no cloud project, credential or schema has been provisioned.
-- Git remote not configured; no remote publication performed.
+## Implemented locally
+- React/JavaScript neutral charcoal dashboard with responsive overview, mission editor, saved missions, history, reports, alerts and system view.
+- Click/drag local XY mission planning, altitude/order editing, save/revision/archive.
+- Node.js/Express domain/services/repository architecture and boundary validation.
+- Labelled backend demo adapter: waypoint motion, pause/hover/resume/land, telemetry, synthetic battery.
+- Durable local file demo storage and PostgreSQL repository with SQL migration, foreign keys/indexes/constraints/RLS.
+- Command idempotency, immutable flight snapshots, lifecycle validation, stale/low-battery incidents and acknowledgement.
+- Four-character alphanumeric bridge pairing; no login/signup. Short code exchanges for long session, CSRF/origin checks and rate limits.
+- Python standard-library pairing helper; authenticated external-agent socket interface and protocol docs.
+- Automated domain/API/storage/demo/protocol/embedded-PostgreSQL checks; CI and Docker configuration.
+- As-built diagrams and rubric guide: IMPLEMENTATION.md.
 
-## Phase 1 — next gate
-Webots was not found in /Applications, ~/Applications or PATH at initial inspection. System Python is 3.9.6; compatibility must be checked against chosen Webots release. Local flight verification has not run. Follow simulator/README.md and record results in docs/evidence/phase-1.md.
+## Pending external integration
+- Supabase direct database hostname did not resolve. Session pooler connection details requested; no remote schema migration or hosted data verification performed.
+- Webots is not installed/verified; actual flight controller, world/axis matching, watchdog landing and agent restart reconciliation remain pending.
+- TLS hosting, real network latency, real PostgreSQL multi-connection/load tests, member assignments and final acceptance evidence.
+- Demo disconnect suspends kinematic test execution; it is not a Webots loss-of-link physical failsafe.
 
-## Scope boundaries
-No mission CRUD, authentication, command WebSockets, flight controller, database or drone telemetry is implemented yet. Foundation page explicitly identifies this status. The local health endpoint does not claim database or simulator readiness.
+## Secrets and publication
+User-supplied Supabase details and generated bridge bootstrap credential reside only in ignored backend/.env. Database password is not used by frontend. No GitHub remote or public deployment has been configured.
+
+Verification: 23 backend and 4 frontend tests, lint and production build passed on Node 24.22.3. See evidence/dashboard-build.md for observed browser checks and explicit verification limits.

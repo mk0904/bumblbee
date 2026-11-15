@@ -1,0 +1,924 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "bumbl.bee Mission Control API",
+    "version": "0.2.0",
+    "description": "Implemented REST operations. WS protocol is documented separately in contracts/protocol.md. Local demo is not Webots integration."
+  },
+  "servers": [
+    {
+      "url": "/api"
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Process liveness only",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/config": {
+      "get": {
+        "summary": "Whether local demo pairing is available",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": []
+      }
+    },
+    "/pairing/request": {
+      "post": {
+        "summary": "Authenticated bridge requests a single-use 2-minute code",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "BridgeBearer": []
+          }
+        ]
+      }
+    },
+    "/pairing/claim": {
+      "post": {
+        "summary": "Claim four-character bridge code; sets HttpOnly session cookie",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "code"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9]{4}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal configured APP_ORIGIN"
+          }
+        ]
+      }
+    },
+    "/pairing/demo": {
+      "post": {
+        "summary": "Local development pairing only; disabled in production",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Must equal configured APP_ORIGIN"
+          }
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Current paired session and CSRF token",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Disconnect control session",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "summary": "Operator-filtered missions, flights, telemetry, commands, alerts, world and connection snapshot",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ]
+      }
+    },
+    "/missions": {
+      "post": {
+        "summary": "Save mission draft",
+        "responses": {
+          "201": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MissionInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/missions/{id}": {
+      "patch": {
+        "summary": "Update mission at required expected revision",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "waypoints",
+                  "revision"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "waypoints": {
+                    "type": "array",
+                    "maxItems": 20,
+                    "items": {
+                      "$ref": "#/components/schemas/Waypoint"
+                    }
+                  },
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Archive mission without deleting flight history",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/flights": {
+      "post": {
+        "summary": "Create flight snapshot and dispatch start command",
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "missionId",
+                  "revision"
+                ],
+                "properties": {
+                  "missionId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flights/{id}/commands": {
+      "post": {
+        "summary": "Request pause, resume or land",
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "action"
+                ],
+                "properties": {
+                  "action": {
+                    "enum": [
+                      "PAUSE",
+                      "RESUME",
+                      "LAND"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flights/{id}/reconcile": {
+      "post": {
+        "summary": "Record unrecoverable disconnected flight as interrupted; does not command landing",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/flights/{id}/report": {
+      "get": {
+        "summary": "Flight snapshot, recorded samples, command/alert timeline and summary",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ]
+      }
+    },
+    "/alerts/{id}/acknowledgement": {
+      "post": {
+        "summary": "Acknowledge an incident",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/demo/inject": {
+      "post": {
+        "summary": "Demo-only battery / link fault control",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unpaired or expired session"
+          },
+          "422": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Origin/CSRF/authorization or disabled demo"
+          },
+          "409": {
+            "description": "State, revision, idempotency or concurrency conflict"
+          },
+          "503": {
+            "description": "Simulator unavailable"
+          }
+        },
+        "security": [
+          {
+            "SessionCookie": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-CSRF-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "battery",
+                      "disconnect",
+                      "reconnect"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "SessionCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "drone_session"
+      },
+      "BridgeBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Waypoint": {
+        "type": "object",
+        "required": [
+          "x",
+          "y",
+          "altitude"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "x": {
+            "type": "number",
+            "minimum": -50,
+            "maximum": 50
+          },
+          "y": {
+            "type": "number",
+            "minimum": -50,
+            "maximum": 50
+          },
+          "altitude": {
+            "type": "number",
+            "minimum": 2,
+            "maximum": 15
+          }
+        }
+      },
+      "MissionInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "waypoints"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "waypoints": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/Waypoint"
+            }
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "requestId": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
