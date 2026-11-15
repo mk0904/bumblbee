@@ -1,0 +1,396 @@
+/* One entry composition: canonical map and pairing form share a rectangular frame. */
+.pairing-page {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #101314;
+  padding: 25px 4vw;
+}
+.pairing-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  height: 43px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.pairing-brand > .pairing-monogram {
+  display: grid;
+  place-items: center;
+  background: #050707;
+  border: 1px solid #2b282e;
+  border-radius: var(--radius);
+  width: 33px;
+  height: 33px;
+  margin: 0;
+  padding: 0 3px 0 0;
+  font:
+    700 25px 'DM Sans',
+    sans-serif;
+  letter-spacing: -3px;
+  color: #e0dae5;
+}
+.pairing-brand strong {
+  font-size: 23px;
+  letter-spacing: -1.1px;
+  color: #efedf0;
+}
+.pairing-brand strong > span {
+  color: #e0b58c;
+}
+.pairing-layout {
+  width: 100%;
+  max-width: 1180px;
+  height: min(620px, calc(100dvh - 145px));
+  min-height: 0;
+  flex: none;
+  margin: auto;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(350px, 0.85fr);
+  gap: 0;
+  align-items: stretch;
+  border: 1px solid #3c373f;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #1e1c20;
+  box-shadow: 0 24px 75px #00000026;
+}
+.pairing-scene {
+  position: relative;
+  display: block;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+  background: #272429;
+}
+.pairing-yard {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #28252b;
+}
+.pairing-yard > .world-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: transparent;
+}
+.pairing-yard > .world-map > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  opacity: 0.6;
+}
+.pairing-yard .map-label,
+.pairing-yard .map-compass,
+.pairing-yard .map-footer,
+.pairing-yard .map-scale {
+  display: none;
+}
+.pairing-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, #16141730 5%, #17151826 25%, #171518a6 56%, #151416f5 100%);
+}
+.pairing-story {
+  position: absolute;
+  z-index: 2;
+  left: 38px;
+  right: 20px;
+  bottom: 44px;
+  padding: 0;
+}
+.pairing-story h1 {
+  font-size: clamp(40px, 4.2vw, 58px);
+  font-weight: 450;
+  line-height: 1.07;
+  letter-spacing: -2.6px;
+  margin: 0 0 22px;
+  color: #f8eee4;
+}
+.pairing-story h1 > span {
+  color: #c4b6cf;
+}
+.pairing-story p {
+  font-size: 12px;
+  line-height: 1.9;
+  margin: 0;
+  color: #b2aab9;
+}
+.pairing-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-self: stretch;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  border: 0;
+  border-left: 1px solid #403b44;
+  border-radius: var(--radius);
+  background: #1e1c20;
+  box-shadow: none;
+  padding: 32px clamp(28px, 3.4vw, 48px);
+}
+.pairing-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 41px;
+  width: 41px;
+  flex-shrink: 0;
+  margin-bottom: 24px;
+  border: 1px solid #514858;
+  border-radius: var(--radius);
+  background: #2e2b31;
+  color: #e5bf9b;
+}
+.pairing-icon > svg {
+  width: 22px;
+  height: 22px;
+}
+.pairing-card h2 {
+  font-size: 29px;
+  line-height: 1.2;
+  letter-spacing: -1.1px;
+  font-weight: 450;
+  margin: 0 0 12px;
+}
+.pairing-card > p {
+  font-size: 11px;
+  color: #a098a6;
+  line-height: 1.8;
+  margin: 0 0 26px;
+  max-width: 310px;
+}
+.pair-code-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+.pair-code-label label {
+  font:
+    400 11px 'DM Sans',
+    sans-serif;
+  letter-spacing: 0;
+  color: #b4acba;
+}
+.pair-code-label > span {
+  font:
+    400 10px 'DM Sans',
+    sans-serif;
+  color: #776d7f;
+}
+.pair-code-input {
+  background: #141315;
+  border: 1px solid #504658;
+  border-radius: var(--radius);
+  height: 64px;
+  margin: 0;
+  font-size: 29px;
+  letter-spacing: 13px;
+  padding: 8px 12px 8px 25px;
+  color: #f0dbc8;
+}
+.pair-code-input::placeholder {
+  color: #5a4e63;
+  opacity: 1;
+}
+.pair-code-input:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #ac98bb;
+}
+.pairing-hint {
+  font-size: 9px;
+  color: #92869b;
+  margin: 11px 0 0;
+  gap: 6px;
+}
+.pairing-error-slot {
+  min-height: 25px;
+  padding-top: 6px;
+}
+.pairing-error-slot .form-error {
+  font-size: 9px;
+  line-height: 1.6;
+  margin: 0 0 8px;
+}
+.pairing-card .button {
+  height: 41px;
+  min-height: 41px;
+  font-size: 11px;
+  gap: 12px;
+  border-radius: var(--radius);
+}
+.pairing-card .button.primary {
+  background: #e1b68e;
+  color: #1c1a1e;
+  border-color: #e1b68e;
+}
+.pairing-card .button.primary:disabled {
+  background: #3f3a43;
+  color: #9f91aa;
+  border-color: #3f3a43;
+  opacity: 1;
+}
+.pairing-security {
+  border-top: 1px solid #39353d;
+  padding-top: 17px;
+  margin-top: 22px;
+  gap: 9px;
+  font-size: 9px;
+  line-height: 1.7;
+  color: #887c92;
+}
+.pairing-security svg {
+  color: #a18fae;
+  flex-shrink: 0;
+}
+.pairing-demo {
+  margin-top: 17px;
+  padding-top: 15px;
+}
+.pairing-demo > span {
+  font-size: 6px;
+}
+.pairing-demo > p {
+  font-size: 8px;
+}
+.pairing-spinner {
+  animation: pairing-spin 1s linear infinite;
+}
+@keyframes pairing-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (max-height: 760px) {
+  .pairing-page {
+    padding: 16px 4vw;
+  }
+  .pairing-layout {
+    height: calc(100dvh - 115px);
+    max-height: 620px;
+  }
+  .pairing-story {
+    left: 30px;
+    bottom: 32px;
+  }
+  .pairing-story h1 {
+    font-size: 43px;
+    letter-spacing: -1.8px;
+    margin: 0 0 17px;
+  }
+  .pairing-story p {
+    font-size: 11px;
+  }
+  .pairing-card {
+    padding: 23px 28px;
+  }
+  .pairing-icon {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 19px;
+  }
+  .pairing-card h2 {
+    font-size: 25px;
+  }
+  .pairing-card > p {
+    font-size: 10px;
+    margin-bottom: 22px;
+  }
+  .pair-code-input {
+    height: 54px;
+    font-size: 25px;
+  }
+  .pairing-card .button {
+    min-height: 36px;
+    height: 36px;
+  }
+  .pairing-security {
+    margin-top: 16px;
+    padding-top: 13px;
+    font-size: 8px;
+  }
+  .pairing-demo {
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+  .pairing-card:has(.pairing-demo) .pairing-icon {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pairing-spinner {
+    animation: none;
+  }
+}
+
+/* Graphite and porcelain: one composed entry surface. */
+.pairing-page { background: radial-gradient(ellipse at 18% 20%, #2b282d 0, #131214 48%, #0c0b0d 100%); padding: 27px 4.5vw; }
+.pairing-brand { max-width:1260px; }
+.pairing-brand > .pairing-monogram { background:#f2edf5; color:#171518; border-color:#f2edf5; border-radius: var(--radius); width:35px; height:35px; }
+.pairing-brand strong { color:#f4f3ef; font-weight:500; }
+.pairing-brand strong > span { color:#a090ad; }
+.pairing-layout { max-width:1260px; height:min(660px, calc(100dvh - 145px)); grid-template-columns:minmax(0,1.2fr) minmax(350px,.8fr); border-color:#ffffff24; border-radius: var(--radius); background:#eeefef; box-shadow:0 40px 100px #0007, 0 1px 0 #ffffff12 inset; }
+.pairing-scene { background:#1b191d; }
+.pairing-yard { background:#1b191d; }
+.pairing-yard > .world-map > svg { opacity:.9; filter:grayscale(.85) contrast(1.15); }
+.pairing-scene::after { background:linear-gradient(180deg,#19171b05 8%,#16151730 32%,#151316e8 76%,#151316 100%); }
+.pairing-story { left:42px; bottom:42px; right:24px; }
+.pairing-story h1 { font-size:clamp(43px,4.8vw,67px); line-height:1.02; font-weight:500; letter-spacing:-3.5px; color:#f5f4ef; margin-bottom:24px; }
+.pairing-story h1 > span { color:#bea6d0; }
+.pairing-story p { color:#aea1b8; font-size:12px; line-height:1.8; }
+.pairing-card { background:linear-gradient(145deg,#f4f4f1,#e8e4eb); color:#201d22; border-left:1px solid #ffffff40; padding:36px clamp(28px,3.6vw,54px); }
+.pairing-icon { border:1px solid #d9d0e0; color:#9870b6; background:#ffffff80; width:46px; height:46px; border-radius: var(--radius); margin-bottom:33px; box-shadow:0 4px 12px #38343b08; }
+.pairing-card h2 { font-size:33px; letter-spacing:-1.5px; font-weight:500; }
+.pairing-card > p { color:#776a81; font-size:12px; margin-bottom:32px; }
+.pair-code-label label { color:#5d4f67; font-size:11px; }
+.pair-code-label > span { color:#988ba2; }
+.pair-code-input { background:#ffffff9c; color:#39353d; border:1px solid #d3c9db; border-radius: var(--radius); height:70px; font-size:30px; box-shadow:0 2px 3px #37333a05 inset; }
+.pair-code-input::placeholder { color:#b7aac1; }
+.pair-code-input:focus { outline:none; border-color:#a685c0; box-shadow:none; }
+.pairing-hint { color:#8b7d95; font-size:10px; }
+.pairing-card .button.primary { background:#9067b0; border-color:#9067b0; color:#fff; height:46px; font-size:12px; border-radius: var(--radius); justify-content:space-between; padding-inline:19px; box-shadow:0 4px 12px #9067b01c; }
+.pairing-card .button.primary:hover:not(:disabled) { background:#7c688b; }
+.pairing-card .button.primary:disabled { background:#ded6e5; color:#998ba4; border-color:#ded6e5; box-shadow:none; }
+.pairing-security { border-color:#d6cedd; color:#8b7d95; font-size:10px; }
+.pairing-security svg { color:#9c7fb3; }
+.pairing-card .form-error { color:#ad3e39; }
+@media(max-height:760px) {
+ .pairing-page {padding:16px 4vw;}
+ .pairing-layout {height:calc(100dvh - 115px);max-height:660px;}
+ .pairing-story {left:30px;bottom:30px;}
+ .pairing-story h1 {font-size:49px;letter-spacing:-2.7px;margin-bottom:20px;}
+ .pairing-card {padding:25px 30px;}
+ .pairing-icon {width:36px;height:36px;margin-bottom:20px;}
+ .pairing-card h2 {font-size:29px;}
+ .pairing-card > p {margin-bottom:22px;font-size:11px;}
+ .pair-code-input {height:58px;}
+ .pairing-security {font-size:9px;}
+}
+
+/* Product image fills the entry scene; the operational map lives in the flight deck. */
+.pairing-drone-hero { display:block; width:100%; height:100%; object-fit:cover; object-position:center 30%; }
+.pairing-scene::after { background:linear-gradient(180deg,transparent 25%,#14121625 45%,#141216d9 76%,#141216f5 100%); }
