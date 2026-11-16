@@ -1,4 +1,5 @@
 import { WebSocketServer } from 'ws';
+import { createCameraChannel } from './camera-sockets.js';
 import { originAllowed } from './origin.js';
 import { z } from 'zod';
 import { timingSafeEqual } from 'node:crypto';
@@ -33,8 +34,10 @@ export function attachWebSockets(server, context) {
   const dashboards = new WebSocketServer({ noServer: true, maxPayload: 65536 });
   const simulators = new WebSocketServer({ noServer: true, maxPayload: 65536 });
   const { auth, gateway, config, services, repository } = context;
+  const camera = createCameraChannel(context);
   server.on('upgrade', (req, socket, head) => {
     const path = new URL(req.url, 'http://local').pathname;
+    if (camera.upgrade(req, socket, head, path)) return;
     if (
       path === '/ws/dashboard' &&
       originAllowed(config, req.headers.origin) &&
@@ -98,11 +101,24 @@ export function attachWebSockets(server, context) {
     }, 5000);
     socket.on('error', () => {});
     socket.on('message', (raw) => {
+      let message;
+      try {
+        message = JSON.parse(raw);
+        if (message.protocolVersion !== 1) throw new Error('Unsupported version');
+        // Liveness must not wait behind database writes. It is not execution evidence.
+        if (attached && gateway.socket === socket && message.type === 'heartbeat') {
+          gateway.lastSeen = new Date().toISOString();
+          socket.send(JSON.stringify({ protocolVersion: 1, type: 'heartbeat_ack' }));
+          return;
+        }
+      } catch {
+        socket.close(4002, 'Invalid message');
+        return;
+      }
       if (++queued > 64 || socket.bufferedAmount > 1_000_000)
         return socket.close(4008, 'Backpressure');
       queue = queue
         .then(async () => {
-          const message = JSON.parse(raw);
           if (message.protocolVersion !== 1) throw new Error('Unsupported protocol version');
           if (!attached) {
             const hello = z
@@ -134,6 +150,14 @@ export function attachWebSockets(server, context) {
             const sample = sampleSchema.parse(message.payload);
             if (sample.epochId !== gateway.epochId) throw new Error('Wrong epoch');
             await services.telemetry.ingest(sample);
+            socket.send(
+              JSON.stringify({
+                protocolVersion: 1,
+                type: 'telemetry_ack',
+                epochId: sample.epochId,
+                sequence: sample.sequence,
+              }),
+            );
           } else if (message.type === 'command_result') {
             const result = z
               .object({
@@ -176,6 +200,7 @@ export function attachWebSockets(server, context) {
   freshness.unref();
   return async () => {
     clearInterval(freshness);
+    camera.close();
     for (const ws of [...dashboards.clients, ...simulators.clients]) ws.terminate();
     dashboards.close();
     simulators.close();

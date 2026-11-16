@@ -1,15 +1,15 @@
 /* Shared control-console surfaces. Keep planner, history, incidents and diagnostics consistent. */
 :root {
-  --bg: #0c0d0e;
+  --bg: #0d0c0e;
   --panel: #1c1e1f;
   --line: #303334;
-  --accent: #dde5b3;
+  --accent: #cebcdc;
   --muted: #8b9192;
   color: #e7e8e8;
-  background: #0c0d0e;
+  background: #0d0c0e;
 }
 .app-shell {
-  background: #0c0d0e;
+  background: #0d0c0e;
   min-height: 100dvh;
 }
 .app-shell .sidebar {
@@ -29,7 +29,7 @@
 .app-shell .workspace-main {
   margin-left: 80px;
   min-width: 0;
-  background: #0c0d0e;
+  background: #0d0c0e;
 }
 .app-shell .sidebar .brand {
   padding: 0;
@@ -98,7 +98,7 @@
 }
 .app-shell .sidebar .nav-item:hover {
   background: #242728;
-  color: #eeeff0;
+  color: #f7eee7;
 }
 .app-shell .sidebar .nav-item:nth-child(4) {
   margin-top: 27px;
@@ -154,7 +154,7 @@
   place-items: center;
   font: 6px var(--mono);
   color: #edc88b;
-  background: #473823;
+  background: #353238;
   border-radius: 3px;
   padding: 1px 3px;
 }
@@ -188,7 +188,7 @@
   position: sticky;
   top: 0;
   z-index: 15;
-  background: #0c0d0ef5;
+  background: #0d0c0ef5;
   backdrop-filter: blur(12px);
   height: 64px;
   border-bottom: 0;
@@ -258,12 +258,12 @@
   box-shadow: none;
 }
 .app-shell .button.primary {
-  background: #d9e1b3;
+  background: #ccb9db;
   color: #1f2121;
-  border: 1px solid #e6ebcc;
+  border: 1px solid #ddd0e7;
 }
 .app-shell .button.primary:hover:not(:disabled) {
-  background: #e6ebcf;
+  background: #ded2e8;
 }
 .app-shell .button.secondary {
   background: #2a2d2e;
@@ -326,7 +326,7 @@
   border-color: #7e868726;
 }
 .app-shell .badge.amber {
-  color: #d7b782;
+  color: #b094c5;
   background: #e4b76e0d;
   border-color: #e4b76e28;
 }
@@ -423,7 +423,7 @@
 }
 .app-shell .mission-mini-map .world-map > svg {
   height: 185px;
-  filter: saturate(0.5);
+  filter: none;
 }
 .app-shell .mission-card h3 {
   font-size: 17px;
@@ -485,7 +485,7 @@
 }
 .app-shell .planner-map .world-map > svg {
   height: 570px;
-  filter: brightness(1.15) saturate(0.7);
+  filter: none;
 }
 .app-shell .planner-map .map-tools {
   border-color: #5a6061;
@@ -608,9 +608,9 @@
 }
 .app-shell .alert-icon {
   border-radius: 11px;
-  border-color: #d0a86625;
-  background: #bd914708;
-  color: #d6b476;
+  border-color: #9f7db925;
+  background: #875ca808;
+  color: #aa8bc1;
   width: 42px;
   height: 42px;
 }
@@ -1102,3 +1102,13 @@
     font-size: 6px;
   }
 }
+
+/* Warm metallic accents on restrained graphite console surfaces. */
+:root { --accent: #b79bcc; --bg: #101011; --panel: #1a1b1c; --line: #332f36; --muted: #8b9099; color: #e9e1ef; }
+.app-shell .sidebar { background: #191a1c; border-right: 1px solid #ffffff08; }
+.app-shell .sidebar .nav-item.active { background: #2b282e; color: #c8b3d8; }
+.app-shell .sidebar .nav-item.active::before { background: #a686be; }
+.app-shell .sidebar .brand-symbol { background: #d5c6e1; color: #242226; }
+.app-shell .button.primary { background: #bda5d0; color: #201d22; border-color: #bda5d0; }
+.app-shell .button.primary:hover:not(:disabled) { background: #cebcdc; }
+.app-shell input:focus, .app-shell textarea:focus { border-color: #946eb1; outline: none; box-shadow: 0 0 0 2px #946eb112; }

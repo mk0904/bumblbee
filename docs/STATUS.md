@@ -24,3 +24,27 @@ User-supplied Supabase details and generated bridge bootstrap credential reside 
 Verification: 24 backend and 4 frontend tests, lint and production build passed on Node 24.22.3. See evidence/dashboard-build.md for observed browser checks and explicit verification limits.
 
 Console revision: reference-inspired four-panel flight deck, shared charcoal theme across screens, fixed responsive navigation with active states/tooltips, and coalesced demo ticks. Latest checks: 25 backend + 6 frontend tests, lint and production build pass. Browser checks and screenshots: evidence/console-redesign.md.
+
+## 2026-11-16 — actual local Webots integration
+Local real-sensor mission execution, normal route completion and authenticated
+start/pause/resume/land now have simulator + SQL reports. See
+evidence/webots-integration.md for passing flight IDs, retained failed trials,
+checks and limitations. Recorded acceptance latency 1.77–2.20 s and telemetry
+0.78 Hz do not meet the faster NFR targets. Hosting/restart recovery/repeated
+accuracy and intentional network-fault trials remain pending.
+
+## 2026-11-16 — FR-16 onboard camera
+640×360 protected JPEG feed implemented and browser decoded; 4.78 FPS measured in
+a 45-second local observation with real control workflow passing concurrently.
+27 backend + 11 frontend + 6 Python tests pass. See evidence/camera-integration.md.
+No camera persistence/recording or hosted-network media performance claim.
+
+## 2026-11-16 — textured yard
+Local concrete/asphalt/pad texture added under ADR-009. Actual onboard view now
+shows surface markings; full start/pause/resume/land passed again, report
+3937f6ea-ce07-45b9-b77b-ea10fe67c0a3. See evidence/textured-yard.md. Physics unchanged.
+
+## 2026-11-16 — canonical scaled planner map
+ADR-010: home diameter 1.5 m, target pads 1.2 m; Webots and every planner/preview
+use the same shared atlas and extents. Saved P1 mapped route (8,6,3); 28 backend /
+13 frontend tests, lint/build pass. See evidence/canonical-map.md.

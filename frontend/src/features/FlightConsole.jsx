@@ -3,6 +3,7 @@ import {
   ArrowDownToLine,
   ArrowUpRight,
   ChartNoAxesCombined,
+  Camera,
   ChevronRight,
   Crosshair,
   Map,
@@ -13,6 +14,7 @@ import {
   Route,
   Signal,
 } from 'lucide-react';
+import { CameraFeed } from '../components/CameraFeed.jsx';
 import { WorldMap } from '../components/WorldMap.jsx';
 import { TelemetryChart } from '../components/TelemetryChart.jsx';
 import { fmt, duration } from '../lib/format.js';
@@ -33,11 +35,11 @@ function DroneDrawing() {
         <ellipse cx="19" cy="57" rx="16" ry="5" />
         <ellipse cx="81" cy="57" rx="16" ry="5" />
         <path d="M42 24L50 19L58 24L61 43L50 50L39 43Z" fill="#323536" />
-        <path d="M45 27H55L57 37H43Z" fill="#8f9b96" stroke="none" />
+        <path d="M45 27H55L57 37H43Z" fill="#8f949b" stroke="none" />
         <circle cx="50" cy="43" r="3" />
         <path d="M44 50L42 55M56 50L58 55" />
       </g>
-      <path d="M8 11H27M72 57H92" stroke="#dce77e" strokeWidth="2" />
+      <path d="M8 11H27M72 57H92" stroke="#b69acb" strokeWidth="2" />
     </svg>
   );
 }
@@ -87,14 +89,14 @@ function HeadingDial({ sample }) {
           </text>
         </g>
         <path d="M120 72V168M72 120H168" stroke="#424848" />
-        <circle cx="120" cy="120" r="4" fill="#adb6b0" />
+        <circle cx="120" cy="120" r="4" fill="#adb1b6" />
         {sample && (
           <g transform={`rotate(${90 - angle} 120 120)`}>
-            <path d="M120 66L128 130L120 123L112 130Z" fill="#edf2e8" />
+            <path d="M120 66L128 130L120 123L112 130Z" fill="#f6ece4" />
             <path d="M120 174L124 129L120 123L116 129Z" fill="#636c69" />
           </g>
         )}
-        <path d="M120 17L116 23H124Z" fill="#dce77e" />
+        <path d="M120 17L116 23H124Z" fill="#b69acb" />
       </svg>
       <div className="heading-coordinates">
         <span>
@@ -161,6 +163,8 @@ export function FlightConsole({
               sample={sample}
               trail={overlay ? data.telemetry : []}
             />
+          ) : view === 'camera' ? (
+            <CameraFeed enabled={data.mode === 'webots'} />
           ) : (
             <div className="console-large-chart">
               <TelemetryChart samples={data.telemetry} height={380} />
@@ -320,6 +324,13 @@ export function FlightConsole({
                 aria-pressed={view === 'map'}
               >
                 <Map size={13} /> Mission view
+              </button>
+              <button
+                className={view === 'camera' ? 'selected' : ''}
+                onClick={() => setView('camera')}
+                aria-pressed={view === 'camera'}
+              >
+                <Camera size={13} /> Camera
               </button>
               <button
                 className={view === 'altitude' ? 'selected' : ''}

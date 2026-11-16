@@ -42,7 +42,7 @@ test('four-character bridge entry is normalized and sent to claim endpoint', asy
     .mockResolvedValueOnce({ demo: false })
     .mockResolvedValueOnce({ user: { id: 'operator-01' }, csrf: 'code-csrf' });
   render(<Pairing onLogin={onLogin} />);
-  await user.type(screen.getByLabelText('BRIDGE CODE'), 'a7k2');
+  await user.type(screen.getByLabelText(/bridge code/i), 'a7k2');
   await user.click(screen.getByRole('button', { name: /Connect to drone/ }));
   await waitFor(() =>
     expect(api).toHaveBeenCalledWith('/pairing/claim', { method: 'POST', body: { code: 'A7K2' } }),

@@ -1,0 +1,1193 @@
+/* Desktop-only, bounded viewport. Lists use explicit pages; panels never become scroll containers. */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+.desktop-required {
+  height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #121013;
+  color: #e1d5ea;
+  padding: 30px;
+  text-align: center;
+  gap: 19px;
+  overflow: hidden;
+}
+.desktop-required-mark {
+  font-size: 27px;
+  font-weight: 650;
+  letter-spacing: -2px;
+  margin-bottom: 15px;
+  color: #e3d9eb;
+}
+.desktop-required > svg {
+  color: #b69acb;
+}
+.desktop-required h1 {
+  font-size: 25px;
+  font-weight: 450;
+  letter-spacing: -0.7px;
+}
+.desktop-required p {
+  font-size: 12px;
+  line-height: 1.8;
+  max-width: 370px;
+  color: #9297a0;
+}
+.desktop-required > span:last-child {
+  font: 8px var(--mono);
+  letter-spacing: 1px;
+  color: #6d6276;
+}
+.app-shell,
+.app-shell:has(.flight-console) {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+.app-shell .workspace-main,
+.app-shell:has(.flight-console) .workspace-main {
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.app-shell .topbar,
+.app-shell:has(.flight-console) .topbar {
+  position: relative;
+  height: 48px;
+  min-height: 48px;
+  flex-shrink: 0;
+  padding: 0 24px;
+}
+.app-shell .content,
+.app-shell:has(.flight-console) .content {
+  flex: 1;
+  min-height: 0;
+  max-height: calc(100dvh - 48px);
+  display: flex;
+  flex-direction: column;
+  padding: 13px 24px 0;
+  width: 100%;
+  max-width: none;
+  overflow: hidden;
+}
+.app-shell .content > .page-title {
+  flex-shrink: 0;
+  margin: 0 0 15px;
+}
+.app-shell .page-title h1 {
+  font-size: 24px;
+  margin: 5px 0;
+}
+.app-shell .page-title p {
+  font-size: 10px;
+}
+.app-shell .page-title .eyebrow {
+  font-size: 6px;
+}
+.app-shell .page-title .date-label {
+  font-size: 7px;
+}
+.app-shell .workspace-footer,
+.app-shell:has(.flight-console) .workspace-footer {
+  flex-shrink: 0;
+  min-height: 22px;
+  margin-top: auto;
+  padding: 7px 0;
+  font-size: 5px;
+}
+.app-shell .content > .panel,
+.app-shell .content > .system-grid {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.app-shell .panel {
+  min-height: 0;
+}
+.app-shell .panel-heading {
+  min-height: 43px;
+  padding: 12px 17px;
+  flex-shrink: 0;
+}
+.app-shell .panel-heading h2 {
+  font-size: 11px;
+}
+.flight-console {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+.console-toolbar {
+  flex-shrink: 0;
+  min-height: 31px;
+  margin: 0 0 10px;
+}
+.console-layout {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  grid-template-rows: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: 15px;
+}
+.console-panel,
+.console-viewport {
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.console-bottomline {
+  flex-shrink: 0;
+  min-height: 25px;
+  margin: 4px 0 0;
+}
+.console-bottomline > span,
+.console-bottomline > button {
+  font-size: 7px;
+}
+.console-viewport > .world-map {
+  height: 100%;
+  min-height: 0;
+}
+.console-viewport > .world-map > svg {
+  height: 100%;
+}
+.console-large-chart {
+  height: 100%;
+  padding: 30px 20px 0 120px;
+}
+.console-large-chart > div {
+  max-height: calc(100% - 45px);
+}
+.drone-status-panel {
+  padding: 15px 18px 0;
+}
+.drone-status-title {
+  padding-bottom: 12px;
+}
+.drone-status-title h2 {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+.drone-status-title p {
+  font-size: 8px;
+}
+.console-drone {
+  height: 40px;
+  width: 58px;
+}
+.console-state {
+  padding: 12px 0;
+}
+.console-battery {
+  padding: 12px 0;
+}
+.console-altitude {
+  padding: 12px 0;
+}
+.console-meter {
+  margin: 9px 0 6px;
+}
+.altitude-track {
+  margin: 13px 3px 8px;
+}
+.console-attitude {
+  padding: 12px 0;
+}
+.console-signal {
+  padding: 9px 0;
+  font-size: 8px;
+}
+.console-control-desk {
+  padding: 12px 16px 14px;
+}
+.desk-top {
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.desk-body {
+  grid-template-columns: 145px 1fr 1.25fr;
+  gap: 17px;
+  min-height: 0;
+}
+.desk-readouts {
+  gap: 12px 10px;
+}
+.desk-readouts strong {
+  font-size: 13px;
+}
+.desk-readouts > div {
+  gap: 6px;
+}
+.desk-readouts > div > span {
+  font-size: 7px;
+}
+.desk-controls {
+  gap: 7px;
+}
+.desk-control-note {
+  font-size: 6px;
+}
+.desk-control-caption {
+  font-size: 6px;
+}
+.console-round-button {
+  height: 57px;
+  width: 57px;
+}
+.console-mission-select {
+  padding: 12px 9px;
+  margin-top: 5px;
+}
+.console-mission-select > span {
+  font-size: 10px;
+}
+.console-command-status {
+  font-size: 6px;
+}
+.console-minimap {
+  min-height: 0;
+}
+.console-minimap .world-map {
+  height: 100%;
+}
+.heading-instrument {
+  padding: 12px 15px 10px;
+}
+.heading-instrument > svg {
+  flex: 1;
+  min-height: 0;
+  max-height: 190px;
+  width: 175px;
+  margin-top: -8px;
+}
+.heading-value {
+  margin-top: 7px;
+  font-size: 12px;
+}
+.heading-coordinates {
+  font-size: 6px;
+  flex-shrink: 0;
+}
+.instrument-title {
+  font-size: 6px;
+}
+.viewport-side {
+  top: 57px;
+  bottom: 92px;
+  padding: 15px;
+  width: 105px;
+}
+.hud-scale {
+  height: 12px;
+  margin: 10px 0 15px;
+}
+.hud-third {
+  margin-top: 16px;
+}
+.viewport-side > strong {
+  font-size: 20px;
+  margin-top: 5px;
+}
+.hud-label {
+  font-size: 6px;
+}
+.hud-route {
+  font-size: 9px;
+}
+.viewport-top {
+  inset: 13px 15px auto;
+}
+.viewport-bottom {
+  padding: 17px 19px;
+}
+.viewport-bottom h1 {
+  font-size: 18px;
+  margin: 5px 0;
+}
+.viewport-mission-label {
+  font-size: 6px;
+}
+.viewport-bottom > div > span:last-child {
+  font-size: 7px;
+}
+.viewport-reticle {
+  top: 45%;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border-top: 1px solid #34373b;
+  padding: 9px 15px;
+  min-height: 34px;
+  font: 8px var(--mono);
+  color: #988f9e;
+}
+.pagination > div {
+  display: flex;
+  gap: 8px;
+}
+.pagination .icon-button {
+  padding: 2px 4px;
+}
+.app-shell .list-toolbar {
+  flex-shrink: 0;
+  padding-bottom: 11px;
+  margin-bottom: 14px;
+}
+.mission-collection {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.app-shell .mission-cards {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+  overflow: hidden;
+}
+.app-shell .mission-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding: 16px;
+}
+.app-shell .mission-mini-map {
+  flex: 1;
+  min-height: 70px;
+  max-height: 240px;
+  margin-bottom: 14px;
+}
+.app-shell .mission-mini-map .world-map {
+  height: 100%;
+}
+.app-shell .mission-mini-map .world-map > svg {
+  height: 100%;
+}
+.app-shell .mission-card h3 {
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app-shell .mission-card > p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 0;
+  font-size: 10px;
+  margin: 6px 0;
+}
+.app-shell .mission-card-meta {
+  margin: 11px 0;
+}
+.app-shell .mission-card-actions {
+  margin-top: auto;
+  flex-shrink: 0;
+  padding-top: 12px;
+}
+.app-shell .empty-state {
+  flex: 1;
+  min-height: 0;
+  padding: 25px;
+  gap: 13px;
+}
+.planner-page {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.app-shell .planner-page > .page-title {
+  flex-shrink: 0;
+  margin-bottom: 13px;
+}
+.app-shell .planner-layout {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1.8fr) minmax(310px, 1fr);
+  gap: 17px;
+  align-items: stretch;
+}
+.app-shell .planner-map {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.app-shell .planner-map > .world-map {
+  flex: 1;
+  min-height: 0;
+}
+.app-shell .planner-map .world-map > svg {
+  height: 100%;
+  min-height: 0;
+}
+.app-shell .map-note {
+  flex-shrink: 0;
+  padding: 10px 15px;
+  font-size: 8px;
+}
+.app-shell .planner-sidebar {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 15px;
+}
+.app-shell .mission-details,
+.app-shell .waypoint-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+.app-shell .mission-details > label {
+  margin: 9px 16px;
+  font-size: 9px;
+}
+.app-shell .mission-details input {
+  padding: 8px 10px;
+  margin-top: 5px;
+  font-size: 11px;
+}
+.app-shell .waypoint-list {
+  max-height: none;
+  overflow: hidden;
+}
+.app-shell .waypoint-editor {
+  padding: 10px 15px;
+}
+.waypoint-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 15px;
+  border-bottom: 1px solid #39353c;
+  font: 8px var(--mono);
+  color: #a498ae;
+}
+.app-shell .coordinate-inputs {
+  margin-top: 9px;
+  gap: 8px;
+}
+.app-shell .coordinate-inputs input {
+  padding: 7px;
+  font-size: 10px;
+  margin-top: 4px;
+}
+.app-shell .bounds-note {
+  padding: 9px 16px;
+  font-size: 6px;
+  line-height: 1.7;
+}
+.app-shell .waypoint-empty {
+  padding: 16px;
+  font-size: 10px;
+}
+.app-shell .history-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.app-shell .table-wrap {
+  min-height: 0;
+  overflow: hidden;
+  flex: 1;
+}
+.app-shell .table-wrap table {
+  table-layout: fixed;
+}
+.app-shell .table-wrap th {
+  padding: 12px 17px;
+  font-size: 7px;
+}
+.app-shell .table-wrap td {
+  padding: 14px 17px;
+  font-size: 10px;
+}
+.app-shell .table-wrap td strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-shell .table-wrap td:first-child,
+.app-shell .table-wrap th:first-child {
+  width: 27%;
+}
+.app-shell .table-wrap td:last-child,
+.app-shell .table-wrap th:last-child {
+  width: 18%;
+}
+.app-shell .content > .panel:has(.alert-list) {
+  display: flex;
+  flex-direction: column;
+}
+.app-shell .alert-list {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 17px;
+}
+.app-shell .alert-item {
+  padding: 18px 0;
+  gap: 13px;
+}
+.app-shell .alert-item p {
+  font-size: 10px;
+  line-height: 1.6;
+}
+.app-shell .alert-item h3 {
+  font-size: 12px;
+}
+.app-shell .system-grid {
+  align-items: stretch;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 17px;
+}
+.app-shell .system-grid > div {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.app-shell .system-panel dl {
+  padding: 0 17px;
+}
+.app-shell .system-panel dl > div {
+  padding: 11px 0;
+  font-size: 10px;
+}
+.app-shell .system-panel dt,
+.app-shell .system-panel dd {
+  font-size: 10px;
+}
+.app-shell .integration-path {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  padding: 16px 15px 6px;
+}
+.app-shell .integration-path > span {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  padding: 9px 5px;
+  text-align: center;
+  font-size: 8px;
+}
+.app-shell .integration-path > svg {
+  transform: rotate(-90deg);
+  width: 12px;
+  flex-shrink: 0;
+}
+.app-shell .system-panel > p {
+  padding: 13px 17px;
+  font-size: 10px;
+  line-height: 1.7;
+}
+.app-shell .demo-tools {
+  margin: 0;
+}
+.app-shell .demo-actions {
+  padding: 0 17px 12px;
+}
+.app-shell .demo-tools > small {
+  padding: 0 17px 15px;
+  font-size: 8px;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  padding: 24px;
+  overflow: hidden;
+  align-items: center;
+}
+.app-shell .report-modal {
+  height: min(780px, calc(100dvh - 48px));
+  width: min(1040px, 100%);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 22px;
+}
+.report-top,
+.report-status,
+.report-metrics,
+.report-tabs,
+.report-data-note {
+  flex-shrink: 0;
+}
+.app-shell .report-top h2 {
+  font-size: 23px;
+  margin: 6px 0;
+  max-width: 800px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.app-shell .report-status {
+  padding: 12px 0;
+}
+.app-shell .report-metrics {
+  margin-bottom: 12px;
+}
+.app-shell .report-metrics > div {
+  padding: 12px 16px;
+}
+.app-shell .report-metrics strong {
+  font-size: 18px;
+  margin-top: 7px;
+}
+.report-tabs,
+.report-chart-tabs {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-bottom: 13px;
+}
+.report-tabs button,
+.report-chart-tabs button {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 7px 11px;
+  color: #978c9f;
+  font-size: 10px;
+}
+.report-tabs button.selected,
+.report-chart-tabs button.selected {
+  background: #343137;
+  border-color: #4f4359;
+  color: #d6c6e2;
+}
+.app-shell .report-grid {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: 1fr 1.2fr;
+  overflow: hidden;
+}
+.app-shell .report-grid > .world-map {
+  min-height: 0;
+}
+.app-shell .report-grid > .world-map > svg {
+  height: 100%;
+  min-height: 0;
+}
+.app-shell .report-grid > div {
+  min-height: 0;
+  overflow: hidden;
+}
+.app-shell .report-data-note {
+  padding: 10px 0;
+  margin: 10px 0 0;
+  font-size: 8px;
+}
+.report-records {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.report-records > .pagination {
+  margin-top: auto;
+}
+.app-shell .command-timeline > div {
+  padding: 14px 0;
+}
+.app-shell .incident-line {
+  font-size: 10px;
+  line-height: 1.7;
+  padding: 12px 0;
+}
+.app-shell .report-modal h3 {
+  flex-shrink: 0;
+  margin: 8px 0;
+}
+.pairing-page {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  padding: 24px 5vw;
+}
+.pairing-brand,
+.pairing-footer {
+  flex-shrink: 0;
+}
+.pairing-layout {
+  flex: 1;
+  min-height: 0;
+  margin: auto;
+  padding: 20px 0;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 6vw;
+}
+.pairing-visual {
+  height: min(560px, 100%);
+  min-height: 0;
+}
+.pairing-visual > .world-map > svg {
+  height: 100%;
+  min-height: 0;
+}
+.pairing-copy {
+  top: 24%;
+  left: 9%;
+}
+.pairing-copy h1 {
+  font-size: 45px;
+}
+.pairing-card {
+  padding: 0;
+}
+.pairing-icon {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 17px;
+}
+.pairing-card h2 {
+  font-size: 27px;
+  margin: 10px 0;
+}
+.pairing-card > p {
+  font-size: 11px;
+  margin-bottom: 18px;
+}
+.pair-code-input {
+  height: 62px;
+  font-size: 27px;
+  padding: 10px 20px 10px 35px;
+}
+.pairing-hint {
+  margin: 10px 0 15px;
+  font-size: 9px;
+}
+.pairing-card .button {
+  min-height: 37px;
+  font-size: 11px;
+}
+.pairing-demo {
+  margin-top: 18px;
+  padding-top: 16px;
+}
+.pairing-security {
+  margin-top: 18px;
+  font-size: 8px;
+}
+.pairing-footer {
+  padding-top: 12px;
+  font-size: 6px;
+}
+@media (max-height: 780px) {
+  .console-layout {
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 12px;
+  }
+  .console-toolbar {
+    min-height: 26px;
+    margin-bottom: 7px;
+  }
+  .drone-status-panel {
+    padding: 12px 15px 0;
+  }
+  .drone-status-title {
+    padding-bottom: 8px;
+  }
+  .drone-status-title p {
+    font-size: 7px;
+  }
+  .drone-status-title h2 {
+    font-size: 15px;
+  }
+  .console-drone {
+    height: 32px;
+    width: 50px;
+  }
+  .console-state {
+    padding: 9px 0;
+  }
+  .console-battery {
+    padding: 9px 0;
+  }
+  .console-altitude {
+    padding: 9px 0;
+  }
+  .console-attitude {
+    padding: 9px 0;
+  }
+  .console-signal {
+    padding: 8px 0;
+    font-size: 7px;
+  }
+  .console-battery > div:first-child,
+  .console-altitude > div:first-child,
+  .console-state > span {
+    font-size: 10px;
+  }
+  .console-control-desk {
+    padding: 9px 13px 10px;
+  }
+  .desk-top {
+    margin-bottom: 9px;
+  }
+  .console-view-tabs button {
+    padding: 5px 7px;
+    font-size: 8px;
+  }
+  .console-plan-button {
+    font-size: 8px;
+  }
+  .desk-body {
+    grid-template-columns: 120px 1fr 1.25fr;
+    gap: 13px;
+  }
+  .desk-readouts {
+    gap: 10px 8px;
+  }
+  .desk-readouts strong {
+    font-size: 12px;
+  }
+  .desk-readouts > div > span {
+    font-size: 6px;
+  }
+  .desk-readouts > div {
+    gap: 5px;
+  }
+  .desk-history {
+    padding-top: 7px;
+    font-size: 7px;
+  }
+  .console-round-button {
+    width: 48px;
+    height: 48px;
+    gap: 4px;
+  }
+  .console-round-button > svg {
+    height: 17px;
+  }
+  .console-round-button > span {
+    font-size: 7px;
+  }
+  .desk-controls {
+    gap: 5px;
+    padding-left: 13px;
+  }
+  .desk-control-caption {
+    font-size: 5px;
+  }
+  .console-command-status {
+    font-size: 5px;
+  }
+  .console-mission-select {
+    padding: 10px 8px;
+  }
+  .console-mission-select > span {
+    font-size: 9px;
+  }
+  .desk-control-note {
+    font-size: 5px;
+  }
+  .heading-instrument {
+    padding: 9px 13px;
+  }
+  .heading-instrument > svg {
+    max-height: 140px;
+    width: 145px;
+  }
+  .heading-value {
+    margin-top: 5px;
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  .instrument-title {
+    font-size: 5px;
+  }
+  .heading-coordinates {
+    font-size: 5px;
+  }
+  .viewport-side {
+    top: 49px;
+    bottom: 78px;
+    padding: 12px;
+    width: 95px;
+  }
+  .viewport-side > strong {
+    font-size: 17px;
+  }
+  .hud-label {
+    font-size: 5px;
+  }
+  .hud-scale {
+    height: 10px;
+    margin: 8px 0 12px;
+  }
+  .hud-third {
+    margin-top: 11px;
+  }
+  .hud-route {
+    font-size: 8px;
+    margin-top: 6px;
+  }
+  .viewport-bottom {
+    padding: 13px 17px;
+  }
+  .viewport-bottom h1 {
+    font-size: 16px;
+  }
+  .viewport-top {
+    inset: 11px 13px auto;
+  }
+  .viewport-source {
+    font-size: 6px;
+    padding: 6px 8px;
+  }
+  .viewport-counters > span {
+    padding: 6px 8px;
+    font-size: 7px;
+  }
+  .console-viewport .map-tools {
+    bottom: 92px;
+  }
+  .app-shell .planner-page > .page-title {
+    margin-bottom: 10px;
+  }
+  .app-shell .mission-details > label {
+    margin: 7px 14px;
+    font-size: 8px;
+  }
+  .app-shell .mission-details input {
+    padding: 6px 9px;
+    font-size: 10px;
+    margin-top: 4px;
+  }
+  .app-shell .panel-heading {
+    min-height: 37px;
+    padding: 9px 15px;
+  }
+  .app-shell .waypoint-editor {
+    padding: 8px 13px;
+  }
+  .app-shell .waypoint-navigation {
+    padding: 4px 12px;
+  }
+  .app-shell .bounds-note {
+    padding: 6px 14px;
+    font-size: 5px;
+  }
+  .app-shell .waypoint-editor-top {
+    gap: 6px;
+  }
+  .app-shell .coordinate-inputs {
+    margin-top: 6px;
+  }
+  .app-shell .coordinate-inputs input {
+    min-height: 27px;
+    padding: 5px 7px;
+  }
+  .app-shell .table-wrap td {
+    padding: 11px 16px;
+  }
+  .app-shell .alert-item {
+    padding: 13px 0;
+  }
+  .app-shell .system-panel dl > div {
+    padding: 8px 0;
+  }
+  .app-shell .system-panel dt,
+  .app-shell .system-panel dd {
+    font-size: 9px;
+  }
+  .app-shell .integration-path {
+    padding: 12px 12px 5px;
+  }
+  .app-shell .system-panel > p {
+    padding: 10px 14px;
+    font-size: 9px;
+  }
+  .app-shell .demo-tools > small {
+    padding: 0 14px 12px;
+    font-size: 7px;
+  }
+  .pairing-copy h1 {
+    font-size: 38px;
+  }
+  .pairing-visual {
+    max-height: 480px;
+  }
+  .pairing-copy p {
+    font-size: 11px;
+  }
+  .pairing-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 13px;
+  }
+  .pairing-card h2 {
+    font-size: 25px;
+  }
+  .pairing-card > p {
+    font-size: 10px;
+    margin-bottom: 13px;
+  }
+  .pairing-demo {
+    margin-top: 13px;
+    padding-top: 12px;
+  }
+  .pairing-security {
+    margin-top: 13px;
+  }
+  .pairing-layout {
+    padding: 15px 0;
+  }
+  .app-shell .report-modal {
+    padding: 18px;
+  }
+  .app-shell .report-top h2 {
+    font-size: 21px;
+  }
+  .app-shell .report-metrics > div {
+    padding: 9px 13px;
+  }
+  .app-shell .report-status {
+    padding: 10px 0;
+  }
+}
+@media (max-height: 700px) {
+  .console-state,
+  .console-battery,
+  .console-altitude,
+  .console-attitude {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  .console-meter {
+    margin-top: 6px;
+    margin-bottom: 4px;
+  }
+  .altitude-track {
+    margin-top: 10px;
+    margin-bottom: 6px;
+  }
+}
+.camera-feed {
+  position: absolute;
+  inset: 0;
+  background: #0d1011;
+  overflow: hidden;
+}
+.camera-feed > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(0.42);
+}
+.camera-feed.is-live > img {
+  filter: none;
+}
+.camera-feed-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  color: #989da5;
+  background: #1014148a;
+}
+.camera-feed-state strong {
+  font-size: 14px;
+  font-weight: 450;
+}
+.camera-feed-state > span {
+  font-size: 10px;
+  color: #7d838b;
+}
+.camera-feed-badge {
+  position: absolute;
+  right: 16px;
+  top: 55px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px;
+  border-radius: 4px;
+  background: #151416dc;
+  color: #9da1a9;
+  font: 7px var(--mono);
+}
+.camera-feed-badge.live {
+  color: #b69acb;
+}
+.camera-feed-spec {
+  position: absolute;
+  right: 17px;
+  bottom: 22px;
+  color: #d6c6e2;
+  font: 7px var(--mono);
+  background: #151416cc;
+  padding: 5px 8px;
+  border-radius: 3px;
+}
+.console-viewport:has(.camera-feed) .viewport-grid {
+  display: none;
+}
+.console-viewport:has(.camera-feed) .viewport-side {
+  background: #12181875;
+}
+
+/* Compact icon navigation; labels appear only on hover or keyboard focus. */
+.app-shell .sidebar,
+.app-shell:has(.flight-console) .sidebar {
+  width: 72px;
+  padding: 24px 12px 14px;
+  background: #18171b;
+  border-right: 1px solid #ffffff08;
+}
+.app-shell .workspace-main,
+.app-shell:has(.flight-console) .workspace-main { margin-left: 72px; }
+.app-shell .sidebar .brand { justify-content:center; padding:0; }
+.app-shell .sidebar .brand > span,
+.app-shell .sidebar .workspace-selector,
+.app-shell .sidebar .nav-section-label,
+.app-shell .sidebar .connection-card,
+.app-shell .sidebar .operator-profile > span:nth-child(2),
+.app-shell .sidebar .operator-profile > svg { display:none; }
+.app-shell .sidebar nav { margin-top:38px; gap:9px; }
+.app-shell .sidebar .nav-item,
+.app-shell:has(.flight-console) .sidebar .nav-item {
+  height:43px; min-height:43px; padding:0; margin:0;
+  justify-content:center; border-radius:10px;
+}
+.app-shell .sidebar .nav-item:nth-child(4),
+.app-shell:has(.flight-console) .sidebar .nav-item:nth-child(4) { margin-top:19px; }
+.app-shell .sidebar .nav-item:nth-child(4)::before { top:-14px; left:10px; right:10px; border-color:#ffffff0b; }
+.app-shell .sidebar .nav-count { display:none; }
+.app-shell .sidebar .operator-profile { justify-content:center; padding:18px 0 0; border-top:1px solid #ffffff0b; }

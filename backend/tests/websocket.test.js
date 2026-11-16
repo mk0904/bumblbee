@@ -58,6 +58,7 @@ test('external-agent protocol authenticates, dispatches a real socket command an
     }),
   );
   const changed = once(ctx.events, 'changed');
+  const persisted = once(ws, 'message');
   ws.send(
     JSON.stringify({
       protocolVersion: 1,
@@ -82,10 +83,50 @@ test('external-agent protocol authenticates, dispatches a real socket command an
     }),
   );
   await changed;
-  // Ordered heartbeat acknowledgement is sent only after previous command/telemetry queue work.
+  const acknowledgement = JSON.parse((await persisted)[0]);
+  assert.equal(acknowledgement.type, 'telemetry_ack');
+  assert.equal(acknowledgement.sequence, 1);
+  assert.equal(acknowledgement.epochId, epochId);
+  // Heartbeats are liveness evidence, independent of persistence acknowledgements.
   const heartbeat = once(ws, 'message');
   ws.send(JSON.stringify({ protocolVersion: 1, type: 'heartbeat' }));
   await heartbeat;
+  let releaseIngest;
+  const originalIngest = ctx.services.telemetry.ingest;
+  ctx.services.telemetry.ingest = () =>
+    new Promise((resolve) => {
+      releaseIngest = resolve;
+    });
+  ws.send(
+    JSON.stringify({
+      protocolVersion: 1,
+      type: 'telemetry',
+      payload: {
+        flightId: cmd.flightId,
+        epochId,
+        sequence: 2,
+        simulationTime: 1,
+        x: 0,
+        y: 0,
+        altitude: 1,
+        speed: 0,
+        battery: 100,
+        roll: 0,
+        pitch: 0,
+        yaw: 0,
+        waypoint: 0,
+        state: 'TAKING_OFF',
+        batterySource: 'synthetic',
+      },
+    }),
+  );
+  const fastHeartbeat = once(ws, 'message');
+  ws.send(JSON.stringify({ protocolVersion: 1, type: 'heartbeat' }));
+  assert.equal(JSON.parse((await fastHeartbeat)[0]).type, 'heartbeat_ack');
+  const secondAck = once(ws, 'message');
+  releaseIngest();
+  assert.equal(JSON.parse((await secondAck)[0]).sequence, 2);
+  ctx.services.telemetry.ingest = originalIngest;
   const state = await ctx.repository.read();
   assert.equal(state.flights[0].state, 'TAKING_OFF');
   assert.equal(state.telemetry.length, 1);

@@ -16,7 +16,7 @@ export default function ChartPlot({ samples = [], metric = 'altitude', height = 
         <span>Telemetry will appear when a flight starts</span>
       </div>
     );
-  const color = metric === 'battery' ? '#d8c58f' : '#d4e4b2';
+  const color = metric === 'battery' ? '#b79bcc' : '#cdbadc';
   return (
     <div style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height="100%" minWidth={1}>

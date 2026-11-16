@@ -1,0 +1,22 @@
+{
+  "id": "training-ground-v1",
+  "frame": "WORLD_LOCAL_V1",
+  "revision": 2,
+  "surface": { "minX": -60, "maxX": 60, "minY": -60, "maxY": 60 },
+  "flightBounds": { "min": -50, "max": 50 },
+  "texture": "training-yard.jpg",
+  "texturePixels": 4096,
+  "pads": [
+    { "id": "H", "x": 0, "y": 0, "diameter": 1.5, "color": "#5b6e64" },
+    { "id": "P1", "x": 8, "y": 6, "diameter": 1.2, "color": "#426975" },
+    { "id": "P2", "x": 16, "y": 12, "diameter": 1.2, "color": "#426975" },
+    { "id": "A1", "x": 24, "y": 18, "diameter": 1.2, "color": "#8b6a3e" },
+    { "id": "B2", "x": -18, "y": 22, "diameter": 1.2, "color": "#4c7073" },
+    { "id": "C3", "x": -14, "y": -16, "diameter": 1.2, "color": "#756045" }
+  ],
+  "footprints": [
+    { "label": "HANGAR A", "x": -30.8333, "y": 31.9167, "width": 16.6667, "height": 9.5 },
+    { "label": "STORAGE", "x": 30.4167, "y": -25.4167, "width": 14.1667, "height": 17.5 },
+    { "label": "SERVICE", "x": -33.4167, "y": -25.8333, "width": 10.8333, "height": 6.66667 }
+  ]
+}

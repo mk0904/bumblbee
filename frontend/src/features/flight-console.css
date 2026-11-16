@@ -1,6 +1,6 @@
 /* Flight deck: a four-panel instrument layout, with the viewport as the primary surface. */
 .app-shell:has(.flight-console) {
-  background: #0b0c0d;
+  background: #0c0b0d;
   min-height: 100vh;
 }
 .app-shell:has(.flight-console) .sidebar {
@@ -11,7 +11,7 @@
 }
 .app-shell:has(.flight-console) .workspace-main {
   margin-left: 80px;
-  background: #0b0c0d;
+  background: #0c0b0d;
 }
 .app-shell:has(.flight-console) .sidebar .nav-item.active {
   background: #080909;
@@ -35,7 +35,7 @@
   width: 20px;
 }
 .app-shell:has(.flight-console) .topbar {
-  background: #0b0c0d;
+  background: #0c0b0d;
   border: 0;
   height: 64px;
   padding: 0 31px;
@@ -137,7 +137,7 @@
 .console-viewport > .world-map > svg {
   width: 100%;
   height: 100%;
-  filter: brightness(1.24);
+  filter: none;
   opacity: 0.95;
 }
 .console-viewport .map-label,
@@ -190,8 +190,8 @@
   display: inline-block;
 }
 .record-dot.active {
-  background: #dde88e;
-  box-shadow: 0 0 6px #dde88e20;
+  background: #bea5d1;
+  box-shadow: 0 0 6px #bea5d120;
 }
 .viewport-counters {
   display: flex;
@@ -203,7 +203,7 @@
   align-items: center;
   padding: 8px 10px;
   border-radius: 5px;
-  background: #0d1214c9;
+  background: #110f12c9;
   backdrop-filter: blur(15px);
   font: 9px var(--mono);
   color: #dee0e0;
@@ -299,7 +299,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 23px 23px 20px;
-  background: linear-gradient(transparent, #0b1114de);
+  background: linear-gradient(transparent, #100e11de);
   pointer-events: none;
   z-index: 3;
 }
@@ -322,7 +322,7 @@
 }
 .viewport-route-button {
   pointer-events: auto;
-  background: #121a1dc2;
+  background: #181619c2;
   color: #dadcdc;
   backdrop-filter: blur(10px);
   border: 1px solid #7f878855;
@@ -416,7 +416,7 @@
   background: #767e80;
 }
 .console-state i.active {
-  background: #dce77e;
+  background: #b69acb;
 }
 .console-battery {
   padding: 18px 0 16px;
@@ -431,7 +431,7 @@
   color: #cfd2d3;
 }
 .console-battery strong {
-  color: #dce77e;
+  color: #b69acb;
   font-size: 15px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
@@ -452,7 +452,7 @@
 .console-meter i {
   height: 100%;
   display: block;
-  background: #c9d87e;
+  background: #ad9abc;
   border-radius: 5px;
   transition: width 0.2s linear;
 }
@@ -557,7 +557,7 @@
 .console-view-tabs {
   display: flex;
   gap: 4px;
-  background: #111314;
+  background: #131114;
   padding: 4px;
   border-radius: 8px;
 }
@@ -609,7 +609,7 @@
 .console-minimap .world-map {
   height: 100%;
   pointer-events: none;
-  filter: saturate(0.25) brightness(0.95);
+  filter: none;
 }
 .console-minimap .world-map > svg {
   height: 100%;
@@ -726,7 +726,7 @@
 }
 .console-round-button.land-command {
   border-color: #515657;
-  color: #e5dbc1;
+  color: #d5c5e1;
   background: radial-gradient(circle at 35% 25%, #3d4142, #2b2e2e 75%);
 }
 .console-command-status {
@@ -800,8 +800,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  background: #a3ccde;
-  color: #12252c;
+  background: #c3acd4;
+  color: #1f1d21;
   font-size: 13px;
   padding: 3px 9px;
   margin-top: 10px;

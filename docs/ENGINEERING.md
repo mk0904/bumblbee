@@ -81,3 +81,59 @@ Relevant tests: domain invariants, transitions, alert strategies, code pairing/s
 For each feature: FR/NFR -> contract/design -> implementation -> meaningful tests -> observed acceptance -> evidence. Keep diagrams/API/schema synchronized. PR descriptions state behaviour and verification, not conversational history.
 
 Webots/hosted checks must use actual systems and cannot be replaced by fake telemetry. Measure command RTT on one monotonic clock; do not subtract unsynchronized timestamps across devices. Record median/p95, samples, versions and conditions. Every member should explain the command path, one invariant/pattern/failure, and their own contribution.
+
+## Webots world baseline
+ADR-005 selects a pinned Mavic2Pro asset and explicit ENU world with identity x/y/z mapping to WORLD_LOCAL_V1. `simulator/controllers/world_check/world_check.py` owns motor/sensor access for a grounded diagnostic only; it has no networking or flight stabilization. World loads and GPS/IMU/gyro produce finite values. Dynamic axis calibration, stabilization, bounded bridge queues and mission execution remain pending.
+
+## Desktop UX boundary (ADR-006)
+The presentation layer supports desktop content viewports ≥1100 × 650 with no
+scroll containers. Pagination/selection remain UI concerns and do not change
+mission domain behavior, simulator contracts or persistence. Mobile/tablet access
+is intentionally unsupported. Validate minimum-size layout alongside large desktop.
+
+## Local executor design (ADR-007)
+`MissionController` composes Webots sensor/motor handles, `BridgeTransport` and a
+local SQLite command/active-flight journal. Route/frame/bounds/expiry/state checks
+precede actuation. The control loop owns devices; the socket worker owns network
+I/O and bounded queues. PD navigation is slew-limited to avoid abrupt braking.
+Telemetry acknowledgement follows backend commit, while heartbeats bypass DB work.
+A single-statement aggregate PostgreSQL read reduces remote round trips without
+changing transaction constraints or introducing a cache/second worker.
+
+## FR-16 media design (ADR-008)
+Camera is infrastructure/presentation, not a domain entity. `MissionController`
+composes `CameraStream`; only main thread touches the sensor. `CameraStream.offer`
+provides copied latest-only handoff; `run` encodes/uploads/awaits acknowledgement on
+an independent worker/socket. `createCameraChannel` adapts authenticated WebSockets
+into a bounded ephemeral relay. `CameraFeed` displays only received images and ages
+freshness separately from flight state. No database/schema changes.
+
+```mermaid
+sequenceDiagram
+  participant W as Webots main thread
+  participant C as CameraStream worker
+  participant N as Node camera channel
+  participant U as CameraFeed
+  U->>N: Cookie + Origin viewer connection
+  C->>N: Bridge credential + active drone epoch
+  W->>C: Owned BGRA buffer (replace queued old frame)
+  C->>N: Validated 640×360 JPEG envelope
+  N->>N: Epoch/order/dimensions/size/rate checks
+  N-->>U: Latest frame, skip slow socket
+  N-->>C: Frame ACK
+  Note over W,N: Commands/telemetry use their existing separate socket
+  N-->>U: Stale/disconnected status; no image persistence
+```
+
+## Yard rendering (ADR-009)
+Project-authored local JPEG atlas on a visual-only mesh; ground collider and
+controller remain unchanged. Generator explicitly maps world metres to UV pixels.
+No new application classes, APIs, schema or design patterns are needed for visual
+paint. Verify with Webots/camera evidence rather than redundant CSS/domain tests.
+
+## Canonical scaled map (ADR-010)
+Pure shared JSON supplies world/frame/surface/flight limits and pad dimensions.
+Backend WORLD reads its bounds; Python atlas generator reads the definition;
+Webots and React use the same shipped JPEG. `worldToMap`/`mapToWorld` are inverse
+presentation transforms, with rejection outside operational bounds. Static-world
+contract tests detect mesh/atlas/bounds divergence. No new service/schema/pattern.

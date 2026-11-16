@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Clock3, Compass, Radio, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Clock3, LoaderCircle, Radio, ShieldCheck } from 'lucide-react';
 import { api, setCsrf } from '../lib/api.js';
 import { WorldMap } from '../components/WorldMap.jsx';
 
@@ -32,50 +32,41 @@ export function Pairing({ onLogin }) {
   };
   return (
     <div className="pairing-page">
-      <div className="pairing-brand">
-        <Compass size={22} />
+      <header className="pairing-brand">
+        <span className="pairing-monogram">b.</span>
         <strong>
           bumbl<span>.bee</span>
         </strong>
-        <span>GROUND STATION</span>
-      </div>
+      </header>
       <div className="pairing-layout">
-        <div className="pairing-visual">
-          <div className="pairing-visual-label">
-            <span className="pulse-dot" /> MISSION OPERATIONS / LOCAL WORLD
-          </div>
-          <WorldMap
-            waypoints={[
-              { x: 24, y: 25 },
-              { x: -20, y: 25 },
-              { x: -20, y: -15 },
-            ]}
-            compact
-          />
-          <div className="pairing-copy">
-            <span className="eyebrow">CONNECTED BY DESIGN</span>
+        <section className="pairing-scene" aria-label="Mission control introduction">
+          <div className="pairing-story">
             <h1>
-              Your drone.
+              Mission control.
               <br />
-              One clear connection.
+              <span>Clearly connected.</span>
             </h1>
             <p>
-              Plan missions, follow telemetry and review every flight.
+              Your flight plan, live instruments and onboard view.
               <br />
-              One ground station, from start to touchdown.
+              One workspace, from takeoff to touchdown.
             </p>
           </div>
-          <span className="pairing-caption">ILLUSTRATIVE ROUTE · NO LIVE DRONE CONNECTED</span>
-        </div>
+          <div className="pairing-yard">
+            <WorldMap compact />
+          </div>
+        </section>
         <section className="pairing-card">
           <span className="pairing-icon">
             <Radio size={25} />
           </span>
-          <span className="eyebrow">PAIR YOUR BRIDGE</span>
-          <h2>Ready when you are.</h2>
-          <p>Run the Python bridge, then enter its four-character code. No account required.</p>
+          <h2>Connect your drone.</h2>
+          <p>Start the Webots bridge and enter the code shown in its terminal.</p>
           <form onSubmit={pair}>
-            <label htmlFor="pair-code">BRIDGE CODE</label>
+            <div className="pair-code-label">
+              <label htmlFor="pair-code">Bridge code</label>
+              <span>{code.length} / 4</span>
+            </div>
             <input
               id="pair-code"
               className="pair-code-input"
@@ -95,18 +86,30 @@ export function Pairing({ onLogin }) {
                     .slice(0, 4),
                 )
               }
+              aria-describedby="pair-code-hint"
+              disabled={busy}
               required
             />
-            <span className="pairing-hint">
+            <span className="pairing-hint" id="pair-code-hint">
               <Clock3 size={12} /> Codes expire in 2 minutes and work once.
             </span>
-            {error && (
-              <p className="form-error" role="alert">
-                {error}
-              </p>
-            )}
+            <div className="pairing-error-slot">
+              {error && (
+                <p className="form-error" role="alert">
+                  {error}
+                </p>
+              )}
+            </div>
             <button className="button primary full" disabled={busy || code.length !== 4}>
-              Connect to drone <ArrowRight size={15} />
+              {busy ? (
+                <>
+                  Connecting <LoaderCircle className="pairing-spinner" size={16} />
+                </>
+              ) : (
+                <>
+                  Connect to drone <ArrowRight size={16} />
+                </>
+              )}
             </button>
           </form>
           {demo && (
@@ -124,17 +127,10 @@ export function Pairing({ onLogin }) {
           )}
           <div className="pairing-security">
             <ShieldCheck size={14} />
-            <span>
-              The short code establishes a protected control session. Your bridge credential stays
-              on its host.
-            </span>
+            <span>No account needed. Your bridge credential stays on its host.</span>
           </div>
         </section>
       </div>
-      <footer className="pairing-footer">
-        <span>BUMBL.BEE / DRONE MISSION CONTROL</span>
-        <span>PLAN. CONNECT. UNDERSTAND.</span>
-      </footer>
     </div>
   );
 }

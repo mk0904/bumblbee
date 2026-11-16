@@ -67,26 +67,16 @@ export class PostgresRepository {
       throw new Error('Database schema is not initialized; run npm run db:migrate');
   }
   async #load(client) {
-    const state = emptyState();
-    for (const [key, table] of Object.entries(tables)) {
-      const result = await client.query(`SELECT data FROM ${table} ORDER BY created_at, id`);
-      state[key] = result.rows.map((row) => row.data);
-    }
-    return state;
+    // One statement gives a consistent snapshot and avoids one network round trip per table.
+    const fields = Object.entries(tables).map(
+      ([key, table]) =>
+        `(SELECT COALESCE(jsonb_agg(data ORDER BY created_at, id), '[]'::jsonb) FROM ${table}) AS "${key}"`,
+    );
+    const result = await client.query(`SELECT ${fields.join(', ')}`);
+    return { ...emptyState(), ...result.rows[0] };
   }
   async read() {
-    const client = await this.pool.connect();
-    try {
-      await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
-      const state = await this.#load(client);
-      await client.query('COMMIT');
-      return state;
-    } catch (error) {
-      await client.query('ROLLBACK');
-      throw error;
-    } finally {
-      client.release();
-    }
+    return this.#load(this.pool);
   }
   async transact(work) {
     const client = await this.pool.connect();

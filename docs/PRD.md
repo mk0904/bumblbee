@@ -154,3 +154,41 @@ A feature is done when its requirement acceptance passes, relevant tests pass, a
 - React documentation: https://react.dev/learn
 - PostgreSQL client: https://node-postgres.com/
 - Migrations: https://salsita.github.io/versioned SQL migrations/
+
+## Local world baseline (2026-11-16)
+The project now contains `simulator/worlds/training-ground-v1.wbt`: ENU, pad surface z=0, one Mavic, 8 ms timestep, ±50 m markings and flat planner scenery. The grounded sensor check loads on the recorded R2025b nightly; this is partial M5 setup, not FR-06 mission execution. See ADR-005 and simulator/README.md.
+
+## Desktop scope update (ADR-006)
+User-directed acceptance: desktop only, minimum content viewport 1100 × 650 CSS
+pixels. No document or panel scrolling. Use pagination, report tabs and selected
+waypoint editing to keep records accessible. Phones/tablets display a desktop-only
+notice; undersized desktop windows request resizing. Supersedes mobile UX scope.
+
+## Webots executor update (ADR-007)
+Actual local sensor/motor integration is now implemented, replacing the motors-off
+baseline as the world's default controller. Initial delivery targets generated 2 Hz
+telemetry with persistence backpressure; 5 Hz is still an unachieved NFR target.
+Local results and failed development trials are recorded in evidence/webots-integration.md.
+Hosted WSS and automatic restart recovery remain out of the demonstrated scope.
+
+## FR-16 — Onboard camera (authorized 2026-11-16, ADR-008)
+Paired desktop operators can select Camera beside Map/Altitude and view actual
+Webots onboard JPEG images (640×360, 5 FPS target). No page/panel scrolling.
+Show waiting, live, stale after 3 seconds, disconnected, and demo-unavailable states.
+Separate bounded media transport must not depend on telemetry SQL transactions.
+Acceptance: decoded real images in browser, changing images during a real flight,
+start/pause/resume/land with feed active, protected access, size/epoch/order validation,
+latest-only buffering and explicit stale state. No recording/audio/3D streaming.
+
+## FR-16 visual yard refinement (ADR-009)
+Replace plain ground with locally shipped concrete/asphalt texture and distinct
+painted pads/zones. Acceptance: readable yard details through the actual onboard
+camera and correct ENU orientation; no raised obstacle, flight-physics or mission
+coordinate change. The 3 m slab pattern is visual, not a navigation grid contract.
+
+## Canonical world map correction (ADR-010)
+The planner must show the exact locally shipped Webots ground atlas rather than a
+separate schematic. Whole yard 120×120 m; flight bounds remain ±50 m. Home pad
+1.5 m diameter, other pads 1.2 m; world/texture/planner share metre coordinates.
+Zoom and metre scale remain available without page/panel scrolling. Reject clicks
+outside flight bounds. Pad paint does not imply autonomous precision landing.

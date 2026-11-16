@@ -13,7 +13,7 @@
   --panel: #191a1c;
   --line: #2d2f31;
   --muted: #84898e;
-  --accent: #d4e4b2;
+  --accent: #cdbadc;
   --mono: 'IBM Plex Mono', monospace;
 }
 * {
@@ -82,7 +82,7 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: #85958d;
+  border-color: #8e8595;
   box-shadow: none;
 }
 textarea {
@@ -132,12 +132,12 @@ small {
   border-color: #5c6064;
 }
 .landing {
-  background: #382d22;
+  background: #2d2a30;
   color: #eac49b;
-  border-color: #655039;
+  border-color: #50445a;
 }
 .landing:hover:not(:disabled) {
-  background: #493a29;
+  background: #39353d;
 }
 .full {
   width: 100%;
@@ -180,7 +180,7 @@ small {
   color: #e2e3e4;
 }
 .danger-text {
-  color: #daa18b !important;
+  color: #b69acb !important;
 }
 .muted {
   color: var(--muted);
@@ -197,12 +197,12 @@ small {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #d4e4b2;
-  box-shadow: 0 0 7px #d4e4b220;
+  background: #cdbadc;
+  box-shadow: 0 0 7px #cdbadc20;
   flex-shrink: 0;
 }
 .offline {
-  background: #a48863;
+  background: #8863a4;
   box-shadow: none;
 }
 .badge {
@@ -235,7 +235,7 @@ small {
 .badge.amber {
   background: #e4b76e12;
   border: 1px solid #e4b76e29;
-  color: #dfb682;
+  color: #b499c8;
 }
 .app-shell {
   display: flex;
@@ -269,7 +269,7 @@ small {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #d4e4b2;
+  color: #cdbadc;
   transform: rotate(-6deg);
 }
 .brand-period {
@@ -342,12 +342,12 @@ small {
   background: linear-gradient(90deg, #b2b5b917, #b2b5b908);
 }
 .nav-item.active svg {
-  color: #d4e4b2;
+  color: #cdbadc;
 }
 .nav-count {
   margin-left: auto;
-  background: #d9bb7920;
-  color: #dcc58f;
+  background: #ac8fc320;
+  color: #b99ecd;
   font: 9px var(--mono);
   padding: 2px 5px;
   border-radius: 3px;
@@ -494,7 +494,7 @@ small {
   margin: 9px 0;
 }
 .title-dot {
-  color: #d4e4b2;
+  color: #cdbadc;
 }
 .page-title p {
   font-size: 11px;
@@ -747,7 +747,7 @@ small {
 .legend-solid {
   display: inline-block;
   width: 13px;
-  border-top: 1px dashed #d4e4b2;
+  border-top: 1px dashed #cdbadc;
 }
 .legend-solid {
   border-top-style: solid;
@@ -822,7 +822,7 @@ small {
 .battery-track i {
   display: block;
   height: 2px;
-  background: #d4e4b2;
+  background: #cdbadc;
 }
 .telemetry-foot {
   display: flex;
@@ -1129,7 +1129,7 @@ small {
   color: #80858a;
 }
 .empty-state > svg {
-  color: #d4e4b2;
+  color: #cdbadc;
   padding: 14px;
   box-sizing: content-box;
   border: 1px solid #494c4f;
@@ -1293,13 +1293,13 @@ td small {
   border: 0;
 }
 .alert-icon {
-  color: #e3be86;
+  color: #b89dcc;
   display: grid;
   place-items: center;
-  background: #ddab6d10;
+  background: #a98ac010;
   width: 42px;
   height: 42px;
-  border: 1px solid #ddab6d30;
+  border: 1px solid #a98ac030;
   border-radius: 8px;
 }
 .alert-item > div {
@@ -1539,8 +1539,8 @@ td small {
   flex: 1;
 }
 .toast.error {
-  background: #3c2a1d;
-  border-color: #a0784f;
+  background: #2d2a2f;
+  border-color: #7a6788;
   color: #f3cfab;
 }
 .error-banner,
@@ -1548,9 +1548,9 @@ td small {
   display: flex;
   gap: 9px;
   align-items: center;
-  border: 1px solid #815b39;
-  background: #3a291c;
-  color: #e5b68a;
+  border: 1px solid #5f506a;
+  background: #2b282e;
+  color: #bba1ce;
   padding: 12px 15px;
   margin-bottom: 20px;
   border-radius: 6px;
@@ -2222,18 +2222,18 @@ td small {
 /* Instrument-first neutral workspace, inspired by the supplied control-console reference. */
 :root {
   --bg: #101112;
-  --panel: #1b1d1f;
+  --panel: #1b1c1f;
   --line: #303235;
   --muted: #92979b;
-  --accent: #d4e4b2;
-  color: #e8eaec;
+  --accent: #cdbadc;
+  color: #ebe3f1;
   background: var(--bg);
 }
 .sidebar {
   width: 82px;
   padding: 25px 12px 0;
-  background: #17191b;
-  border-right-color: #2a2d30;
+  background: #19171b;
+  border-right-color: #2a2c30;
 }
 .sidebar .brand {
   justify-content: center;
@@ -2251,9 +2251,9 @@ td small {
   width: 37px;
   height: 37px;
   border-radius: 11px;
-  border-color: #505951;
+  border-color: #505459;
   transform: none;
-  background: #23282a;
+  background: #272429;
 }
 .sidebar nav {
   margin-top: 52px;
@@ -2271,9 +2271,9 @@ td small {
   height: 20px;
 }
 .sidebar .nav-item.active {
-  background: #d4e4b212;
-  color: #e0edc7;
-  box-shadow: inset 2px 0 #d4e4b2;
+  background: #cdbadc12;
+  color: #dccee6;
+  box-shadow: inset 2px 0 #cdbadc;
 }
 .sidebar .nav-count {
   position: absolute;
@@ -2289,7 +2289,7 @@ td small {
   margin-left: 82px;
 }
 .topbar {
-  background: #141617;
+  background: #141517;
   height: 64px;
   border-bottom-color: #292c2e;
 }
@@ -2310,12 +2310,12 @@ td small {
 }
 .panel,
 .stat-card {
-  border-color: #2d3033;
+  border-color: #2d2f33;
   border-radius: 13px;
-  background: #1b1d1f;
+  background: #1b1c1f;
 }
 .stat-card:hover {
-  background: #202325;
+  background: #232025;
   border-color: #4d5656;
 }
 .stat-label {
@@ -2369,7 +2369,7 @@ td small {
   box-shadow: none;
 }
 .secondary {
-  background: #272b2d;
+  background: #2a272d;
   border-color: #3a4143;
   color: #d1d7d8;
 }
@@ -2378,7 +2378,7 @@ td small {
   border-color: #586263;
 }
 .map-tools button {
-  background: #252d30;
+  background: #2b282d;
 }
 .map-tools button:hover {
   background: #3a4547;
@@ -2387,7 +2387,7 @@ td small {
   border-color: #465357;
 }
 .map-label {
-  background: #171e21b3;
+  background: #1c1a1eb3;
   border: 1px solid #46535760;
   border-radius: 4px;
   padding: 6px 8px;
@@ -2397,14 +2397,14 @@ td small {
 }
 .mission-card {
   border-radius: 12px;
-  background: #1b1d1f;
-  border-color: #303538;
+  background: #1b1c1f;
+  border-color: #343137;
 }
 .mission-card-actions {
-  border-color: #343a3d;
+  border-color: #39353c;
 }
 .mission-mini-map {
-  border-color: #374145;
+  border-color: #3f3a42;
 }
 .source-label {
   color: #a9b5b7;
@@ -2413,15 +2413,15 @@ td small {
   color: #d0d8da;
 }
 .toast {
-  background: #29342e;
-  border-color: #71876a;
+  background: #2f2b32;
+  border-color: #7a6a87;
 }
 .workspace-footer {
-  color: #717d82;
+  color: #717782;
 }
 .pairing-page {
   min-height: 100vh;
-  background: radial-gradient(ellipse at 15% 40%, #27303644, transparent 60%), #111315;
+  background: radial-gradient(ellipse at 15% 40%, #2f2b3244, transparent 60%), #131214;
   padding: 34px 5vw;
   display: flex;
   flex-direction: column;
@@ -2430,24 +2430,24 @@ td small {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #d4e4b2;
+  color: #cdbadc;
 }
 .pairing-brand strong {
   font-size: 23px;
-  color: #edf0ed;
+  color: #efe9f4;
   letter-spacing: -1px;
   font-weight: 600;
 }
 .pairing-brand strong > span {
-  color: #b7c79f;
+  color: #b69bcb;
 }
 .pairing-brand > span {
   font: 8px var(--mono);
   letter-spacing: 2px;
-  border-left: 1px solid #41494c;
+  border-left: 1px solid #47424b;
   margin-left: 12px;
   padding-left: 20px;
-  color: #8f999e;
+  color: #988f9e;
 }
 .pairing-layout {
   display: grid;
@@ -2461,11 +2461,11 @@ td small {
 }
 .pairing-visual {
   position: relative;
-  border: 1px solid #354146;
+  border: 1px solid #3e3a41;
   border-radius: 22px;
   overflow: hidden;
   min-height: 590px;
-  background: #1b2428;
+  background: #221f24;
 }
 .pairing-visual > .world-map {
   position: absolute;
@@ -2503,7 +2503,7 @@ td small {
   letter-spacing: -2.3px;
   line-height: 1.12;
   margin: 23px 0;
-  color: #eef1ed;
+  color: #f7eee7;
 }
 .pairing-copy p {
   font-size: 12px;
@@ -2527,8 +2527,8 @@ td small {
   display: grid;
   place-items: center;
   border: 1px solid #4b5756;
-  background: #252d2c;
-  color: #d4e4b2;
+  background: #29262c;
+  color: #cdbadc;
   border-radius: 13px;
   width: 52px;
   height: 52px;
@@ -2556,7 +2556,7 @@ td small {
   letter-spacing: 17px;
   padding: 16px 20px 16px 35px;
   text-align: center;
-  background: #1d2225;
+  background: #211f23;
   border-color: #475356;
   text-transform: uppercase;
   margin-top: 12px;
@@ -2580,7 +2580,7 @@ td small {
 .pairing-demo {
   margin-top: 29px;
   padding-top: 22px;
-  border-top: 1px solid #30383b;
+  border-top: 1px solid #363239;
 }
 .pairing-demo > span {
   display: block;
@@ -2613,18 +2613,18 @@ td small {
   gap: 20px;
   font: 7px var(--mono);
   letter-spacing: 1px;
-  color: #647b83;
+  color: #766483;
   padding-top: 20px;
 }
 .integration-path > span {
-  background: #232a2e;
-  border-color: #394448;
+  background: #29262b;
+  border-color: #413c45;
   color: #bac6c8;
 }
 .integration-path > .selected {
-  background: #d4e4b20d;
-  border-color: #728367;
-  color: #d4e4b2;
+  background: #cdbadc0d;
+  border-color: #776783;
+  color: #cdbadc;
 }
 .system-panel > p {
   color: #9eafb4;
@@ -2809,12 +2809,12 @@ td small {
   padding: 28px;
   border: 1px solid #485456;
   border-radius: 13px;
-  background: #202629;
+  background: #252227;
   margin: auto;
   box-shadow: 0 20px 80px #0008;
 }
 .confirm-card > svg {
-  color: #dec28e;
+  color: #b99fcd;
   margin-bottom: 18px;
 }
 .confirm-card h2 {
@@ -2838,7 +2838,7 @@ td small {
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   padding: 9px 17px 12px;
-  border-top: 1px solid #303538;
+  border-top: 1px solid #343137;
   color: #7c8d92;
   font: 7px var(--mono);
   letter-spacing: 0.5px;
@@ -2849,7 +2849,7 @@ td small {
   gap: 5px;
 }
 .attitude-strip > span + span {
-  border-left: 1px solid #364044;
+  border-left: 1px solid #3e3941;
   padding-left: 9px;
 }
 .attitude-strip strong {

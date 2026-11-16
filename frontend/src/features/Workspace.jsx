@@ -1,3 +1,4 @@
+import { Pagination, usePages } from '../components/Pagination.jsx';
 import { FlightConsole } from './FlightConsole.jsx';
 import { Modal } from '../components/Modal.jsx';
 import { useEffect, useState } from 'react';
@@ -36,7 +37,7 @@ import { Planner } from './Planner.jsx';
 import { MissionCards } from './MissionCards.jsx';
 import { Report } from './Report.jsx';
 
-export function Workspace({ user, onLogout }) {
+export function Workspace({ user: _user, onLogout }) {
   const { data, connection, error, refresh } = useDashboard(onLogout);
   const [page, setPage] = useState('overview'),
     [editor, setEditor] = useState(null),
@@ -69,6 +70,8 @@ export function Workspace({ user, onLogout }) {
       setBusy(false);
     }
   };
+  const historyPages = usePages(data?.flights ?? [], 4);
+  const alertPages = usePages(data ? [...data.alerts].reverse() : [], 3);
   const active = data?.flights.find((f) => !terminal(f.state)),
     sample = active?.latest;
   const stale = sample ? Date.now() - Date.parse(sample.receivedAt) > 3000 : false;
@@ -199,8 +202,8 @@ export function Workspace({ user, onLogout }) {
               <Radio size={14} />
             </span>
             <span>
-              <strong>Ground station</strong>
-              <small>{user.email}</small>
+              <strong>Control session</strong>
+              <small>Disconnect</small>
             </span>
             <LogOut size={15} />
           </button>
@@ -399,7 +402,7 @@ export function Workspace({ user, onLogout }) {
                           </tr>
                         </thead>
                         <tbody>
-                          {data.flights.map((f) => (
+                          {historyPages.items.map((f) => (
                             <tr key={f.id}>
                               <td>
                                 <strong>{f.snapshot.name}</strong>
@@ -443,6 +446,7 @@ export function Workspace({ user, onLogout }) {
                       Complete your first mission to start building a flight history.
                     </Empty>
                   )}
+                  <Pagination pages={historyPages} label="Flights" />
                 </section>
               )}
               {page === 'alerts' && (
@@ -454,7 +458,7 @@ export function Workspace({ user, onLogout }) {
                   </PanelHeading>
                   {data.alerts.length ? (
                     <div className="alert-list">
-                      {[...data.alerts].reverse().map((a) => (
+                      {alertPages.items.map((a) => (
                         <div className={`alert-item ${a.severity}`} key={a.id}>
                           <span className="alert-icon">
                             <TriangleAlert size={20} />
@@ -493,6 +497,7 @@ export function Workspace({ user, onLogout }) {
                       Low battery and missing telemetry incidents will appear here.
                     </Empty>
                   )}
+                  <Pagination pages={alertPages} label="Alerts" />
                 </section>
               )}
               {page === 'system' && (

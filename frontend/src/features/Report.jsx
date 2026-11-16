@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { Pagination, usePages } from '../components/Pagination.jsx';
 import { Modal } from '../components/Modal.jsx';
 import { Download, ShieldCheck, X } from 'lucide-react';
 import { fmt, duration, date } from '../lib/format.js';
@@ -7,6 +9,10 @@ import { TelemetryChart } from '../components/TelemetryChart.jsx';
 
 export function Report({ report, onClose }) {
   const { flight, samples, summary, commands, alerts } = report;
+  const [tab, setTab] = useState('overview'),
+    [metric, setMetric] = useState('altitude');
+  const commandPages = usePages(commands, 4),
+    alertPages = usePages(alerts, 3);
   const download = () => {
     const url = URL.createObjectURL(
       new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' }),
@@ -52,45 +58,81 @@ export function Report({ report, onClose }) {
             </div>
           ))}
         </div>
-        <div className="report-grid">
-          <WorldMap
-            waypoints={flight.snapshot.waypoints}
-            trail={samples}
-            sample={samples.at(-1)}
-            compact
-          />
-          <div>
-            <h3>Altitude profile</h3>
-            <TelemetryChart samples={samples} height={180} />
-            <h3>Battery estimate</h3>
-            <TelemetryChart samples={samples} metric="battery" height={150} />
-          </div>
+        <div className="report-tabs" role="group" aria-label="Report sections">
+          {['overview', 'commands', 'alerts'].map((section) => (
+            <button
+              key={section}
+              className={tab === section ? 'selected' : ''}
+              onClick={() => setTab(section)}
+              aria-pressed={tab === section}
+            >
+              {section === 'alerts'
+                ? `Incidents (${alerts.length})`
+                : section === 'commands'
+                  ? `Commands (${commands.length})`
+                  : 'Flight overview'}
+            </button>
+          ))}
         </div>
+        {tab === 'overview' && (
+          <div className="report-grid">
+            <WorldMap
+              waypoints={flight.snapshot.waypoints}
+              trail={samples}
+              sample={samples.at(-1)}
+              compact
+            />
+            <div>
+              <div className="report-chart-tabs">
+                <button
+                  className={metric === 'altitude' ? 'selected' : ''}
+                  onClick={() => setMetric('altitude')}
+                >
+                  Altitude
+                </button>
+                <button
+                  className={metric === 'battery' ? 'selected' : ''}
+                  onClick={() => setMetric('battery')}
+                >
+                  Battery
+                </button>
+              </div>
+              <TelemetryChart samples={samples} metric={metric} height={180} />
+            </div>
+          </div>
+        )}
         <div className="report-data-note">
           <ShieldCheck size={15} />
           {summary.sampleCount} samples · {summary.gaps} sequence gaps ·{' '}
           {summary.complete ? 'Complete recorded session' : 'Incomplete or active session'} ·
           battery is synthetic
         </div>
-        <h3>Command timeline</h3>
-        <div className="command-timeline">
-          {commands.map((c) => (
-            <div key={c.id}>
-              <span>{c.action.replaceAll('_', ' ')}</span>
-              <Badge tone={c.status === 'COMPLETED' ? 'green' : 'amber'}>{c.status}</Badge>
-              <small>{date(c.createdAt)}</small>
+        {tab === 'commands' && (
+          <div className="report-records">
+            <h3>Command timeline</h3>
+            <div className="command-timeline">
+              {commandPages.items.map((c) => (
+                <div key={c.id}>
+                  <span>{c.action.replaceAll('_', ' ')}</span>
+                  <Badge tone={c.status === 'COMPLETED' ? 'green' : 'amber'}>{c.status}</Badge>
+                  <small>{date(c.createdAt)}</small>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        {alerts.length > 0 && (
-          <>
+            <Pagination pages={commandPages} label="Commands" />
+          </div>
+        )}
+        {tab === 'alerts' && (
+          <div className="report-records">
             <h3>Flight incidents</h3>
-            {alerts.map((a) => (
+            {!alerts.length && <p className="incident-line">No incidents recorded.</p>}
+            {alertPages.items.map((a) => (
               <p className="incident-line" key={a.id}>
                 {a.title} · {a.status} · {a.message}
               </p>
             ))}
-          </>
+            <Pagination pages={alertPages} label="Incidents" />
+          </div>
         )}
       </section>
     </Modal>

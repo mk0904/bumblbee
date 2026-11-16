@@ -1,10 +1,11 @@
 import { randomUUID } from 'node:crypto';
+import worldMap from '../../../shared/worlds/training-ground-v1.json' with { type: 'json' };
 
 export const WORLD = Object.freeze({
-  id: 'training-ground-v1',
-  frame: 'WORLD_LOCAL_V1',
-  min: -50,
-  max: 50,
+  id: worldMap.id,
+  frame: worldMap.frame,
+  min: worldMap.flightBounds.min,
+  max: worldMap.flightBounds.max,
   minAltitude: 2,
   maxAltitude: 15,
   maxWaypoints: 20,
