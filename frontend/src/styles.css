@@ -81,8 +81,9 @@ textarea {
 }
 input:focus,
 textarea:focus {
-  outline: 1px solid var(--accent);
-  border-color: var(--accent);
+  outline: none;
+  border-color: #85958d;
+  box-shadow: none;
 }
 textarea {
   resize: vertical;
