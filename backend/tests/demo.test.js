@@ -1,3 +1,4 @@
+import { DemoAdapter } from '../src/infrastructure/demo-adapter.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, rm } from 'node:fs/promises';
@@ -55,4 +56,27 @@ test('landing during takeoff supersedes start without falsely failing the flight
   assert.equal(state.flights[0].state, 'COMPLETED');
   assert.equal(state.commands[0].status, 'CANCELLED');
   assert.equal(state.commands[1].status, 'COMPLETED');
+});
+
+test('slow persistence coalesces timer ticks so commands are not buried under a timer backlog', async () => {
+  const adapter = new DemoAdapter();
+  let release;
+  let calls = 0;
+  const gate = new Promise((resolve) => {
+    release = resolve;
+  });
+  adapter.tick = async () => {
+    calls++;
+    await gate;
+  };
+  adapter.scheduleTick();
+  for (let i = 0; i < 100; i++) adapter.scheduleTick();
+  await Promise.resolve();
+  assert.equal(calls, 1);
+  const first = adapter.queue;
+  release();
+  await first;
+  adapter.scheduleTick();
+  await adapter.queue;
+  assert.equal(calls, 2);
 });

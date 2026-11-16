@@ -22,3 +22,5 @@
 User-supplied Supabase details and generated bridge bootstrap credential reside only in ignored backend/.env. Database password is not used by frontend. No GitHub remote or public deployment has been configured.
 
 Verification: 24 backend and 4 frontend tests, lint and production build passed on Node 24.22.3. See evidence/dashboard-build.md for observed browser checks and explicit verification limits.
+
+Console revision: reference-inspired four-panel flight deck, shared charcoal theme across screens, fixed responsive navigation with active states/tooltips, and coalesced demo ticks. Latest checks: 25 backend + 6 frontend tests, lint and production build pass. Browser checks and screenshots: evidence/console-redesign.md.

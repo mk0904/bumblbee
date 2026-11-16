@@ -1,9 +1,7 @@
+import { FlightConsole } from './FlightConsole.jsx';
 import { Modal } from '../components/Modal.jsx';
 import { useEffect, useState } from 'react';
 import {
-  Activity,
-  ArrowDownToLine,
-  ArrowRight,
   ArrowUpRight,
   Battery,
   Bell,
@@ -14,17 +12,13 @@ import {
   Clock3,
   Compass,
   FileText,
-  Gauge,
   LayoutDashboard,
   ListFilter,
   LogOut,
   Map,
-  Pause,
-  Play,
   Plus,
   Radio,
   RefreshCw,
-  Route,
   Settings2,
   ShieldCheck,
   Signal,
@@ -34,11 +28,10 @@ import {
   X,
 } from 'lucide-react';
 import { api, requestKey } from '../lib/api.js';
-import { terminal, fmt, duration, date } from '../lib/format.js';
+import { terminal, date } from '../lib/format.js';
 import { Badge, PanelHeading, Empty } from '../components/ui.jsx';
 import { useDashboard } from '../lib/use-dashboard.js';
-import { WorldMap } from '../components/WorldMap.jsx';
-import { TelemetryChart } from '../components/TelemetryChart.jsx';
+
 import { Planner } from './Planner.jsx';
 import { MissionCards } from './MissionCards.jsx';
 import { Report } from './Report.jsx';
@@ -115,7 +108,6 @@ export function Workspace({ user, onLogout }) {
     setEditor(null);
     setFilter('');
   };
-  const flightSeconds = sample?.simulationTime ?? 0;
   if (!data)
     return (
       <div className="loading-page">
@@ -129,7 +121,7 @@ export function Workspace({ user, onLogout }) {
     );
   return (
     <div className="app-shell">
-      <aside className="sidebar">
+      <aside className="sidebar" aria-label="Primary navigation">
         <a
           aria-label="bumbl.bee overview"
           className="brand"
@@ -137,7 +129,7 @@ export function Workspace({ user, onLogout }) {
           onClick={() => navigate('overview')}
         >
           <div className="brand-symbol">
-            <Compass size={23} />
+            <span className="rail-monogram">b.</span>
           </div>
           <span>
             bumbl<span className="brand-period">.bee</span>
@@ -152,7 +144,7 @@ export function Workspace({ user, onLogout }) {
           <ChevronDown size={13} />
         </div>
         <span className="nav-section-label">WORKSPACE</span>
-        <nav>
+        <nav aria-label="Workspace navigation">
           {[
             ['overview', LayoutDashboard, 'Overview'],
             ['missions', Map, 'Mission planner'],
@@ -162,13 +154,15 @@ export function Workspace({ user, onLogout }) {
           ].map(([id, Icon, label]) => (
             <button
               key={id}
-              title={label}
               aria-label={label}
-              className={`nav-item ${page === id && !editor ? 'active' : ''}`}
+              aria-current={page === id ? 'page' : undefined}
+              className={`nav-item ${page === id ? 'active' : ''}`}
               onClick={() => navigate(id)}
             >
               <Icon size={17} />
-              {label}
+              <span className="nav-label" aria-hidden="true">
+                {label}
+              </span>
               {id === 'alerts' && openAlerts.length > 0 && (
                 <span className="nav-count">{openAlerts.length}</span>
               )}
@@ -280,350 +274,83 @@ export function Workspace({ user, onLogout }) {
             />
           ) : (
             <>
-              <div className="page-title">
-                <div>
-                  <span className="eyebrow">GROUND CONTROL / ATLAS 01</span>
-                  <h1>
-                    {
+              {page !== 'overview' && (
+                <div className="page-title">
+                  <div>
+                    <span className="eyebrow">GROUND CONTROL / ATLAS 01</span>
+                    <h1>
                       {
-                        overview: 'Mission control',
-                        missions: 'Mission planner',
-                        history: 'Flight history',
-                        alerts: 'Alerts & incidents',
-                        system: 'System overview',
-                      }[page]
-                    }
-                    <span className="title-dot">.</span>
-                  </h1>
-                  <p>
-                    {
+                        {
+                          overview: 'Mission control',
+                          missions: 'Mission planner',
+                          history: 'Flight history',
+                          alerts: 'Alerts & incidents',
+                          system: 'System overview',
+                        }[page]
+                      }
+                      <span className="title-dot">.</span>
+                    </h1>
+                    <p>
                       {
-                        overview: 'A clear view of your drone, from takeoff to touchdown.',
-                        missions: 'Build a route. Define the details. Make it repeatable.',
-                        history: 'Every flight recorded. Every decision traceable.',
-                        alerts: 'The signals that need your attention.',
-                        system: 'Know what is connected, and what is still being built.',
-                      }[page]
-                    }
-                  </p>
+                        {
+                          overview: 'A clear view of your drone, from takeoff to touchdown.',
+                          missions: 'Local routes, saved with their execution settings.',
+                          history: 'Flight sessions, telemetry and command records.',
+                          alerts: 'Battery and connection incidents, with acknowledgement history.',
+                          system: 'Connection, storage and simulator configuration.',
+                        }[page]
+                      }
+                    </p>
+                  </div>
+                  <div className="page-actions">
+                    <span className="date-label">
+                      {new Date().toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </span>
+                    <button
+                      className="button primary"
+                      onClick={() => {
+                        setEditor({});
+                        setPage('missions');
+                      }}
+                    >
+                      <Plus size={15} /> New mission
+                    </button>
+                  </div>
                 </div>
-                <div className="page-actions">
-                  <span className="date-label">
-                    {new Date().toLocaleDateString(undefined, {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </span>
-                  <button
-                    className="button primary"
-                    onClick={() => {
-                      setEditor({});
-                      setPage('missions');
-                    }}
-                  >
-                    <Plus size={15} /> New mission
-                  </button>
-                </div>
-              </div>
+              )}
               {page === 'overview' && (
-                <>
-                  <div className="stat-grid">
-                    {[
-                      [
-                        Route,
-                        'TOTAL MISSIONS',
-                        data.missions.length,
-                        'Saved in your workspace',
-                        'missions',
-                      ],
-                      [
-                        Activity,
-                        'FLIGHT SESSIONS',
-                        data.flights.length,
-                        `${data.flights.filter((f) => f.state === 'COMPLETED').length} completed flights`,
-                        'history',
-                      ],
-                      [
-                        Radio,
-                        'DRONE STATUS',
-                        active
-                          ? active.state.replaceAll('_', ' ')
-                          : data.drone.connected
-                            ? 'Standby'
-                            : 'Offline',
-                        active ? 'Mission in progress' : 'No active mission',
-                        'system',
-                      ],
-                      [
-                        Bell,
-                        'OPEN ALERTS',
-                        openAlerts.length.toString().padStart(2, '0'),
-                        openAlerts.length ? 'Review required' : 'No unresolved incidents',
-                        'alerts',
-                      ],
-                    ].map(([Icon, label, value, note, target]) => (
-                      <button className="stat-card" key={label} onClick={() => navigate(target)}>
-                        <div className="stat-label">
-                          <span>{label}</span>
-                          <Icon size={16} />
-                        </div>
-                        <strong className={label === 'DRONE STATUS' ? 'status-value' : ''}>
-                          {value}
-                        </strong>
-                        <div className="stat-note">
-                          <span className="tiny-dot" />
-                          {note}
-                          <ArrowUpRight size={13} />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="operations-grid">
-                    <section className="panel live-map-panel">
-                      <PanelHeading number="01" title="Live mission view">
-                        <Badge tone={active ? (stale ? 'amber' : 'green') : 'neutral'}>
-                          {active ? (stale ? 'STALE' : 'IN FLIGHT') : 'STANDBY'}
-                        </Badge>
-                      </PanelHeading>
-                      <div className="live-map-info">
-                        <div>
-                          <span className="drone-glyph">
-                            <Compass size={19} />
-                          </span>
-                          <div>
-                            <strong>{active?.snapshot.name ?? 'Atlas 01'}</strong>
-                            <span>
-                              {active
-                                ? `FLIGHT ${active.id.slice(0, 8).toUpperCase()} · ${data.mode.toUpperCase()}`
-                                : 'QUADCOPTER / NO ACTIVE MISSION'}
-                            </span>
-                          </div>
-                        </div>
-                        <span className="live-chip">
-                          <span className={`pulse-dot ${!data.drone.connected ? 'offline' : ''}`} />
-                          {data.drone.connected
-                            ? data.mode === 'demo'
-                              ? 'Demo link'
-                              : 'Agent linked'
-                            : 'No agent'}
-                        </span>
-                      </div>
-                      <WorldMap
-                        waypoints={active?.snapshot.waypoints ?? data.missions[0]?.waypoints ?? []}
-                        sample={sample}
-                        trail={data.telemetry}
-                      />
-                      <div className="map-bottom-strip">
-                        <span>
-                          <ShieldCheck size={14} /> LOCAL COORDINATE FRAME
-                        </span>
-                        <span>
-                          {active
-                            ? `Waypoint ${Math.min((sample?.waypoint ?? 0) + 1, active.snapshot.waypoints.length)} / ${active.snapshot.waypoints.length}`
-                            : 'Awaiting mission assignment'}
-                        </span>
-                      </div>
-                    </section>
-                    <aside className="flight-side">
-                      <section className="panel telemetry-panel">
-                        <PanelHeading number="02" title="Live telemetry">
-                          <Radio size={14} />
-                        </PanelHeading>
-                        <div className="telemetry-values">
-                          {[
-                            [ArrowUpRight, 'Altitude', fmt(sample?.altitude), 'm'],
-                            [Gauge, 'Ground speed', fmt(sample?.speed), 'm/s'],
-                            [Battery, 'Battery', fmt(sample?.battery, 0), '%'],
-                            [Clock3, 'Flight time', active ? duration(flightSeconds) : '—', ''],
-                          ].map(([Icon, label, value, unit]) => (
-                            <div key={label}>
-                              <span>
-                                <Icon size={14} />
-                                {label}
-                              </span>
-                              <strong>
-                                {value}
-                                <small>{unit}</small>
-                              </strong>
-                              {label === 'Battery' && (
-                                <div className="battery-track">
-                                  <i
-                                    style={{
-                                      width: `${sample?.battery ?? 0}%`,
-                                      background: sample?.battery < 20 ? '#e4ad70' : undefined,
-                                    }}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                        <div className="attitude-strip" aria-label="Drone attitude in degrees">
-                          {['roll', 'pitch', 'yaw'].map((axis) => (
-                            <span key={axis}>
-                              {axis.toUpperCase()}{' '}
-                              <strong>
-                                {sample ? fmt((sample[axis] * 180) / Math.PI, 0) : '—'}°
-                              </strong>
-                            </span>
-                          ))}
-                        </div>
-                        <div className="telemetry-foot">
-                          <span className={`pulse-dot ${stale || !sample ? 'offline' : ''}`} />
-                          {sample
-                            ? stale
-                              ? 'Readings stale'
-                              : '5 Hz target · simulated readings'
-                            : 'Awaiting telemetry'}
-                          <span>Battery: {sample?.batterySource ?? 'synthetic'}</span>
-                        </div>
-                      </section>
-                      <section className="panel control-panel">
-                        <PanelHeading number="03" title="Flight controls" />
-                        <div className="flight-control-state">
-                          <span>EXECUTION STATE</span>
-                          <Badge tone={active ? 'green' : 'neutral'}>
-                            {active?.state ?? 'IDLE'}
-                          </Badge>
-                        </div>
-                        {active ? (
-                          <>
-                            <div className="flight-buttons">
-                              <button
-                                className="button secondary"
-                                disabled={
-                                  busy ||
-                                  pending ||
-                                  stale ||
-                                  !data.drone.connected ||
-                                  !['EXECUTING', 'PAUSED'].includes(active.state)
-                                }
-                                onClick={() =>
-                                  command(active.state === 'PAUSED' ? 'RESUME' : 'PAUSE')
-                                }
-                              >
-                                {active.state === 'PAUSED' ? (
-                                  <Play size={15} />
-                                ) : (
-                                  <Pause size={15} />
-                                )}{' '}
-                                {active.state === 'PAUSED' ? 'Resume' : 'Pause'}
-                              </button>
-                              <button
-                                className="button landing"
-                                disabled={
-                                  busy ||
-                                  commands.some(
-                                    (c) =>
-                                      ['PENDING', 'ACCEPTED', 'UNKNOWN'].includes(c.status) &&
-                                      c.action !== 'START_MISSION',
-                                  ) ||
-                                  !data.drone.connected ||
-                                  !['TAKING_OFF', 'EXECUTING', 'PAUSED'].includes(active.state)
-                                }
-                                onClick={() => command('LAND')}
-                              >
-                                <ArrowDownToLine size={15} /> Land
-                              </button>
-                            </div>
-                            {commands.at(-1) && (
-                              <p className="command-status">
-                                <span>{commands.at(-1).action.replaceAll('_', ' ')}</span>
-                                <strong>{commands.at(-1).status}</strong>
-                              </p>
-                            )}
-                            {!data.drone.connected && (
-                              <button
-                                className="text-button danger-text"
-                                disabled={busy}
-                                onClick={() =>
-                                  setConfirmation({
-                                    title: 'Close unconfirmed session?',
-                                    message:
-                                      'This records an interrupted session. It does not command or confirm landing.',
-                                    confirm: () =>
-                                      act(
-                                        () =>
-                                          api(`/flights/${active.id}/reconcile`, {
-                                            method: 'POST',
-                                          }),
-                                        'Session marked interrupted; outcome unknown',
-                                      ),
-                                  })
-                                }
-                              >
-                                Close unconfirmed session
-                              </button>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            <p className="control-help">
-                              Choose a saved mission to begin automatic waypoint execution.
-                            </p>
-                            <button
-                              className="button secondary full"
-                              onClick={() => navigate('missions')}
-                            >
-                              Select mission <ArrowRight size={14} />
-                            </button>
-                          </>
-                        )}
-                        <p className="control-caption">
-                          Commands require simulator acknowledgement.
-                        </p>
-                      </section>
-                    </aside>
-                  </div>
-                  <div className="lower-grid">
-                    <section className="panel">
-                      <PanelHeading number="04" title="Altitude profile">
-                        <span className="panel-subtitle">METRES / SIMULATION TIME</span>
-                      </PanelHeading>
-                      <div className="chart-wrap">
-                        <TelemetryChart samples={data.telemetry} />
-                      </div>
-                    </section>
-                    <section className="panel recent-panel">
-                      <PanelHeading number="05" title="Recent activity">
-                        <button className="text-button" onClick={() => navigate('history')}>
-                          View all <ArrowUpRight size={13} />
-                        </button>
-                      </PanelHeading>
-                      {data.flights.length ? (
-                        data.flights.slice(0, 3).map((f) => (
-                          <button className="activity-row" key={f.id} onClick={() => showReport(f)}>
-                            <span className="activity-icon">
-                              <Route size={16} />
-                            </span>
-                            <span>
-                              <strong>{f.snapshot.name}</strong>
-                              <small>{date(f.startedAt)}</small>
-                            </span>
-                            <Badge
-                              tone={
-                                f.state === 'COMPLETED'
-                                  ? 'green'
-                                  : terminal(f.state)
-                                    ? 'amber'
-                                    : 'neutral'
-                              }
-                            >
-                              {f.state.replaceAll('_', ' ')}
-                            </Badge>
-                          </button>
-                        ))
-                      ) : (
-                        <div className="activity-empty">
-                          <Clock3 size={21} />
-                          <span>No flights yet</span>
-                          <p>Your flight timeline will appear here.</p>
-                        </div>
-                      )}
-                    </section>
-                  </div>
-                </>
+                <FlightConsole
+                  data={data}
+                  active={active}
+                  sample={sample}
+                  stale={stale}
+                  busy={busy}
+                  pending={pending}
+                  commands={commands}
+                  onCommand={command}
+                  onMissions={() => navigate('missions')}
+                  onHistory={() => navigate('history')}
+                  onNewMission={() => {
+                    setEditor({});
+                    setPage('missions');
+                  }}
+                  onReconcile={() =>
+                    setConfirmation({
+                      title: 'Close unconfirmed session?',
+                      message:
+                        'This records an interrupted session. It does not command or confirm landing.',
+                      confirm: () =>
+                        act(
+                          () => api(`/flights/${active.id}/reconcile`, { method: 'POST' }),
+                          'Session marked interrupted; outcome unknown',
+                        ),
+                    })
+                  }
+                />
               )}
               {page === 'missions' && (
                 <>
@@ -712,7 +439,7 @@ export function Workspace({ user, onLogout }) {
                       </table>
                     </div>
                   ) : (
-                    <Empty icon={FileText} title="A clean flight log">
+                    <Empty icon={FileText} title="No recorded flights">
                       Complete your first mission to start building a flight history.
                     </Empty>
                   )}
@@ -762,7 +489,7 @@ export function Workspace({ user, onLogout }) {
                       ))}
                     </div>
                   ) : (
-                    <Empty icon={ShieldCheck} title="Nothing needs your attention">
+                    <Empty icon={ShieldCheck} title="No incidents recorded">
                       Low battery and missing telemetry incidents will appear here.
                     </Empty>
                   )}
@@ -798,11 +525,11 @@ export function Workspace({ user, onLogout }) {
                   </section>
                   <div>
                     <section className="panel system-panel">
-                      <PanelHeading number="02" title="Adapter boundary" />
+                      <PanelHeading number="02" title="Connection path" />
                       <div className="integration-path">
                         <span>Dashboard</span>
                         <ChevronDown size={16} />
-                        <span>Express · application services</span>
+                        <span>Mission gateway</span>
                         <ChevronDown size={16} />
                         <span>Simulator adapter</span>
                         <ChevronDown size={16} />
@@ -817,7 +544,7 @@ export function Workspace({ user, onLogout }) {
                     </section>
                     {data.mode === 'demo' && (
                       <section className="panel system-panel demo-tools">
-                        <PanelHeading number="03" title="Demo fault injection" />
+                        <PanelHeading number="03" title="Demo controls" />
                         <p>Test alert and connection behaviour using the labelled demo adapter.</p>
                         <div className="demo-actions">
                           <button

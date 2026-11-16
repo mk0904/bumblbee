@@ -17,14 +17,14 @@ export function MissionCards({
   if (!missions.length)
     return (
       <Empty
-        title="Your next mission starts here"
+        title="No missions yet"
         action={
           <button className="button primary" onClick={onNew}>
             <Plus size={15} /> Create mission
           </button>
         }
       >
-        Place a few waypoints and give Atlas a route to follow.
+        Create a route in the local training world to begin.
       </Empty>
     );
   if (!visible.length) return <Empty title="No missions match">Try another mission name.</Empty>;

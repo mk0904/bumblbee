@@ -70,6 +70,7 @@ classDiagram
   class DemoAdapter {
     +bind(services)
     +send(command)
+    +scheduleTick()
     +tick()
     +emit()
     +inject(kind)
@@ -332,3 +333,6 @@ Supabase session-pooler connection/migration and live write/read/rollback verifi
 8. Show SQL migrations, ER and constraint tests.
 9. Demonstrate stale telemetry, offline start and conflicting revision/request key.
 10. Run planner -> demo flight -> pause/resume/land -> alert -> saved report, clearly labelling demo; add actual Webots proof when integrated.
+
+## Console UI revision
+FlightConsole now owns instrument presentation and receives backend snapshots/callbacks from Workspace. A shared workspace theme covers the fixed navigation rail, mission library/editor, history/report, incidents and diagnostics. See ADR-004 and evidence/console-redesign.md. Domain/transport rules remain unchanged; demo timer ticks are coalesced so slow persistence cannot queue unlimited work ahead of commands.

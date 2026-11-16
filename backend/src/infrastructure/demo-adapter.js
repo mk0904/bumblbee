@@ -10,19 +10,27 @@ export class DemoAdapter extends SimulatorAdapter {
     super();
     this.epochId = randomUUID();
     this.queue = Promise.resolve();
+    this.tickScheduled = false;
   }
   bind(services) {
     this.services = services;
-    this.timer = setInterval(() => {
-      this.queue = this.queue
-        .then(() => this.tick())
-        .catch((error) =>
-          console.error(
-            JSON.stringify({ event: 'demo_tick_error', code: error.code ?? 'INTERNAL_ERROR' }),
-          ),
-        );
-    }, 200);
+    this.timer = setInterval(() => this.scheduleTick(), 200);
     this.timer.unref();
+  }
+  // Coalesce timer ticks: slow persistence must never build an unbounded queue ahead of commands.
+  scheduleTick() {
+    if (this.tickScheduled) return;
+    this.tickScheduled = true;
+    this.queue = this.queue
+      .then(() => this.tick())
+      .catch((error) => {
+        console.error(
+          JSON.stringify({ event: 'demo_tick_error', code: error.code ?? 'INTERNAL_ERROR' }),
+        );
+      })
+      .finally(() => {
+        this.tickScheduled = false;
+      });
   }
   async send(command) {
     if (this.dispatched.has(command.id)) return;

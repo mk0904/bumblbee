@@ -1,3 +1,4 @@
+import { FlightConsole } from '../src/features/FlightConsole.jsx';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -105,4 +106,58 @@ test('offline flight recovery uses an in-page dialog and clearly records unknown
     expect(api).toHaveBeenCalledWith('/flights/flight-01/reconcile', { method: 'POST' }),
   );
   expect(screen.queryByRole('dialog')).toBeNull();
+});
+
+test('flight deck toggles route and chart views without inventing missing telemetry', async () => {
+  const user = userEvent.setup();
+  const data = snapshot();
+  render(
+    <FlightConsole
+      data={data}
+      active={null}
+      sample={null}
+      stale={false}
+      busy={false}
+      pending={false}
+      commands={[]}
+      onMissions={() => {}}
+      onNewMission={() => {}}
+      onHistory={() => {}}
+      onCommand={() => {}}
+      onReconcile={() => {}}
+    />,
+  );
+  expect(screen.getByLabelText('No heading telemetry')).toBeTruthy();
+  await user.click(screen.getByRole('button', { name: 'Hide route overlay' }));
+  expect(screen.getByRole('button', { name: 'Show route overlay' })).toBeTruthy();
+  await user.click(screen.getByRole('button', { name: 'Altitude', exact: true }));
+  expect(screen.getByText('Telemetry chart')).toBeTruthy();
+});
+
+test('flight deck permits landing during takeoff while keeping pause disabled', async () => {
+  const user = userEvent.setup(),
+    onCommand = vi.fn(),
+    data = snapshot();
+  data.drone.connected = true;
+  const active = { ...data.flights[0], state: 'TAKING_OFF' };
+  render(
+    <FlightConsole
+      data={data}
+      active={active}
+      sample={null}
+      stale={false}
+      busy={false}
+      pending={true}
+      commands={[{ action: 'START_MISSION', status: 'ACCEPTED' }]}
+      onMissions={() => {}}
+      onNewMission={() => {}}
+      onHistory={() => {}}
+      onCommand={onCommand}
+      onReconcile={() => {}}
+    />,
+  );
+  expect(screen.getByRole('button', { name: 'Pause', exact: true }).disabled).toBe(true);
+  expect(screen.getByRole('button', { name: 'Land', exact: true }).disabled).toBe(false);
+  await user.click(screen.getByRole('button', { name: 'Land', exact: true }));
+  expect(onCommand).toHaveBeenCalledWith('LAND');
 });

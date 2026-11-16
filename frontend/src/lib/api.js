@@ -14,7 +14,18 @@ export async function api(path, options = {}) {
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   });
   if (response.status === 204) return null;
-  const data = await response.json();
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    const error = new Error(
+      response.status === 401
+        ? 'Pair your bridge to reconnect.'
+        : 'Backend connection interrupted. Please retry.',
+    );
+    error.status = response.status;
+    throw error;
+  }
   if (!response.ok) {
     const error = new Error(data.error?.message ?? 'Request failed');
     error.status = response.status;

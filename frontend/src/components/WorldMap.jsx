@@ -201,25 +201,27 @@ export function WorldMap({
         <Navigation size={15} />
         <span>+Y</span>
       </div>
-      <div className="map-tools">
-        <button
-          title="Zoom in"
-          aria-label="Zoom in"
-          onClick={() => setZoom((z) => Math.min(2, z + 0.25))}
-        >
-          <Plus size={16} />
-        </button>
-        <button
-          title="Zoom out"
-          aria-label="Zoom out"
-          onClick={() => setZoom((z) => Math.max(1, z - 0.25))}
-        >
-          <Minus size={16} />
-        </button>
-        <button title="Reset view" aria-label="Reset map view" onClick={() => setZoom(1)}>
-          <Crosshair size={16} />
-        </button>
-      </div>
+      {!compact && (
+        <div className="map-tools">
+          <button
+            title="Zoom in"
+            aria-label="Zoom in"
+            onClick={() => setZoom((z) => Math.min(2, z + 0.25))}
+          >
+            <Plus size={16} />
+          </button>
+          <button
+            title="Zoom out"
+            aria-label="Zoom out"
+            onClick={() => setZoom((z) => Math.max(1, z - 0.25))}
+          >
+            <Minus size={16} />
+          </button>
+          <button title="Reset view" aria-label="Reset map view" onClick={() => setZoom(1)}>
+            <Crosshair size={16} />
+          </button>
+        </div>
+      )}
       <div className="map-footer">
         <span>
           {editable ? (
