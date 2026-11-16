@@ -57,7 +57,7 @@ No login/signup UI. Bridge has a long configured bootstrap credential and obtain
 
 Pairing/session maps are ephemeral, scoped to a single installation principal. Re-pair after restart. Local demo shortcut is disabled in production. Production requires PostgreSQL, Webots mode, HTTPS origin and long bridge credential. Never put database passwords or bootstrap secrets in VITE_ variables. Do not log credentials or persist them in Git.
 
-Supabase is database hosting; application rules stay in Express. SQL RLS has no browser-client policies. Use correct verified TLS/direct or session-pooler configuration. Publishable keys cannot execute SQL migrations. Hosted connection remains unverified until tested.
+Supabase is database hosting; application rules stay in Express. SQL RLS has no browser-client policies. Use correct verified TLS/direct or session-pooler configuration. Publishable keys cannot execute SQL migrations. Hosted session-pooler connection, verified TLS, migration and write/read/rollback are now verified; real load/concurrency remain separate acceptance checks.
 
 ## Database and transactions
 Migration source: backend/migrations/001_initial.sql. Relational operators, drones, missions/waypoints, flight_sessions, commands, telemetry_samples and alerts; indexed constraints and JSONB aggregate records/snapshots. Waypoint rows update transactionally with mission data.

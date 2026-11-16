@@ -1,3 +1,4 @@
+import { databaseConfig } from './database-config.js';
 import { mkdir, readFile, writeFile, rename } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import pg from 'pg';
@@ -167,7 +168,7 @@ export class PostgresRepository {
 }
 export async function createRepository(config) {
   const repository = config.databaseUrl
-    ? new PostgresRepository(new pg.Pool({ connectionString: config.databaseUrl, max: 4 }))
+    ? new PostgresRepository(new pg.Pool(databaseConfig(config.databaseUrl)))
     : new FileRepository(config.dataPath);
   await repository.init();
   return repository;

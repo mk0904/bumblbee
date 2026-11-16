@@ -1,10 +1,11 @@
 import { readFile } from 'node:fs/promises';
 import pg from 'pg';
+import { databaseConfig } from '../backend/src/infrastructure/database-config.js';
 if (!process.env.DATABASE_URL)
   throw new Error(
     'Set DATABASE_URL for migration; use a direct/session connection suitable for DDL',
   );
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new pg.Pool(databaseConfig(process.env.DATABASE_URL));
 try {
   const existing = await pool.query(
     "SELECT to_regclass('public.app_schema_version') AS table_name",

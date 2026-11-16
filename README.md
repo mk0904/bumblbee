@@ -44,7 +44,7 @@ npm run db:migrate
 
 4. Restart backend. System page must show **postgresql**, rather than local-file-demo.
 
-The user-provided direct endpoint did not resolve during this session; hosted setup is pending session pooler details. Supabase credentials are not in Git. Do not describe local demo storage or embedded SQL tests as hosted verification.
+Supabase is now connected through the session pooler with verified TLS. The initial schema is applied and the running backend reports postgresql storage. Set DATABASE_CA_CERT=certs/supabase-root-2021.crt to use the public provider CA consistently for runtime and migrations. See docs/evidence/supabase-connection.md. Credentials remain outside Git. Earlier local demo records are preserved but were not imported.
 
 For local PostgreSQL, if Docker is available:
 

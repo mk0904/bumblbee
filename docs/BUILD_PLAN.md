@@ -17,8 +17,8 @@ Neutral engineering console, mission planner, click/drag coordinates, waypoint o
 ## Phase 3 — pairing and integration boundary (implemented/test-agent verified)
 No login/signup. Bridge bootstrap -> four-character 2-minute code -> protected browser session. Socket handshake, latest-session fencing, command dispatch/result, telemetry validation and heartbeat tested using an external socket test client. Python pairing helper implemented. This is not actual Webots proof.
 
-## Phase 4 — persistence and Supabase (SQL locally verified; cloud pending)
-SQL relational tables, JSONB snapshots, indexes, active-flight/command/sample/alert constraints and RLS. Production repository transaction/rollback tested using embedded PostgreSQL. Obtain correct Supabase session-pooler details, verify TLS, apply migrations and run real multi-connection concurrency tests. UI System view must report postgresql before claiming hosted persistence. Use local file demo storage only while cloud connection is pending.
+## Phase 4 — persistence and Supabase (cloud connection/schema verified; load/concurrency pending)
+SQL relational tables, JSONB snapshots, indexes, active-flight/command/sample/alert constraints and RLS. Production repository transaction/rollback tested using embedded PostgreSQL. Session-pooler connectivity, verified TLS, migration and write/read/rollback checks now pass. Real multi-connection concurrency tests remain pending. UI System view must report postgresql before claiming hosted persistence. Use local file demo storage only while cloud connection is pending.
 
 ## Phase 5 — actual Webots integration (pending)
 Install/pin compatible Webots/Python, select and credit drone/controller, prove takeoff/hover/target/land. Match WORLD_LOCAL_V1 axes and environment footprints. Implement local executor with nonblocking bridge queues. Validate pause hover, command expiry/deduplication, telemetry sequence/epoch, heartbeat, local loss-of-contact landing and restart reconciliation. Repeat flights and save actual accuracy evidence.
