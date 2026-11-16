@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Pagination, usePages } from '../components/Pagination.jsx';
 import { Modal } from '../components/Modal.jsx';
-import { Download, ShieldCheck, X } from 'lucide-react';
+import { Download, X } from 'lucide-react';
 import { fmt, duration, date } from '../lib/format.js';
 import { Badge } from '../components/ui.jsx';
 import { WorldMap } from '../components/WorldMap.jsx';
@@ -11,8 +10,6 @@ export function Report({ report, onClose }) {
   const { flight, samples, summary, commands, alerts } = report;
   const [tab, setTab] = useState('overview'),
     [metric, setMetric] = useState('altitude');
-  const commandPages = usePages(commands, 4),
-    alertPages = usePages(alerts, 3);
   const download = () => {
     const url = URL.createObjectURL(
       new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' }),
@@ -28,10 +25,10 @@ export function Report({ report, onClose }) {
       <section className="report-modal">
         <div className="report-top">
           <div>
-            <span className="eyebrow">POST-FLIGHT ANALYSIS · {flight.adapter.toUpperCase()}</span>
+            {flight.adapter === 'demo' && <span className="report-demo-tag">Demo flight</span>}
             <h2>{flight.snapshot.name}</h2>
             <p>
-              {date(flight.startedAt)} · {flight.id.slice(0, 8)}
+              {date(flight.startedAt)}
             </p>
           </div>
           <button className="icon-button" aria-label="Close report" onClick={onClose}>
@@ -40,17 +37,17 @@ export function Report({ report, onClose }) {
         </div>
         <div className="report-status">
           <Badge tone={flight.state === 'COMPLETED' ? 'green' : 'amber'}>{flight.state}</Badge>
-          <span>{flight.reason ?? 'Flight in progress'}</span>
+          <span>{flight.reason ?? (summary.complete ? 'Flight ended' : 'Recording incomplete or in progress')}</span>
           <button className="text-button" onClick={download}>
-            <Download size={14} /> Export JSON
+            <Download size={14} /> Download report
           </button>
         </div>
         <div className="report-metrics">
           {[
             ['Duration', duration(summary.duration)],
-            ['Path estimate', `${fmt(summary.distance)} m`],
+            ['Distance', `${fmt(summary.distance)} m`],
             ['Max altitude', `${fmt(summary.maxAltitude)} m`],
-            ['Battery used', `${fmt(summary.batteryUsed)}%`],
+            ['Battery used (estimated)', `${fmt(summary.batteryUsed)}%`],
           ].map(([label, value]) => (
             <div key={label}>
               <span>{label}</span>
@@ -70,7 +67,7 @@ export function Report({ report, onClose }) {
                 ? `Incidents (${alerts.length})`
                 : section === 'commands'
                   ? `Commands (${commands.length})`
-                  : 'Flight overview'}
+                  : 'Overview'}
             </button>
           ))}
         </div>
@@ -101,37 +98,31 @@ export function Report({ report, onClose }) {
             </div>
           </div>
         )}
-        <div className="report-data-note">
-          <ShieldCheck size={15} />
-          {summary.sampleCount} samples · {summary.gaps} sequence gaps ·{' '}
-          {summary.complete ? 'Complete recorded session' : 'Incomplete or active session'} ·
-          battery is synthetic
-        </div>
+        {(!summary.complete || summary.gaps > 0) && <div className="report-integrity-warning" role="status">{!summary.complete ? 'This recording is incomplete.' : ''} {summary.gaps > 0 ? `${summary.gaps} telemetry gaps detected.` : ''}</div>}
         {tab === 'commands' && (
           <div className="report-records">
             <h3>Command timeline</h3>
             <div className="command-timeline">
-              {commandPages.items.map((c) => (
+              {commands.map((c) => (
                 <div key={c.id}>
                   <span>{c.action.replaceAll('_', ' ')}</span>
                   <Badge tone={c.status === 'COMPLETED' ? 'green' : 'amber'}>{c.status}</Badge>
                   <small>{date(c.createdAt)}</small>
+                  {c.error && <p className="command-error">{c.error}</p>}
                 </div>
               ))}
             </div>
-            <Pagination pages={commandPages} label="Commands" />
           </div>
         )}
         {tab === 'alerts' && (
           <div className="report-records">
             <h3>Flight incidents</h3>
             {!alerts.length && <p className="incident-line">No incidents recorded.</p>}
-            {alertPages.items.map((a) => (
+            {alerts.map((a) => (
               <p className="incident-line" key={a.id}>
                 {a.title} · {a.status} · {a.message}
               </p>
             ))}
-            <Pagination pages={alertPages} label="Incidents" />
           </div>
         )}
       </section>

@@ -42,7 +42,7 @@ test('four-character bridge entry is normalized and sent to claim endpoint', asy
     .mockResolvedValueOnce({ demo: false })
     .mockResolvedValueOnce({ user: { id: 'operator-01' }, csrf: 'code-csrf' });
   render(<Pairing onLogin={onLogin} />);
-  await user.type(screen.getByLabelText(/bridge code/i), 'a7k2');
+  await user.type(screen.getByLabelText(/drone code/i), 'a7k2');
   await user.click(screen.getByRole('button', { name: /Connect to drone/ }));
   await waitFor(() =>
     expect(api).toHaveBeenCalledWith('/pairing/claim', { method: 'POST', body: { code: 'A7K2' } }),
@@ -66,7 +66,7 @@ test('planner adds/reorders coordinate values and saves clean route payload', as
   expect(saved.name).toBe('Inspection');
   expect(saved.waypoints[0].x).toBe(0);
   expect(saved.waypoints[1].x).toBe(12);
-  expect(saved.waypoints.every((w) => Object.keys(w).sort().join(',') === 'altitude,x,y')).toBe(
+  expect(saved.waypoints.every((w) => Object.keys(w).sort().join(',') === 'altitude,speed,x,y')).toBe(
     true,
   );
 });
@@ -108,8 +108,7 @@ test('offline flight recovery uses an in-page dialog and clearly records unknown
   expect(screen.queryByRole('dialog')).toBeNull();
 });
 
-test('flight deck toggles route and chart views without inventing missing telemetry', async () => {
-  const user = userEvent.setup();
+test('flight deck shows map, camera and chart together without inventing missing telemetry', async () => {
   const data = snapshot();
   render(
     <FlightConsole
@@ -128,9 +127,10 @@ test('flight deck toggles route and chart views without inventing missing teleme
     />,
   );
   expect(screen.getByLabelText('No heading telemetry')).toBeTruthy();
-  await user.click(screen.getByRole('button', { name: 'Hide route overlay' }));
-  expect(screen.getByRole('button', { name: 'Show route overlay' })).toBeTruthy();
-  await user.click(screen.getByRole('button', { name: 'Altitude', exact: true }));
+  expect(screen.queryByRole('button', { name: 'Hide route overlay' })).toBeNull();
+  expect(screen.getByRole('region', { name: 'Mission viewport' })).toBeTruthy();
+  expect(screen.getByRole('region', { name: 'Camera view' })).toBeTruthy();
+  expect(screen.getByRole('region', { name: 'Live altitude trend' })).toBeTruthy();
   expect(screen.getByText('Telemetry chart')).toBeTruthy();
 });
 
@@ -160,4 +160,56 @@ test('flight deck permits landing during takeoff while keeping pause disabled', 
   expect(screen.getByRole('button', { name: 'Land', exact: true }).disabled).toBe(false);
   await user.click(screen.getByRole('button', { name: 'Land', exact: true }));
   expect(onCommand).toHaveBeenCalledWith('LAND');
+});
+
+test('compass converts measured ENU yaw to local bearing and identifies stale readings', () => {
+  const props = { data: snapshot(), active: null, stale: false, busy: false, pending: false, commands: [] };
+  const { rerender } = render(<FlightConsole {...props} sample={{ yaw: 0, x: 2, y: 3 }} />);
+  expect(screen.getByLabelText('Local heading 90 degrees clockwise from positive Y')).toBeTruthy();
+  rerender(<FlightConsole {...props} stale sample={{ yaw: Math.PI / 2, x: 2, y: 3 }} />);
+  expect(screen.getByLabelText('Local heading 0 degrees clockwise from positive Y, stale')).toBeTruthy();
+  expect(screen.getByText('Stale reading')).toBeTruthy();
+});
+
+test('flight deck leaves saved routes hidden until explicitly selected', () => {
+  const data = snapshot();
+  data.missions = [{ id: 'route-01', name: 'Selected mission', waypoints: [{x: 8, y: 6, altitude: 3}] }];
+  const props = { data, active: null, sample: null, stale: false, busy: false, pending: false, commands: [] };
+  const { rerender } = render(<FlightConsole {...props} />);
+  expect(screen.queryByLabelText(/Waypoint 1, X/)).toBeNull();
+  expect(screen.getByText('No mission selected')).toBeTruthy();
+  rerender(<FlightConsole {...props} selectedMission={data.missions[0]} />);
+  expect(screen.getByLabelText(/Waypoint 1, X/)).toBeTruthy();
+});
+
+test('selected plan exposes waypoint details and starts that exact revision', async () => {
+ const user=userEvent.setup(), onStart=vi.fn();
+ const data=snapshot(); data.drone.connected=true;
+ const mission={id:'selected',revision:4,name:'Inspection route',waypoints:[{x:8,y:6,altitude:3}]};
+ render(<FlightConsole data={data} selectedMission={mission} active={null} sample={null} stale={false} busy={false} pending={false} commands={[]} onStart={onStart} />);
+ expect(screen.getByRole('table',{name:'Selected mission waypoints'})).toBeTruthy();
+ expect(screen.getByText('Selected · 1 waypoints')).toBeTruthy();
+ await user.click(screen.getByRole('button',{name:'Start mission'}));
+ expect(onStart).toHaveBeenCalledWith(mission);
+});
+
+test('connection failures use a dismissible notification without in-flow banners', async () => {
+ const user=userEvent.setup();
+ useDashboard.mockReturnValue({data:snapshot(),connection:'reconnecting',error:'Failed to fetch',refresh:vi.fn()});
+ const {container}=render(<Workspace user={{}} onLogout={()=>{}} />);
+ expect(container.querySelector('.content .error-banner,.content .warning-banner')).toBeNull();
+ expect(screen.getByRole('alert').textContent).toContain('Retrying automatically');
+ await user.click(screen.getByRole('button',{name:'Dismiss connection notification'}));
+ expect(screen.queryByRole('alert')).toBeNull();
+});
+
+test('sidebar bottom offers theme switching and System retains session disconnect', async () => {
+  const user = userEvent.setup();
+  useDashboard.mockReturnValue({ data: snapshot(), connection: 'live', error: '', refresh: vi.fn() });
+  render(<Workspace user={{}} onLogout={() => {}} />);
+  const navigation = screen.getByRole('complementary', { name: 'Primary navigation' });
+  expect(navigation.querySelector('.sidebar-bottom .theme-toggle')).toBeTruthy();
+  expect(screen.queryByRole('button', { name: 'Disconnect control session' })).toBeNull();
+  await user.click(screen.getByRole('button', { name: 'System & alerts', exact: true }));
+  expect(screen.getByRole('button', { name: 'Disconnect control session' })).toBeTruthy();
 });

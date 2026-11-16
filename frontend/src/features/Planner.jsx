@@ -1,20 +1,29 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight, CircleHelp, Plus, Save, Trash2 } from 'lucide-react';
-import { Badge, PanelHeading } from '../components/ui.jsx';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowUp, ArrowDown, Plus, Save, Trash2 } from 'lucide-react';
+import { PanelHeading } from '../components/ui.jsx';
 import { WorldMap } from '../components/WorldMap.jsx';
 
-export function Planner({ mission, onClose, onSave, busy }) {
+export function Planner({ mission, onClose: _onClose, onSave, busy }) {
   const [name, setName] = useState(mission?.name ?? 'Untitled mission'),
-    [description, setDescription] = useState(mission?.description ?? ''),
     [waypoints, setWaypoints] = useState(mission?.waypoints ?? []),
     [selected, setSelected] = useState(-1),
-    [altitude, setAltitude] = useState(8);
-  const current = Math.min(Math.max(0, selected), waypoints.length - 1);
+    [altitude, setAltitude] = useState(mission?.defaultAltitude ?? 8),
+    [speed, setSpeed] = useState(mission?.defaultSpeed ?? 1);
+  const listRef = useRef(null);
+  useEffect(() => {
+    const list = listRef.current;
+    const row = list?.children[selected];
+    if (!row) return;
+    const top = row.offsetTop - list.offsetTop;
+    if (top < list.scrollTop) list.scrollTop = top;
+    else if (top + row.offsetHeight > list.scrollTop + list.clientHeight)
+      list.scrollTop = top + row.offsetHeight - list.clientHeight;
+  }, [selected, waypoints.length]);
   const move = (i, patch) =>
     setWaypoints((points) => points.map((w, index) => (index === i ? { ...w, ...patch } : w)));
   const add = (p) => {
     if (waypoints.length < 20) {
-      setWaypoints((points) => [...points, { ...p, altitude }]);
+      setWaypoints((points) => [...points, { ...p, altitude, speed }]);
       setSelected(waypoints.length);
     }
   };
@@ -29,36 +38,27 @@ export function Planner({ mission, onClose, onSave, busy }) {
   return (
     <section className="planner-page">
       <div className="page-title">
-        <div>
-          <button className="text-button back" onClick={onClose}>
-            <ChevronLeft size={14} /> Back to missions
-          </button>
-          <h1>
-            {mission ? 'Edit mission' : 'Plan a new mission'}
-            <span className="title-dot">.</span>
-          </h1>
-          <p>Place your route in the training world. Each point is a local coordinate.</p>
-        </div>
+        <h1 className="planner-heading">Plan a mission</h1>
         <button
-          className="button primary"
+          className="button primary planner-save-icon"
+          aria-label="Save mission"
+          title="Save mission"
           disabled={busy || !name.trim()}
           onClick={() =>
             onSave({
               name,
-              description,
-              waypoints: waypoints.map(({ x, y, altitude }) => ({ x, y, altitude })),
+              defaultAltitude: altitude,
+              defaultSpeed: speed,
+              waypoints: waypoints.map(({ x, y, altitude, speed }) => ({ x, y, altitude, speed: speed ?? 1 })),
               ...(mission ? { revision: mission.revision } : {}),
             })
           }
         >
-          <Save size={15} /> Save mission
+          <Save size={18} />
         </button>
       </div>
       <div className="planner-layout">
         <div className="panel planner-map">
-          <PanelHeading number="01" title="Route editor">
-            <Badge>LOCAL XY</Badge>
-          </PanelHeading>
           <WorldMap
             editable
             waypoints={waypoints}
@@ -67,29 +67,17 @@ export function Planner({ mission, onClose, onSave, busy }) {
             onAdd={add}
             onMove={move}
           />
-          <div className="map-note">
-            <CircleHelp size={14} /> Click to add a point, drag to move. Scenery does not imply
-            obstacle avoidance.
-          </div>
+
         </div>
         <div className="planner-sidebar">
           <div className="panel mission-details">
             <PanelHeading number="02" title="Mission details" />
             <label>
-              Mission name
+              <span className="field-border-label">Mission name</span>
               <input maxLength={80} value={name} onChange={(e) => setName(e.target.value)} />
             </label>
             <label>
-              Description
-              <input
-                maxLength={500}
-                placeholder="What is this flight for?"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </label>
-            <label>
-              Default altitude <span className="muted">metres</span>
+              <span className="field-border-label">Default altitude</span><span className="field-unit">m</span>
               <input
                 type="number"
                 min="2"
@@ -98,9 +86,10 @@ export function Planner({ mission, onClose, onSave, busy }) {
                 onChange={(e) => setAltitude(Number(e.target.value))}
               />
             </label>
+            <label className="mission-default-speed"><span className="field-border-label">Default speed</span><span className="field-unit">m/s</span><input aria-label="Default speed" type="number" min="0.2" max="2" step="0.1" value={speed} onChange={e => setSpeed(Number(e.target.value))} /></label>
           </div>
           <div className="panel waypoint-panel">
-            <PanelHeading number="03" title={`Waypoints (${waypoints.length}/20)`}>
+            <PanelHeading title={`Waypoints (${waypoints.length}/20)`}>
               <button
                 className="icon-button"
                 title="Add waypoint at origin"
@@ -114,44 +103,21 @@ export function Planner({ mission, onClose, onSave, busy }) {
             {!waypoints.length && (
               <div className="waypoint-empty">Click the map or + to add your first waypoint.</div>
             )}
-            {waypoints.length > 0 && (
-              <div className="waypoint-navigation">
-                <button
-                  className="icon-button"
-                  aria-label="Previous waypoint"
-                  disabled={current <= 0}
-                  onClick={() => setSelected(current - 1)}
-                >
-                  <ChevronLeft size={15} />
-                </button>
-                <span>
-                  Waypoint {current + 1} of {waypoints.length}
-                </span>
-                <button
-                  className="icon-button"
-                  aria-label="Next waypoint"
-                  disabled={current >= waypoints.length - 1}
-                  onClick={() => setSelected(current + 1)}
-                >
-                  <ChevronRight size={15} />
-                </button>
-              </div>
-            )}
-            <div className="waypoint-list">
+            <ol ref={listRef} className="waypoint-list" aria-label="Mission waypoints">
               {waypoints.map(
                 (w, i) =>
-                  i === current && (
-                    <div className={`waypoint-editor ${selected === i ? 'selected' : ''}`} key={i}>
+                  (
+                    <li className={`waypoint-editor ${selected === i ? 'selected' : ''}`} key={i}>
                       <div className="waypoint-editor-top">
                         <span className="waypoint-index">{String(i + 1).padStart(2, '0')}</span>
-                        <strong>Waypoint {i + 1}</strong>
-                        <button
+                        <button className="waypoint-focus" onClick={() => setSelected(i)} aria-label={`Select waypoint ${i + 1}`}><span>{String(i + 1).padStart(2, '0')}</span>Waypoint</button>
+                        <div className="waypoint-action-tray"><button
                           className="icon-button"
                           aria-label={`Move waypoint ${i + 1} earlier`}
                           disabled={i === 0}
                           onClick={() => reorder(i, -1)}
                         >
-                          <ChevronLeft size={13} />
+                          <ArrowUp size={13} />
                         </button>
                         <button
                           className="icon-button"
@@ -159,42 +125,39 @@ export function Planner({ mission, onClose, onSave, busy }) {
                           disabled={i === waypoints.length - 1}
                           onClick={() => reorder(i, 1)}
                         >
-                          <ChevronRight size={13} />
+                          <ArrowDown size={13} />
                         </button>
                         <button
-                          className="icon-button danger-text"
+                          className="icon-button danger-text danger-action"
                           aria-label={`Remove waypoint ${i + 1}`}
                           onClick={() =>
                             setWaypoints((points) => points.filter((_, index) => index !== i))
                           }
                         >
                           <Trash2 size={13} />
-                        </button>
+                        </button></div>
                       </div>
                       <div className="coordinate-inputs">
-                        {['x', 'y', 'altitude'].map((field) => (
+                        {['x', 'y', 'altitude', 'speed'].map((field) => (
                           <label key={field}>
-                            {field === 'altitude' ? 'ALT' : field.toUpperCase()}
+                            <span>{field === 'altitude' ? 'Alt' : field === 'speed' ? 'Speed' : field.toUpperCase()}<small>{field === 'speed' ? 'm/s' : 'm'}</small></span>
                             <input
                               aria-label={`Waypoint ${i + 1} ${field}`}
                               type="number"
                               step="0.1"
-                              min={field === 'altitude' ? 2 : -50}
-                              max={field === 'altitude' ? 15 : 50}
-                              value={w[field]}
+                              min={field === 'speed' ? 0.2 : field === 'altitude' ? 2 : -50}
+                              max={field === 'speed' ? 2 : field === 'altitude' ? 15 : 50}
+                              value={w[field] ?? (field === 'speed' ? 1 : '')}
                               onChange={(e) => move(i, { [field]: Number(e.target.value) })}
                             />
                           </label>
                         ))}
                       </div>
-                    </div>
+                    </li>
                   ),
               )}
-            </div>
-            <div className="bounds-note">
-              Flight bounds ±50 m · altitude 2–15 m<br />
-              Empty routes can be saved as drafts.
-            </div>
+            </ol>
+
           </div>
         </div>
       </div>

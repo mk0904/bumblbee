@@ -26,7 +26,7 @@
 .app-shell:has(.flight-console) .brand-symbol {
   border: 0;
   background: #090a0a;
-  border-radius: 6px;
+  border-radius: var(--radius);
   width: 36px;
   height: 28px;
   color: #e1e3e3;
@@ -96,7 +96,7 @@
 .console-bottomline > span i {
   width: 5px;
   height: 5px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: #747778;
 }
 .console-link.connected i {
@@ -107,7 +107,7 @@
   letter-spacing: 0.6px;
   color: #777e7f;
   border: 1px solid #333738;
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 5px 7px;
 }
 .console-layout {
@@ -118,13 +118,13 @@
 }
 .console-panel {
   background: #1c1e1f;
-  border-radius: 22px;
+  border-radius: var(--radius);
   overflow: hidden;
   border: 1px solid #272a2a;
 }
 .console-viewport {
   position: relative;
-  border-radius: 22px;
+  border-radius: var(--radius);
   overflow: hidden;
   background: #242c2d;
   border: 1px solid #3c4041;
@@ -150,7 +150,7 @@
   right: 18px;
   z-index: 4;
   border-color: #747c7d55;
-  border-radius: 5px;
+  border-radius: var(--radius);
   box-shadow: none;
 }
 .console-viewport .map-tools button {
@@ -178,7 +178,7 @@
   color: #d5d8d8;
   background: #171e20c9;
   border: 1px solid #7e868838;
-  border-radius: 5px;
+  border-radius: var(--radius);
   padding: 8px 10px;
   backdrop-filter: blur(15px);
 }
@@ -186,7 +186,7 @@
   width: 5px;
   height: 5px;
   background: #81898b;
-  border-radius: 50%;
+  border-radius: var(--radius);
   display: inline-block;
 }
 .record-dot.active {
@@ -202,7 +202,7 @@
   gap: 6px;
   align-items: center;
   padding: 8px 10px;
-  border-radius: 5px;
+  border-radius: var(--radius);
   background: #110f12c9;
   backdrop-filter: blur(15px);
   font: 9px var(--mono);
@@ -290,7 +290,7 @@
   width: 8px;
   height: 8px;
   border: 1px solid #ebecec;
-  border-radius: 50%;
+  border-radius: var(--radius);
 }
 .viewport-bottom {
   position: absolute;
@@ -326,7 +326,7 @@
   color: #dadcdc;
   backdrop-filter: blur(10px);
   border: 1px solid #7f878855;
-  border-radius: 7px;
+  border-radius: var(--radius);
   width: 35px;
   height: 35px;
   display: grid;
@@ -412,7 +412,7 @@
 .console-state i {
   width: 4px;
   height: 4px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: #767e80;
 }
 .console-state i.active {
@@ -447,13 +447,13 @@
   background: #414546;
   margin: 12px 0 7px;
   overflow: hidden;
-  border-radius: 5px;
+  border-radius: var(--radius);
 }
 .console-meter i {
   height: 100%;
   display: block;
   background: #ad9abc;
-  border-radius: 5px;
+  border-radius: var(--radius);
   transition: width 0.2s linear;
 }
 .console-battery > span {
@@ -484,7 +484,7 @@
 .altitude-track > span {
   width: 10px;
   height: 10px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: #747b7d;
   border: 2px solid #262929;
   box-shadow: 0 1px 5px #0006;
@@ -539,7 +539,7 @@
   margin-left: auto;
   font: 6px var(--mono);
   border: 1px solid #424647;
-  border-radius: 3px;
+  border-radius: var(--radius);
   padding: 2px 4px;
 }
 .console-control-desk {
@@ -559,14 +559,14 @@
   gap: 4px;
   background: #131114;
   padding: 4px;
-  border-radius: 8px;
+  border-radius: var(--radius);
 }
 .console-view-tabs button {
   display: flex;
   gap: 6px;
   align-items: center;
   border: 0;
-  border-radius: 5px;
+  border-radius: var(--radius);
   padding: 7px 9px;
   background: none;
   color: #969c9d;
@@ -602,7 +602,7 @@
   padding: 0;
   background: #191b1b;
   border: 2px solid #121314;
-  border-radius: 8px;
+  border-radius: var(--radius);
   overflow: hidden;
   color: #9ea4a6;
 }
@@ -704,7 +704,7 @@
 .console-round-button {
   width: 69px;
   height: 69px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   border: 1px solid #4a4f51;
   background: radial-gradient(circle at 35% 25%, #404546, #2c2f2f 75%);
   box-shadow:
@@ -754,7 +754,7 @@
   align-items: center;
   background: #282b2c;
   border: 1px solid #4a4f50;
-  border-radius: 9px;
+  border-radius: var(--radius);
   padding: 15px 12px;
   color: #d7d9da;
   width: 100%;
@@ -799,7 +799,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 5px;
+  border-radius: var(--radius);
   background: #c3acd4;
   color: #1f1d21;
   font-size: 13px;
@@ -1136,7 +1136,7 @@
   }
   .console-panel,
   .console-viewport {
-    border-radius: 16px;
+    border-radius: var(--radius);
   }
   .console-viewport {
     grid-row: 1;

@@ -23,7 +23,7 @@
   place-items: center;
   background: #050707;
   border: 1px solid #2b282e;
-  border-radius: 8px;
+  border-radius: var(--radius);
   width: 33px;
   height: 33px;
   margin: 0;
@@ -55,7 +55,7 @@
   gap: 0;
   align-items: stretch;
   border: 1px solid #3c373f;
-  border-radius: 21px;
+  border-radius: var(--radius);
   overflow: hidden;
   background: #1e1c20;
   box-shadow: 0 24px 75px #00000026;
@@ -78,7 +78,7 @@
   max-height: none;
   aspect-ratio: auto;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius);
   overflow: hidden;
   background: #28252b;
 }
@@ -146,7 +146,7 @@
   min-height: 0;
   border: 0;
   border-left: 1px solid #403b44;
-  border-radius: 0;
+  border-radius: var(--radius);
   background: #1e1c20;
   box-shadow: none;
   padding: 32px clamp(28px, 3.4vw, 48px);
@@ -160,7 +160,7 @@
   flex-shrink: 0;
   margin-bottom: 24px;
   border: 1px solid #514858;
-  border-radius: 11px;
+  border-radius: var(--radius);
   background: #2e2b31;
   color: #e5bf9b;
 }
@@ -204,7 +204,7 @@
 .pair-code-input {
   background: #141315;
   border: 1px solid #504658;
-  border-radius: 7px;
+  border-radius: var(--radius);
   height: 64px;
   margin: 0;
   font-size: 29px;
@@ -241,7 +241,7 @@
   min-height: 41px;
   font-size: 11px;
   gap: 12px;
-  border-radius: 6px;
+  border-radius: var(--radius);
 }
 .pairing-card .button.primary {
   background: #e1b68e;
@@ -350,10 +350,10 @@
 /* Graphite and porcelain: one composed entry surface. */
 .pairing-page { background: radial-gradient(ellipse at 18% 20%, #2b282d 0, #131214 48%, #0c0b0d 100%); padding: 27px 4.5vw; }
 .pairing-brand { max-width:1260px; }
-.pairing-brand > .pairing-monogram { background:#f2edf5; color:#171518; border-color:#f2edf5; border-radius:10px; width:35px; height:35px; }
+.pairing-brand > .pairing-monogram { background:#f2edf5; color:#171518; border-color:#f2edf5; border-radius: var(--radius); width:35px; height:35px; }
 .pairing-brand strong { color:#f4f3ef; font-weight:500; }
 .pairing-brand strong > span { color:#a090ad; }
-.pairing-layout { max-width:1260px; height:min(660px, calc(100dvh - 145px)); grid-template-columns:minmax(0,1.2fr) minmax(350px,.8fr); border-color:#ffffff24; border-radius:24px; background:#eeefef; box-shadow:0 40px 100px #0007, 0 1px 0 #ffffff12 inset; }
+.pairing-layout { max-width:1260px; height:min(660px, calc(100dvh - 145px)); grid-template-columns:minmax(0,1.2fr) minmax(350px,.8fr); border-color:#ffffff24; border-radius: var(--radius); background:#eeefef; box-shadow:0 40px 100px #0007, 0 1px 0 #ffffff12 inset; }
 .pairing-scene { background:#1b191d; }
 .pairing-yard { background:#1b191d; }
 .pairing-yard > .world-map > svg { opacity:.9; filter:grayscale(.85) contrast(1.15); }
@@ -363,16 +363,16 @@
 .pairing-story h1 > span { color:#bea6d0; }
 .pairing-story p { color:#aea1b8; font-size:12px; line-height:1.8; }
 .pairing-card { background:linear-gradient(145deg,#f4f4f1,#e8e4eb); color:#201d22; border-left:1px solid #ffffff40; padding:36px clamp(28px,3.6vw,54px); }
-.pairing-icon { border:1px solid #d9d0e0; color:#9870b6; background:#ffffff80; width:46px; height:46px; border-radius:14px; margin-bottom:33px; box-shadow:0 4px 12px #38343b08; }
+.pairing-icon { border:1px solid #d9d0e0; color:#9870b6; background:#ffffff80; width:46px; height:46px; border-radius: var(--radius); margin-bottom:33px; box-shadow:0 4px 12px #38343b08; }
 .pairing-card h2 { font-size:33px; letter-spacing:-1.5px; font-weight:500; }
 .pairing-card > p { color:#776a81; font-size:12px; margin-bottom:32px; }
 .pair-code-label label { color:#5d4f67; font-size:11px; }
 .pair-code-label > span { color:#988ba2; }
-.pair-code-input { background:#ffffff9c; color:#39353d; border:1px solid #d3c9db; border-radius:10px; height:70px; font-size:30px; box-shadow:0 2px 3px #37333a05 inset; }
+.pair-code-input { background:#ffffff9c; color:#39353d; border:1px solid #d3c9db; border-radius: var(--radius); height:70px; font-size:30px; box-shadow:0 2px 3px #37333a05 inset; }
 .pair-code-input::placeholder { color:#b7aac1; }
 .pair-code-input:focus { outline:none; border-color:#a685c0; box-shadow:none; }
 .pairing-hint { color:#8b7d95; font-size:10px; }
-.pairing-card .button.primary { background:#9067b0; border-color:#9067b0; color:#fff; height:46px; font-size:12px; border-radius:10px; justify-content:space-between; padding-inline:19px; box-shadow:0 4px 12px #9067b01c; }
+.pairing-card .button.primary { background:#9067b0; border-color:#9067b0; color:#fff; height:46px; font-size:12px; border-radius: var(--radius); justify-content:space-between; padding-inline:19px; box-shadow:0 4px 12px #9067b01c; }
 .pairing-card .button.primary:hover:not(:disabled) { background:#7c688b; }
 .pairing-card .button.primary:disabled { background:#ded6e5; color:#998ba4; border-color:#ded6e5; box-shadow:none; }
 .pairing-security { border-color:#d6cedd; color:#8b7d95; font-size:10px; }
@@ -390,3 +390,7 @@
  .pair-code-input {height:58px;}
  .pairing-security {font-size:9px;}
 }
+
+/* Product image fills the entry scene; the operational map lives in the flight deck. */
+.pairing-drone-hero { display:block; width:100%; height:100%; object-fit:cover; object-position:center 30%; }
+.pairing-scene::after { background:linear-gradient(180deg,transparent 25%,#14121625 45%,#141216d9 76%,#141216f5 100%); }

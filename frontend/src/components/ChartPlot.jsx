@@ -16,21 +16,23 @@ export default function ChartPlot({ samples = [], metric = 'altitude', height = 
         <span>Telemetry will appear when a flight starts</span>
       </div>
     );
-  const color = metric === 'battery' ? '#b79bcc' : '#cdbadc';
+  const color = 'var(--chart-line)';
   return (
     <div style={{ width: '100%', height }}>
       <ResponsiveContainer width="100%" height="100%" minWidth={1}>
-        <AreaChart data={samples} margin={{ top: 12, right: 8, bottom: 0, left: -25 }}>
+        <AreaChart data={samples} margin={{ top: 12, right: 8, bottom: 18, left: 8 }}>
           <defs>
             <linearGradient id={`gradient-${metric}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity={0.2} />
               <stop offset="100%" stopColor={color} stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="#2a2c2f" strokeDasharray="3 4" vertical={false} />
+          <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="3 4" vertical={false} />
           <XAxis
             dataKey="simulationTime"
-            stroke="#676c71"
+            height={36}
+            label={{ value: 'Time (s)', position: 'insideBottom', offset: -8, fill: 'var(--chart-label)', fontSize: 10 }}
+            stroke="var(--chart-axis)"
             tickLine={false}
             axisLine={false}
             minTickGap={45}
@@ -38,7 +40,9 @@ export default function ChartPlot({ samples = [], metric = 'altitude', height = 
             tickFormatter={(v) => `${Math.round(v)}s`}
           />
           <YAxis
-            stroke="#676c71"
+            width={45}
+            label={{ value: metric === 'battery' ? 'Battery (%)' : 'Altitude (m)', angle: -90, position: 'insideLeft', offset: 0, fill: 'var(--chart-label)', fontSize: 10 }}
+            stroke="var(--chart-axis)"
             tickLine={false}
             axisLine={false}
             tick={{ fontSize: 10 }}
@@ -46,10 +50,10 @@ export default function ChartPlot({ samples = [], metric = 'altitude', height = 
           />
           <Tooltip
             contentStyle={{
-              background: '#232426',
-              border: '1px solid #44474b',
-              borderRadius: 8,
-              color: '#e1e2e3',
+              background: 'var(--chart-tooltip)',
+              border: '1px solid var(--line)',
+              borderRadius: 'var(--radius)',
+              color: 'var(--chart-text)',
               fontSize: 12,
             }}
             labelFormatter={(v) => `${Number(v).toFixed(1)} simulation seconds`}

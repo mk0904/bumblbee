@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { Crosshair, Minus, Plus, Navigation, MousePointer2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { RotateCcw, ZoomOut, ZoomIn, Navigation, MousePointer2 } from 'lucide-react';
 
 import yardTexture from '../../../shared/worlds/training-yard.jpg?url';
 import { world, worldToMap, mapToWorld } from '../lib/world-map.js';
@@ -16,10 +16,46 @@ export function WorldMap({
   selected = -1,
   onSelect,
   compact = false,
+  zoomKey,
+  toolbarExtras,
+  fill = false,
 }) {
+  const surface = useRef(null);
   const svg = useRef(null),
     dragging = useRef(null);
-  const [zoom, setZoom] = useState(1);
+  const [zoom, updateZoom] = useState(() => {
+    if (!zoomKey) return 1;
+    try {
+      const saved = Number(sessionStorage.getItem(`map-zoom:${zoomKey}`));
+      return saved >= 1 && saved <= 4 ? saved : 1;
+    } catch { return 1; }
+  });
+  const setZoom = (change) => {
+    const next = typeof change === 'function' ? change(zoom) : change;
+    updateZoom(next);
+    if (zoomKey) {
+      try { sessionStorage.setItem(`map-zoom:${zoomKey}`, String(next)); } catch { /* Storage is optional. */ }
+    }
+  };
+  const zoomRef = useRef(zoom);
+  zoomRef.current = zoom;
+  useEffect(() => {
+    const element = surface.current;
+    if (compact || !element) return;
+    const wheel = (event) => {
+      event.preventDefault();
+      const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? element.clientHeight : 1);
+      const next = Math.min(4, Math.max(1, zoomRef.current * Math.exp(-delta * (event.ctrlKey ? 0.012 : 0.002))));
+      zoomRef.current = next;
+      updateZoom(next);
+      if (zoomKey) {
+        try { sessionStorage.setItem(`map-zoom:${zoomKey}`, String(next)); } catch { /* Storage is optional. */ }
+      }
+    };
+    // Non-passive listener consumes wheel/pinch gestures without scrolling the page.
+    element.addEventListener('wheel', wheel, { passive: false });
+    return () => element.removeEventListener('wheel', wheel);
+  }, [compact, zoomKey]);
   const offset = 300 - 300 / zoom,
     size = 600 / zoom;
   const point = (event) => {
@@ -32,12 +68,10 @@ export function WorldMap({
     .map(([x, y]) => `${px(x)},${py(y)}`)
     .join(' ');
   return (
-    <div className={`world-map ${compact ? 'compact' : ''}`}>
-      <div className="map-label">
-        <span className="pulse-dot" /> TRAINING YARD <span>WEBOTS MAP · METRES</span>
-      </div>
+    <div ref={surface} className={`world-map ${compact ? 'compact' : ''}`}>
       <svg
         ref={svg}
+        preserveAspectRatio={fill ? 'xMidYMid slice' : 'xMidYMid meet'}
         viewBox={`${offset} ${offset} ${size} ${size}`}
         aria-label={
           editable
@@ -92,14 +126,16 @@ export function WorldMap({
           />
         )}
         {waypoints.length > 0 && (
-          <polyline
-            points={route}
-            fill="none"
-            stroke="#cdbadc"
-            strokeWidth={1.8 / zoom}
-            strokeDasharray="6 5"
-            opacity=".8"
-          />
+          <g pointerEvents="none" aria-label="Planned mission route">
+            <polyline points={route} fill="none" stroke="#17131ee6" strokeWidth={compact ? 4 : 6} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeLinecap="round" />
+            <polyline points={route} fill="none" stroke="#e0bcff" strokeWidth={compact ? 2 : 3} vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeLinecap="round" />
+            {waypoints.map((w,i) => {
+              const previous = i ? waypoints[i-1] : {x:0,y:0};
+              const x1=px(previous.x),y1=py(previous.y),x2=px(w.x),y2=py(w.y);
+              if(Math.hypot(x2-x1,y2-y1)<8/zoom) return null;
+              return <path key={i} d={`M${-5/zoom} ${-4/zoom}L${2/zoom} 0L${-5/zoom} ${4/zoom}`} transform={`translate(${(x1+x2)/2} ${(y1+y2)/2}) rotate(${Math.atan2(y2-y1,x2-x1)*180/Math.PI})`} fill="none" stroke="#fff0ff" strokeWidth={2} vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />;
+            })}
+          </g>
         )}
         {waypoints.map((w, i) => (
           <g
@@ -126,9 +162,10 @@ export function WorldMap({
           >
             <circle
               r={(selected === i ? 10 : 8) / zoom}
-              fill="#1d1e1f25"
-              stroke="#cdbadc"
-              strokeWidth={(selected === i ? 2 : 1.2) / zoom}
+              fill={selected === i ? '#d8b4f3' : '#272130'}
+              stroke="#f1ddff"
+              vectorEffect="non-scaling-stroke"
+              strokeWidth={selected === i ? 2.5 : 1.5}
             />
             <circle r={1.5 / zoom} fill="#e8dfee" />
             <text
@@ -138,7 +175,7 @@ export function WorldMap({
               stroke="#1d1b1f"
               strokeWidth={3 / zoom}
               paintOrder="stroke"
-              fontSize={10 / zoom}
+              fontSize={(compact ? 14 : 11) / zoom}
               fontWeight="600"
             >
               {String(i + 1).padStart(2, '0')}
@@ -179,22 +216,23 @@ export function WorldMap({
       </div>
       {!compact && (
         <div className="map-tools">
+          {toolbarExtras}
           <button
             title="Zoom in"
             aria-label="Zoom in"
             onClick={() => setZoom((z) => Math.min(4, z + 0.5))}
           >
-            <Plus size={16} />
+            <ZoomIn size={16} />
           </button>
           <button
             title="Zoom out"
             aria-label="Zoom out"
             onClick={() => setZoom((z) => Math.max(1, z - 0.5))}
           >
-            <Minus size={16} />
+            <ZoomOut size={16} />
           </button>
           <button title="Reset view" aria-label="Reset map view" onClick={() => setZoom(1)}>
-            <Crosshair size={16} />
+            <RotateCcw size={16} />
           </button>
         </div>
       )}
@@ -211,7 +249,7 @@ export function WorldMap({
             </>
           )}
         </span>
-        <span>120 × 120 m YARD · FLIGHT AREA ±50 m</span>
+        <span>Flight area ±50 m</span>
       </div>
     </div>
   );

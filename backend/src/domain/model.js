@@ -22,8 +22,8 @@ export function invariant(condition, code, message, status = 409) {
   if (!condition) throw new DomainError(code, message, status);
 }
 export class Waypoint {
-  constructor({ x, y, altitude = 8 }, sequence) {
-    for (const [name, value] of Object.entries({ x, y, altitude })) {
+  constructor({ x, y, altitude = 8, speed = 1 }, sequence) {
+    for (const [name, value] of Object.entries({ x, y, altitude, speed })) {
       invariant(Number.isFinite(value), 'INVALID_WAYPOINT', `${name} must be a finite number`, 422);
     }
     invariant(
@@ -32,7 +32,8 @@ export class Waypoint {
       'Waypoints require X/Y within ±50 m and altitude between 2–15 m',
       422,
     );
-    Object.assign(this, { x, y, altitude, sequence });
+    invariant(speed >= 0.2 && speed <= 2, 'INVALID_SPEED', 'Waypoint speed must be between 0.2 and 2 m/s', 422);
+    Object.assign(this, { x, y, altitude, speed, sequence });
     Object.freeze(this);
   }
 }
@@ -72,9 +73,15 @@ export class Mission {
       'At most 20 waypoints are allowed',
       422,
     );
-    const waypoints = input.waypoints.map((w, i) => ({ ...new Waypoint(w, i) }));
+    const defaultSpeed = input.defaultSpeed ?? 1;
+    const defaultAltitude = input.defaultAltitude ?? 8;
+    invariant(Number.isFinite(defaultSpeed) && defaultSpeed >= 0.2 && defaultSpeed <= 2, 'INVALID_SPEED', 'Default speed must be between 0.2 and 2 m/s', 422);
+    invariant(Number.isFinite(defaultAltitude) && defaultAltitude >= 2 && defaultAltitude <= 15, 'OUT_OF_BOUNDS', 'Default altitude must be between 2 and 15 m', 422);
+    const waypoints = input.waypoints.map((w, i) => ({ ...new Waypoint({ ...w, speed: w.speed ?? defaultSpeed }, i) }));
     Object.assign(this.#data, {
       name,
+      defaultSpeed,
+      defaultAltitude,
       description: (input.description ?? '').trim().slice(0, 500),
       waypoints,
       worldId: WORLD.id,

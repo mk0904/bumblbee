@@ -136,8 +136,8 @@ export class PostgresRepository {
             await client.query('DELETE FROM waypoints WHERE mission_id=$1', [item.id]);
             for (const [sequence, target] of item.waypoints.entries()) {
               await client.query(
-                'INSERT INTO waypoints(mission_id,sequence,x_m,y_m,altitude_m) VALUES($1,$2,$3,$4,$5)',
-                [item.id, sequence, target.x, target.y, target.altitude],
+                'INSERT INTO waypoints(mission_id,sequence,x_m,y_m,altitude_m,speed_mps) VALUES($1,$2,$3,$4,$5,$6)',
+                [item.id, sequence, target.x, target.y, target.altitude, target.speed ?? 1],
               );
             }
           }

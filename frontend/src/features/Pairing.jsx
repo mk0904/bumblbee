@@ -1,7 +1,8 @@
+import { ThemeToggle } from '../components/ThemeToggle.jsx';
 import { useEffect, useState } from 'react';
 import { ArrowRight, ArrowUpRight, Clock3, LoaderCircle, Radio, ShieldCheck } from 'lucide-react';
 import { api, setCsrf } from '../lib/api.js';
-import { WorldMap } from '../components/WorldMap.jsx';
+import droneLaunch from '../assets/drone-launch.png';
 
 export function Pairing({ onLogin }) {
   const [code, setCode] = useState(''),
@@ -33,6 +34,7 @@ export function Pairing({ onLogin }) {
   return (
     <div className="pairing-page">
       <header className="pairing-brand">
+        <ThemeToggle className="pairing-theme-toggle" />
         <span className="pairing-monogram">b.</span>
         <strong>
           bumbl<span>.bee</span>
@@ -53,7 +55,7 @@ export function Pairing({ onLogin }) {
             </p>
           </div>
           <div className="pairing-yard">
-            <WorldMap compact />
+            <img className="pairing-drone-hero" src={droneLaunch} alt="Matte black quadcopter in a dark studio" />
           </div>
         </section>
         <section className="pairing-card">
@@ -61,10 +63,10 @@ export function Pairing({ onLogin }) {
             <Radio size={25} />
           </span>
           <h2>Connect your drone.</h2>
-          <p>Start the Webots bridge and enter the code shown in its terminal.</p>
+          <p>Enter the permanent four-character code for your Webots setup.</p>
           <form onSubmit={pair}>
             <div className="pair-code-label">
-              <label htmlFor="pair-code">Bridge code</label>
+              <label htmlFor="pair-code">Drone code</label>
               <span>{code.length} / 4</span>
             </div>
             <input
@@ -91,7 +93,7 @@ export function Pairing({ onLogin }) {
               required
             />
             <span className="pairing-hint" id="pair-code-hint">
-              <Clock3 size={12} /> Codes expire in 2 minutes and work once.
+              <Clock3 size={12} /> Your drone code stays the same across sessions.
             </span>
             <div className="pairing-error-slot">
               {error && (

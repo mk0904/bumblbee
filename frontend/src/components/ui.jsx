@@ -11,7 +11,7 @@ export function PanelHeading({ number, title, children }) {
   return (
     <div className="panel-heading">
       <h2>
-        <span>{number}</span>
+        {number && <span>{number}</span>}
         {title}
       </h2>
       {children}

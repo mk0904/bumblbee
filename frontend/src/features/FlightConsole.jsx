@@ -1,111 +1,38 @@
-import { useState } from 'react';
+import { Pagination, usePages } from '../components/Pagination.jsx';
 import {
   ArrowDownToLine,
-  ArrowUpRight,
-  ChartNoAxesCombined,
-  Camera,
   ChevronRight,
   Crosshair,
-  Map,
   Pause,
   Play,
   Plus,
   Radio,
-  Route,
-  Signal,
 } from 'lucide-react';
 import { CameraFeed } from '../components/CameraFeed.jsx';
 import { WorldMap } from '../components/WorldMap.jsx';
 import { TelemetryChart } from '../components/TelemetryChart.jsx';
+import droneIdentity from '../../../shared/config/drone.json';
 import { fmt, duration } from '../lib/format.js';
 import './flight-console.css';
 
-function DroneDrawing() {
+function HeadingDial({ sample, stale }) {
+  const heading = sample ? ((90 - sample.yaw * 180 / Math.PI) % 360 + 360) % 360 : null;
   return (
-    <svg
-      className="console-drone"
-      viewBox="0 0 100 70"
-      fill="none"
-      aria-label="Quadcopter illustration"
-    >
-      <g stroke="currentColor" strokeWidth="1.4">
-        <path d="M43 29L20 13M57 29L80 13M43 40L20 56M57 40L80 56" />
-        <ellipse cx="19" cy="12" rx="16" ry="5" />
-        <ellipse cx="81" cy="12" rx="16" ry="5" />
-        <ellipse cx="19" cy="57" rx="16" ry="5" />
-        <ellipse cx="81" cy="57" rx="16" ry="5" />
-        <path d="M42 24L50 19L58 24L61 43L50 50L39 43Z" fill="#323536" />
-        <path d="M45 27H55L57 37H43Z" fill="#8f949b" stroke="none" />
-        <circle cx="50" cy="43" r="3" />
-        <path d="M44 50L42 55M56 50L58 55" />
-      </g>
-      <path d="M8 11H27M72 57H92" stroke="#b69acb" strokeWidth="2" />
-    </svg>
-  );
-}
-function HeadingDial({ sample }) {
-  const angle = sample ? ((((sample.yaw * 180) / Math.PI) % 360) + 360) % 360 : null;
-  return (
-    <section className="console-panel heading-instrument" aria-label="Local heading instrument">
-      <div className="instrument-title">
-        <span>HEADING</span>
-        <span>LOCAL FRAME</span>
-      </div>
-      <div className="heading-value">{angle === null ? '—' : `${Math.round(angle)}°`}</div>
-      <svg
-        viewBox="0 0 240 240"
-        aria-label={
-          angle === null
-            ? 'No heading telemetry'
-            : `Yaw ${Math.round(angle)} degrees from positive X`
-        }
-      >
-        <circle cx="120" cy="120" r="97" fill="#101112" stroke="#353839" />
-        <circle cx="120" cy="120" r="88" fill="none" stroke="#242829" />
-        {Array.from({ length: 60 }, (_, i) => (
-          <line
-            key={i}
-            x1="120"
-            y1="29"
-            x2="120"
-            y2={i % 5 === 0 ? 39 : 34}
-            transform={`rotate(${i * 6} 120 120)`}
-            stroke={i % 5 === 0 ? '#a9aeac' : '#515757'}
-            strokeWidth={i % 5 === 0 ? 1.5 : 1}
-          />
-        ))}
-        <g fill="#9da5a2" fontSize="11" textAnchor="middle" fontFamily="DM Sans, sans-serif">
-          <text x="120" y="58">
-            +Y
-          </text>
-          <text x="183" y="124">
-            +X
-          </text>
-          <text x="120" y="190">
-            −Y
-          </text>
-          <text x="57" y="124">
-            −X
-          </text>
-        </g>
-        <path d="M120 72V168M72 120H168" stroke="#424848" />
-        <circle cx="120" cy="120" r="4" fill="#adb1b6" />
-        {sample && (
-          <g transform={`rotate(${90 - angle} 120 120)`}>
-            <path d="M120 66L128 130L120 123L112 130Z" fill="#f6ece4" />
-            <path d="M120 174L124 129L120 123L116 129Z" fill="#636c69" />
+    <section className={`console-panel heading-instrument operator-compass ${stale ? 'is-stale' : ''}`} aria-label="Local heading instrument">
+      <div className="compass-body">
+        <svg viewBox="0 0 220 220" aria-label={heading === null ? 'No heading telemetry' : `Local heading ${Math.round(heading) % 360} degrees clockwise from positive Y${stale ? ', stale' : ''}`}>
+          <circle cx="110" cy="110" r="92" fill="#121215" stroke="#ffffff18" />
+          <g transform={`rotate(${heading === null ? 0 : -heading} 110 110)`}>
+            {Array.from({length:72},(_,i)=><line key={i} x1="110" y1="22" x2="110" y2={i%6===0?32:27} transform={`rotate(${i*5} 110 110)`} stroke={i%6===0?'#aaa3b5':'#4c4654'} />)}
+            <g fill="#bcb5c6" fontSize="13" textAnchor="middle" fontFamily="DM Sans, sans-serif"><text x="110" y="51">N</text><text x="175" y="115">E</text><text x="110" y="182">S</text><text x="45" y="115">W</text></g>
           </g>
-        )}
-        <path d="M120 17L116 23H124Z" fill="#b69acb" />
-      </svg>
-      <div className="heading-coordinates">
-        <span>
-          X <strong>{fmt(sample?.x)} m</strong>
-        </span>
-        <span>
-          Y <strong>{fmt(sample?.y)} m</strong>
-        </span>
+          <path d="M110 13L104 23H116Z" fill="#cdbadc" />
+          <path d="M110 77L124 131L110 122L96 131Z" fill={sample ? '#e9deef' : '#65616b'} />
+          <circle cx="110" cy="110" r="58" fill="none" stroke="#ffffff07" />
+        </svg>
+        <div className="compass-details"><span>{stale ? 'Stale reading' : sample ? 'Measured heading' : 'Awaiting telemetry'}</span><span>Local north = +Y</span></div>
       </div>
+      <div className="heading-coordinates"><span>X <strong>{fmt(sample?.x)} m</strong></span><span>Y <strong>{fmt(sample?.y)} m</strong></span></div>
     </section>
   );
 }
@@ -113,6 +40,7 @@ function HeadingDial({ sample }) {
 /** Presentation only. Commands and all flight/telemetry state are provided by application services. */
 export function FlightConsole({
   data,
+  selectedMission,
   active,
   sample,
   stale,
@@ -121,13 +49,15 @@ export function FlightConsole({
   commands,
   onCommand,
   onMissions,
+  onStart,
   onNewMission,
   onReconcile,
   onHistory,
 }) {
-  const [view, setView] = useState('map'),
-    [overlay, setOverlay] = useState(true);
-  const route = active?.snapshot.waypoints ?? data.missions[0]?.waypoints ?? [];
+  const route = active?.snapshot.waypoints ?? selectedMission?.waypoints ?? [];
+  const waypointPages = usePages(route, 2);
+  const initial = !active && !sample;
+  const initialValue = initial ? 0 : undefined;
   const command = commands.at(-1);
   const landPending = commands.some(
     (c) => ['PENDING', 'ACCEPTED', 'UNKNOWN'].includes(c.status) && c.action !== 'START_MISSION',
@@ -136,252 +66,84 @@ export function FlightConsole({
   const current = Math.min((sample?.waypoint ?? 0) + 1, route.length);
   return (
     <div className="flight-console">
-      <div className="console-toolbar">
-        <div>
-          <span className="console-section-name">Flight deck</span>
-          <span className="console-divider" />
-          <span className="console-device-label">ATLAS 01</span>
-        </div>
-        <div>
-          <span className={`console-link ${data.drone.connected ? 'connected' : ''}`}>
-            <i />
-            {data.drone.connected ? 'Link established' : 'No agent connected'}
-          </span>
-          <span className="console-source">
-            {data.mode === 'demo' ? 'DEMO ADAPTER' : 'WEBOTS AGENT'}
-          </span>
-        </div>
-      </div>
       <div className="console-layout">
-        <section
-          className={`console-viewport ${view === 'altitude' ? 'chart-view' : ''}`}
-          aria-label="Mission viewport"
-        >
-          {view === 'map' ? (
-            <WorldMap
-              waypoints={overlay ? route : []}
-              sample={sample}
-              trail={overlay ? data.telemetry : []}
-            />
-          ) : view === 'camera' ? (
-            <CameraFeed enabled={data.mode === 'webots'} />
-          ) : (
-            <div className="console-large-chart">
-              <TelemetryChart samples={data.telemetry} height={380} />
-            </div>
-          )}
-          <div className="viewport-top">
-            <span className="viewport-source">
-              <span className={`record-dot ${active && !stale ? 'active' : ''}`} />
-              {active ? (stale ? 'TELEMETRY STALE' : 'MISSION ACTIVE') : 'MISSION PREVIEW'}
-            </span>
-            <div className="viewport-counters">
-              <span>
-                <ClockGlyph />
-                {active ? duration(sample?.simulationTime ?? 0) : '00:00'}
-              </span>
-              <span className="viewport-world">LOCAL XY</span>
-            </div>
-          </div>
-          <div className="viewport-side">
-            <span className="hud-label">ALTITUDE</span>
-            <strong>
-              {fmt(sample?.altitude)}
-              <small>m</small>
-            </strong>
-            <div className="hud-scale">
-              {Array.from({ length: 13 }, (_, i) => (
-                <i key={i} className={i % 3 === 0 ? 'major' : ''} />
-              ))}
-            </div>
-            <span className="hud-label">GROUND SPEED</span>
-            <strong>
-              {fmt(sample?.speed)}
-              <small>m/s</small>
-            </strong>
-            <span className="hud-label hud-third">ROUTE</span>
-            <span className="hud-route">
-              {active
-                ? `${String(current).padStart(2, '0')} / ${String(route.length).padStart(2, '0')}`
-                : route.length
-                  ? `${route.length} POINTS`
-                  : 'NOT ASSIGNED'}
-            </span>
-          </div>
-          {view === 'map' && (
-            <div className="viewport-reticle" aria-hidden="true">
-              <i />
-              <span />
-              <i />
-            </div>
-          )}
-          <div className="viewport-bottom">
-            <div>
-              <span className="viewport-mission-label">
-                {active ? 'EXECUTING MISSION' : 'ROUTE PREVIEW'}
-              </span>
-              <h1>
-                {active?.snapshot.name ?? data.missions[0]?.name ?? 'Ready for your next mission'}
-              </h1>
-              <span>
-                {active
-                  ? `SESSION ${active.id.slice(0, 8).toUpperCase()}`
-                  : route.length
-                    ? `${route.length} waypoints · local training world`
-                    : 'Add a route in the mission editor.'}
-              </span>
-            </div>
-            <button
-              className="viewport-route-button"
-              aria-label={overlay ? 'Hide route overlay' : 'Show route overlay'}
-              title={overlay ? 'Hide route overlay' : 'Show route overlay'}
-              disabled={view !== 'map'}
-              onClick={() => setOverlay((v) => !v)}
-              aria-pressed={overlay}
-            >
-              <Route size={17} />
-            </button>
-          </div>
+        <section className="console-viewport" aria-label="Mission viewport">
+          <WorldMap
+            zoomKey="flight-deck"
+            waypoints={route}
+            sample={sample}
+            trail={active ? data.telemetry : []}
+            toolbarExtras={<>
+              <button className={`map-mission-status ${!data.drone.connected ? 'offline' : stale ? 'stale' : active?.state === 'PAUSED' ? 'paused' : active ? 'running' : 'standby'}`} aria-label={`Mission status: ${!data.drone.connected ? 'Simulator offline' : stale ? 'Telemetry stale' : active?.state?.replaceAll('_', ' ') ?? 'Standby — no active mission'}`}>
+                <i />
+                <span className="map-status-tooltip" role="tooltip">
+                  <strong>{!data.drone.connected ? 'Simulator offline' : stale ? 'Telemetry stale' : active?.state?.replaceAll('_', ' ') ?? 'Standby — no active mission'}</strong>
+                  <span>Green · active mission</span><span>Amber · paused</span><span>Red · stale telemetry or offline</span><span>Grey · standby</span>
+                </span>
+              </button>
+
+            </>}
+          />
+          <div className="map-panel-name">Map</div>
           <div className="viewport-grid" aria-hidden="true" />
         </section>
-        <aside className="console-panel drone-status-panel">
-          <div className="drone-status-title">
-            <div>
-              <h2>Atlas 01</h2>
-              <p>Quadcopter · training configuration</p>
-            </div>
-            <DroneDrawing />
-          </div>
-          <div className="console-state">
-            <span>Flight state</span>
-            <strong>
-              <i className={active ? 'active' : ''} />
-              {state.replaceAll('_', ' ')}
-            </strong>
-          </div>
-          <div className="console-battery">
-            <div>
-              <span>Battery estimate</span>
-              <strong className={sample?.battery <= 20 ? 'battery-low' : ''}>
-                {fmt(sample?.battery, 0)}
-                <small>%</small>
-              </strong>
-            </div>
-            <div className="console-meter">
-              <i style={{ width: `${sample?.battery ?? 0}%` }} />
-            </div>
-            <span>
-              {sample ? `${sample.batterySource ?? 'synthetic'} source` : 'Waiting for telemetry'}
-            </span>
-          </div>
-          <div className="console-altitude">
-            <div>
-              <span>Altitude</span>
-              <strong>
-                {fmt(sample?.altitude)} <small>m</small>
-              </strong>
-            </div>
-            <div className="altitude-track">
-              <span
-                style={{
-                  left: `${Math.min(100, ((sample?.altitude ?? 0) / (data.world.maxAltitude ?? 15)) * 100)}%`,
-                }}
-              />
-            </div>
-            <div className="altitude-limits">
-              <span>0 m</span>
-              <span>LIMIT {data.world.maxAltitude ?? 15} m</span>
+        <section className="console-panel live-camera-panel" aria-label="Camera view">
+          <div className="live-camera-image"><CameraFeed enabled={data.mode === 'webots'} /></div>
+          <div className="camera-panel-name">Camera</div>
+        </section>
+        <div className="navigation-instrument-stack">
+        <HeadingDial sample={sample} stale={stale} />
+        <section className={`console-panel altitude-gauge-panel ${stale ? 'is-stale' : ''}`} aria-label="Altitude range meter">
+          <div className="altitude-gauge-heading"><span>Altitude</span><strong>{fmt(sample?.altitude ?? initialValue)}<small> m</small></strong></div>
+          <div className="altitude-gauge-body">
+            <div className="altitude-ruler" aria-hidden="true">
+              {Array.from({length:16},(_,i) => <div className={`altitude-ruler-tick ${i%5===0 ? 'major' : ''}`} key={i} style={{bottom:`${i/15*100}%`}}><i />{i%5===0 && <span>{Number(((data.world.maxAltitude ?? 15)*i/15).toFixed(1))}</span>}</div>)}
+              <div className="altitude-ruler-pointer" style={{bottom:`${Math.min(100,Math.max(0,(sample?.altitude ?? 0)/(data.world.maxAltitude ?? 15)*100))}%`}}><span>{fmt(sample?.altitude ?? initialValue)}</span><i /></div>
             </div>
           </div>
-          <div className="console-attitude">
-            <div>
-              <span>ROLL</span>
-              <strong>{sample ? fmt((sample.roll * 180) / Math.PI, 0) : '—'}°</strong>
+          <div className="altitude-limit-label">Limit {data.world.maxAltitude ?? 15} m</div>
+          <div className="altitude-gauge-condition">{stale ? 'Telemetry stale' : sample ? 'Above ground' : 'Awaiting telemetry'}</div>
+        </section>
+        </div>
+        <section className="telemetry-history-section" aria-label="UAV telemetry and history">
+          <aside className="console-panel telemetry-tiles-panel" aria-label="Drone telemetry">
+            <div className="uav-section-header"><h2>{data.drone.code ?? droneIdentity.code}</h2><span className={`uav-condition ${stale ? 'stale' : ''}`}><i />{stale ? 'Telemetry stale' : state.replaceAll('_', ' ')}</span></div>
+            <div className="telemetry-tile-grid">
+              {[
+                ['Battery', fmt(sample?.battery ?? initialValue, 0), '%', 'Estimated'],
+                ['Altitude', fmt(sample?.altitude ?? initialValue), 'm'],
+                ['Ground speed', fmt(sample?.speed ?? initialValue), 'm/s'],
+                ['Flight time', active ? (sample ? duration(sample.simulationTime) : '—') : '00:00', ''],
+                ['Waypoint', active ? `${current} / ${route.length}` : `0 / ${route.length}`, ''],
+                ['Heading', sample ? fmt(((90 - sample.yaw * 180 / Math.PI) % 360 + 360) % 360, 1) : initial ? '0.0' : '—', '°'],
+                ['Pitch', sample ? fmt(sample.pitch * 180 / Math.PI, 1) : initial ? '0.0' : '—', '°'],
+                ['Roll', sample ? fmt(sample.roll * 180 / Math.PI, 1) : initial ? '0.0' : '—', '°'],
+              ].map(([label,value,unit,note]) => <div className={`telemetry-tile ${stale ? 'is-stale' : ''}`} key={label}><span>{label}{note && <small>{note}</small>}</span><strong>{value}<small>{unit}</small></strong></div>)}
             </div>
-            <div>
-              <span>PITCH</span>
-              <strong>{sample ? fmt((sample.pitch * 180) / Math.PI, 0) : '—'}°</strong>
-            </div>
-            <div>
-              <span>YAW</span>
-              <strong>{sample ? fmt((sample.yaw * 180) / Math.PI, 0) : '—'}°</strong>
-            </div>
-          </div>
-          <div className="console-signal">
-            <Signal size={15} />
-            <span>
-              {stale ? 'Stale readings' : sample ? 'Telemetry received' : 'Awaiting flight data'}
-            </span>
-            <span>{data.storage === 'postgresql' ? 'PG' : 'LOCAL'}</span>
-          </div>
-        </aside>
+          </aside>
+          <section className="console-panel flight-trend-panel" aria-label="Live altitude trend">
+            <div className="live-panel-title"><span>Altitude history</span></div>
+            <TelemetryChart samples={data.telemetry} height={130} />
+          </section>
+        </section>
         <section className="console-panel console-control-desk">
           <div className="desk-top">
-            <div className="console-view-tabs" role="group" aria-label="Mission viewport display">
-              <button
-                className={view === 'map' ? 'selected' : ''}
-                onClick={() => setView('map')}
-                aria-pressed={view === 'map'}
-              >
-                <Map size={13} /> Mission view
-              </button>
-              <button
-                className={view === 'camera' ? 'selected' : ''}
-                onClick={() => setView('camera')}
-                aria-pressed={view === 'camera'}
-              >
-                <Camera size={13} /> Camera
-              </button>
-              <button
-                className={view === 'altitude' ? 'selected' : ''}
-                onClick={() => setView('altitude')}
-                aria-pressed={view === 'altitude'}
-              >
-                <ChartNoAxesCombined size={13} /> Altitude
-              </button>
-            </div>
+            <span className="desk-title">Mission & controls</span>
             <button className="console-plan-button" onClick={onNewMission}>
               <Plus size={13} /> Plan mission
             </button>
           </div>
           <div className="desk-body">
-            <button
-              className="console-minimap"
-              onClick={onMissions}
-              aria-label="Open mission planner"
-            >
-              <WorldMap waypoints={route} sample={sample} compact />
-              <span>
-                MISSION PLANNER <ArrowUpRight size={11} />
-              </span>
-            </button>
-            <div className="desk-readouts">
-              <div>
-                <span>SPEED</span>
-                <strong>
-                  {fmt(sample?.speed)} <small>m/s</small>
-                </strong>
-              </div>
-              <div>
-                <span>ALTITUDE</span>
-                <strong>
-                  {fmt(sample?.altitude)} <small>m</small>
-                </strong>
-              </div>
-              <div>
-                <span>FLIGHT TIME</span>
-                <strong>{active ? duration(sample?.simulationTime ?? 0) : '—'}</strong>
-              </div>
-              <div>
-                <span>WAYPOINT</span>
-                <strong>{active ? `${current} / ${route.length}` : '—'}</strong>
-              </div>
-              <button className="desk-history" onClick={onHistory}>
-                Flight records <ChevronRight size={12} />
-              </button>
+            <div className="mission-summary">
+              <h2>{active?.snapshot.name ?? selectedMission?.name ?? 'No mission selected'}</h2>
+              <p className="selected-mission-state">{active ? `In flight · waypoint ${current} / ${route.length}` : selectedMission ? `Selected · ${route.length} waypoints` : 'Select a saved plan to inspect its route.'}</p>
+              {route.length > 0 && <div className="selected-waypoints">
+                <table aria-label="Selected mission waypoints"><thead><tr><th>WP</th><th>X (m)</th><th>Y (m)</th><th>Alt (m)</th></tr></thead><tbody>{waypointPages.items.map((point,i)=><tr key={waypointPages.page*2+i}><td>{String(waypointPages.page*2+i+1).padStart(2,'0')}</td><td>{fmt(point.x)}</td><td>{fmt(point.y)}</td><td>{fmt(point.altitude)}</td></tr>)}</tbody></table>
+                <Pagination pages={waypointPages} label="Waypoints" />
+              </div>}
+              <button className="desk-history" onClick={onHistory}>Flight records <ChevronRight size={12} /></button>
             </div>
             <div className="desk-controls">
-              <span className="desk-control-caption">MISSION COMMANDS</span>
               {active ? (
                 <>
                   <div className="console-command-buttons">
@@ -432,12 +194,13 @@ export function FlightConsole({
                 </>
               ) : (
                 <>
+                  {selectedMission && <button className="button primary selected-start" disabled={busy || pending || !data.drone.connected || !route.length} onClick={() => onStart(selectedMission)}><Play size={15} /> Start mission</button>}
                   <button className="console-mission-select" onClick={onMissions}>
                     <Crosshair size={23} />
-                    <span>Select mission</span>
+                    <span>{selectedMission ? 'Change mission' : 'Select mission'}</span>
                     <ChevronRight size={14} />
                   </button>
-                  <p>Ready for a saved waypoint route.</p>
+                  <p>{!data.drone.connected ? 'Connect the simulator to start.' : selectedMission ? 'Ready to start selected plan.' : 'Choose a plan before starting.'}</p>
                 </>
               )}
               <div className="desk-control-note">
@@ -446,27 +209,8 @@ export function FlightConsole({
             </div>
           </div>
         </section>
-        <HeadingDial sample={sample} />
       </div>
-      <div className="console-bottomline">
-        <span>
-          <i />
-          {data.mode === 'demo'
-            ? 'Synthetic telemetry · Webots not connected'
-            : 'External agent · local coordinate frame'}
-        </span>
-        <button onClick={onHistory}>
-          {data.flights.length} recorded flights <ArrowUpRight size={11} />
-        </button>
-      </div>
+
     </div>
-  );
-}
-function ClockGlyph() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-      <circle cx="6" cy="6" r="4.3" stroke="currentColor" />
-      <path d="M6 3V6L8 7" stroke="currentColor" />
-    </svg>
   );
 }

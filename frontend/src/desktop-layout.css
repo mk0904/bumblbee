@@ -676,7 +676,7 @@ body,
 .report-chart-tabs button {
   background: none;
   border: 1px solid transparent;
-  border-radius: 5px;
+  border-radius: var(--radius);
   padding: 7px 11px;
   color: #978c9f;
   font-size: 10px;
@@ -1138,7 +1138,7 @@ body,
   align-items: center;
   gap: 7px;
   padding: 7px 9px;
-  border-radius: 4px;
+  border-radius: var(--radius);
   background: #151416dc;
   color: #9da1a9;
   font: 7px var(--mono);
@@ -1154,7 +1154,7 @@ body,
   font: 7px var(--mono);
   background: #151416cc;
   padding: 5px 8px;
-  border-radius: 3px;
+  border-radius: var(--radius);
 }
 .console-viewport:has(.camera-feed) .viewport-grid {
   display: none;
@@ -1184,10 +1184,827 @@ body,
 .app-shell .sidebar .nav-item,
 .app-shell:has(.flight-console) .sidebar .nav-item {
   height:43px; min-height:43px; padding:0; margin:0;
-  justify-content:center; border-radius:10px;
+  justify-content:center; border-radius: var(--radius);
 }
 .app-shell .sidebar .nav-item:nth-child(4),
 .app-shell:has(.flight-console) .sidebar .nav-item:nth-child(4) { margin-top:19px; }
 .app-shell .sidebar .nav-item:nth-child(4)::before { top:-14px; left:10px; right:10px; border-color:#ffffff0b; }
 .app-shell .sidebar .nav-count { display:none; }
 .app-shell .sidebar .operator-profile { justify-content:center; padding:18px 0 0; border-top:1px solid #ffffff0b; }
+
+/* Flight operations: map, onboard image and large instruments stay visible together. */
+.console-layout {
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(205px, .78fr);
+  grid-template-rows: minmax(0, 1.9fr) minmax(160px, 1fr);
+  gap: 14px;
+}
+.console-layout > .console-viewport { grid-column:1; grid-row:1; border-radius: var(--radius); }
+.console-layout > .live-camera-panel { grid-column:2; grid-row:1; }
+.console-layout > .drone-status-panel { grid-column:3; grid-row:1; }
+.console-layout > .console-control-desk { grid-column:1; grid-row:2; }
+.console-layout > .flight-trend-panel { grid-column:2; grid-row:2; }
+.console-layout > .heading-instrument { grid-column:3; grid-row:2; }
+.console-viewport .viewport-bottom { padding:15px 17px; background:linear-gradient(transparent,#101013ee); }
+.console-viewport .viewport-bottom h1 { font-size:17px; margin:5px 0 0; }
+.console-viewport .viewport-bottom > div > span:last-child,
+.console-viewport .viewport-mission-label,
+.console-viewport .viewport-reticle,
+.console-viewport .viewport-grid { display:none; }
+.console-viewport .viewport-top { padding:12px; }
+.console-viewport .viewport-counters { display:none; }
+.console-viewport .map-tools { right:12px; bottom:70px; }
+.live-camera-panel { display:flex; flex-direction:column; padding:0; border-radius: var(--radius); }
+.live-panel-title { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px 16px; flex-shrink:0; font-size:12px; color:#dedbe3; }
+.live-panel-title > span:first-child { display:flex; align-items:center; gap:8px; }
+.live-panel-title > span:last-child { font:8px var(--mono); color:#8f8998; letter-spacing:.6px; }
+.live-camera-image { flex:1; min-height:0; position:relative; overflow:hidden; background:#0c0c0f; }
+.live-camera-image .camera-feed { position:absolute; inset:0; }
+.live-camera-image .camera-feed img { object-fit:contain; }
+.live-camera-image .camera-feed-state { padding:20px; text-align:center; }
+.live-camera-image .camera-feed-state strong { font-size:12px; }
+.live-camera-image .camera-feed-state > span { font-size:10px; }
+.live-camera-image .camera-feed-spec { display:none; }
+.live-camera-image .camera-feed-badge { top:10px; right:10px; font-size:8px; }
+.camera-attitude-readouts { display:grid; grid-template-columns:repeat(3,1fr); padding:18px 10px; flex-shrink:0; }
+.camera-attitude-readouts > div { text-align:center; border-right:1px solid #ffffff10; }
+.camera-attitude-readouts > div:last-child { border:0; }
+.camera-attitude-readouts span { display:block; font-size:8px; color:#95919e; margin-bottom:8px; letter-spacing:.7px; }
+.camera-attitude-readouts strong { font:500 23px 'DM Sans',sans-serif; letter-spacing:-.8px; }
+.camera-attitude-readouts small { font-size:13px; color:#aaa5b2; }
+.drone-status-panel { border-radius: var(--radius); padding:16px 16px 0; }
+.drone-status-title p { font-size:9px; }
+.console-state { padding:12px 0; font-size:10px; }
+.console-state strong { font-size:9px; }
+.console-battery { padding:12px 0; }
+.console-battery > div > strong { font-size:34px; line-height:1; }
+.console-battery > div > strong small { font-size:15px; }
+.primary-flight-readouts { display:grid; grid-template-columns:1fr 1fr; gap:17px 10px; padding:15px 0; }
+.primary-flight-readouts span { display:block; color:#a09aa8; font-size:10px; margin-bottom:6px; }
+.primary-flight-readouts strong { display:block; font:500 clamp(24px,2.8vw,40px) 'DM Sans',sans-serif; letter-spacing:-1.4px; line-height:1.1; white-space:nowrap; font-variant-numeric:tabular-nums; }
+.primary-flight-readouts strong small { font-size:12px; letter-spacing:0; color:#a29baa; margin-left:4px; }
+.primary-flight-readouts > div:nth-child(n+3) strong { font-size:24px; }
+.console-signal { margin-top:auto; }
+.console-control-desk { padding:14px 16px; border-radius: var(--radius); }
+.desk-top { margin-bottom:12px; }
+.desk-title { font-size:12px; font-weight:500; }
+.desk-body { grid-template-columns:minmax(0,1fr) minmax(120px,.85fr); gap:14px; }
+.mission-summary { min-width:0; }
+.mission-summary > span { font:8px var(--mono); color:#95909e; }
+.mission-summary h2 { font-size:17px; font-weight:500; letter-spacing:-.5px; margin:9px 0 6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mission-summary p { font-size:9px; color:#9c96a4; margin:0; }
+.mission-progress { height:4px; background:#ffffff10; border-radius: var(--radius); margin:13px 0; overflow:hidden; }
+.mission-progress i { display:block; height:100%; background:var(--accent); }
+.mission-summary .desk-history { font-size:10px; padding:0; border:0; width:100%; }
+.desk-controls { border-left:1px solid #ffffff10; padding-left:14px; gap:6px; }
+.console-round-button { height:52px; width:52px; }
+.console-command-status { font-size:7px; }
+.desk-control-note { display:none; }
+.console-mission-select { padding:10px 8px; }
+.flight-trend-panel { padding:0 10px 8px; border-radius: var(--radius); display:flex; flex-direction:column; }
+.flight-trend-panel .live-panel-title { padding:14px 7px 8px; }
+.flight-trend-panel > div:last-child { min-height:0; flex:1; overflow:hidden; }
+.heading-instrument { border-radius: var(--radius); }
+.heading-instrument > svg { max-height:140px; width:140px; }
+.heading-value { font-size:21px; }
+@media(max-height:760px) {
+ .console-layout { grid-template-rows:minmax(0,1.8fr) minmax(153px,1fr);gap:10px; }
+ .drone-status-panel { padding:11px 12px 0; }
+ .drone-status-title { padding-bottom:7px; }
+ .console-state,.console-battery { padding:8px 0; }
+ .console-battery > div > strong { font-size:28px; }
+ .primary-flight-readouts { gap:10px 7px; padding:10px 0; }
+ .primary-flight-readouts strong { font-size:29px; }
+ .primary-flight-readouts > div:nth-child(n+3) strong { font-size:20px; }
+ .camera-attitude-readouts { padding:12px 6px; }
+ .camera-attitude-readouts strong { font-size:20px; }
+ .heading-instrument > svg { max-height:100px;width:100px; }
+ .heading-value { font-size:16px;margin-top:3px; }
+ .console-control-desk { padding:11px 12px; }
+ .mission-summary h2 { font-size:14px; }
+ .console-round-button { height:44px;width:44px; }
+}
+@media(max-height:700px) {
+ .drone-status-title p { display:none; }
+ .drone-status-title { padding-bottom:5px; }
+ .console-drone { height:27px; }
+ .console-state,.console-battery { padding:7px 0; }
+ .console-meter { margin:6px 0; }
+ .primary-flight-readouts { gap:9px 7px;padding:10px 0; }
+ .console-signal { padding:5px 0;font-size:7px; }
+}
+
+/* Operational overview: one title, square map, minimal chrome. */
+.app-shell:has(.flight-console) .topbar,
+.app-shell:has(.flight-console) .workspace-footer { display:none; }
+.app-shell:has(.flight-console) .content { max-height:100dvh; padding:16px 20px 18px; }
+.flight-deck-title { margin:0; font-size:21px; font-weight:500; letter-spacing:-.6px; }
+.console-toolbar { min-height:30px; margin-bottom:12px; }
+.console-layout {
+ grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(205px,.78fr);
+ grid-template-rows:minmax(0,1.9fr) minmax(160px,1fr);
+}
+.console-layout > .console-viewport {
+ width:min(100%, calc((100dvh - 76px - 14px) * .655 - 12px));
+ height:auto; aspect-ratio:1; align-self:start; justify-self:center;
+}
+.console-layout > .console-panel,
+.console-layout > .console-viewport { border-radius: var(--radius); }
+.console-viewport > .world-map,
+.console-viewport > .world-map > svg { width:100%; height:100%; }
+.console-layout .console-round-button { border-radius: var(--radius); }
+.console-layout .console-mission-select { border-radius: var(--radius); }
+.console-viewport .map-label,
+.console-viewport .map-footer { display:none; }
+@media(max-height:760px) {
+ .app-shell:has(.flight-console) .content { padding:12px 17px 14px; }
+ .console-toolbar { margin-bottom:9px;min-height:27px; }
+ .console-layout > .console-viewport { width:min(100%, calc((100dvh - 65px - 10px) * .643 - 8px)); }
+}
+
+/* Single map tool tray, including accessible status legend. */
+.console-viewport .map-tools {
+ position:absolute; right:14px; bottom:14px; top:auto; left:auto;
+ display:flex; flex-direction:row; align-items:center; gap:0;
+ background:#202125f2; border:1px solid #ffffff24; border-radius: var(--radius);
+ padding:4px; box-shadow:0 4px 18px #0004; z-index:8;
+ overflow:visible;
+}
+.console-viewport .map-tools > button {
+ position:relative; display:grid; place-items:center; width:32px; height:32px;
+ padding:0; border:0; border-radius: var(--radius); background:transparent; color:#d5d2da;
+}
+.console-viewport .map-tools > button:hover,
+.console-viewport .map-tools > button:focus-visible { background:#ffffff12; color:#fff; }
+.console-viewport .map-tools > button:first-child { border-right:1px solid #ffffff18; border-radius: var(--radius); margin-right:4px; }
+.map-panel-name { position:absolute; bottom:22px; left:18px; z-index:5; font-size:16px; font-weight:500; color:#f2f0f5; text-shadow:0 1px 8px #000a; pointer-events:none; }
+.map-mission-status > i { width:8px;height:8px;border-radius: var(--radius);background:#95999f; }
+.map-mission-status.running > i { background:#63c49a; }
+.map-mission-status.paused > i { background:#e6b76e; }
+.map-mission-status.stale > i,.map-mission-status.offline > i { background:#e58080; }
+.map-status-tooltip {
+ position:absolute; right:-4px; bottom:calc(100% + 12px); width:215px; padding:13px;
+ background:#1a1b20; border:1px solid #ffffff24; border-radius: var(--radius); box-shadow:0 8px 25px #0005;
+ text-align:left; color:#b9b5c0; font-size:10px; line-height:1.8;
+ opacity:0; visibility:hidden; pointer-events:none;
+}
+.map-status-tooltip strong { display:block;color:#f0edf4;font-size:11px;font-weight:500;margin-bottom:7px; }
+.map-status-tooltip > span { display:block; }
+.map-mission-status:hover .map-status-tooltip,
+.map-mission-status:focus-visible .map-status-tooltip { opacity:1;visibility:visible; }
+.live-panel-title > span:only-child { font:500 12px 'DM Sans',sans-serif; color:#dedbe3; letter-spacing:0; }
+/* Operator instruments prioritize values and measured-condition clarity. */
+.primary-flight-readouts { gap:20px 12px; }
+.primary-flight-readouts strong { font-size:clamp(30px,3.1vw,46px);font-weight:500; }
+.primary-flight-readouts > div:nth-child(n+3) strong { font-size:27px; }
+.primary-flight-readouts span { font-size:11px; }
+.source-label { font-size:9px;color:#99919f;font-weight:400; }
+.console-state strong { font-size:10px; }
+.console-signal { font-size:9px;line-height:1.5; }
+.operator-compass { padding:13px 16px 11px;display:flex;flex-direction:column; }
+.compass-header { display:flex;align-items:center;justify-content:space-between;gap:8px; }
+.compass-header > span { color:#b9b2c2;font-size:12px; }
+.compass-header > strong { font-size:28px;letter-spacing:-1px;font-weight:500;color:#e9e0ef;font-variant-numeric:tabular-nums; }
+.compass-body { display:flex;align-items:center;justify-content:center;gap:12px;flex:1;min-height:0; }
+.compass-body > svg { height:100%;max-height:150px;max-width:150px;min-width:75px; }
+.compass-details { display:flex;flex-direction:column;gap:8px;max-width:105px;font-size:9px;line-height:1.5;color:#a69cad; }
+.compass-details > span:last-child { font-size:8px;color:#807888; }
+.operator-compass .heading-coordinates { margin-top:5px;font-size:10px;gap:16px;justify-content:center; }
+.operator-compass.is-stale .compass-body { opacity:.5; }
+@media(max-height:760px) {
+ .primary-flight-readouts {gap:12px 8px;}
+ .primary-flight-readouts strong {font-size:32px;}
+ .primary-flight-readouts > div:nth-child(n+3) strong {font-size:22px;}
+ .compass-header > strong {font-size:23px;}
+ .compass-body > svg {max-height:105px;max-width:105px;}
+ .operator-compass {padding:10px 12px;}
+}
+.console-signal > span:last-child { border:0; padding:0; margin-left:0; font-size:9px; color:inherit; }
+.operator-compass .compass-header { width:100%;justify-content:space-between; }
+.live-camera-panel { position:relative; }
+.live-camera-image { width:100%;height:100%; }
+.camera-panel-name { position:absolute;left:18px;bottom:22px;z-index:5;font-size:16px;font-weight:500;color:#f2f0f5;text-shadow:0 1px 8px #000a;pointer-events:none; }
+.live-camera-image::after { content:'';position:absolute;inset:auto 0 0;height:65px;background:linear-gradient(transparent,#101013a0);pointer-events:none; }
+.parameter-attitude { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid #ffffff10;padding:13px 0; }
+.parameter-attitude span { display:block;font-size:9px;color:#a69dac;margin-bottom:7px; }
+.parameter-attitude strong { font-size:21px;font-weight:500;letter-spacing:-.5px;font-variant-numeric:tabular-nums; }
+.parameter-attitude small { font-size:12px;color:#a69dac; }
+@media(max-height:760px) {
+ .primary-flight-readouts {gap:10px 8px;padding:9px 0;}
+ .primary-flight-readouts strong {font-size:29px;}
+ .parameter-attitude {padding:10px 0;}
+ .parameter-attitude strong {font-size:18px;}
+}
+/* Keep the camera landscape, with history beneath it beside the square map. */
+.console-layout > .live-camera-panel { aspect-ratio:16/9; width:100%;height:auto;align-self:start; }
+.console-layout > .flight-trend-panel { grid-column:2;grid-row:1;align-self:end;height:44%; }
+.console-layout > .heading-instrument { grid-column:2 / 4;grid-row:2; }
+.live-camera-image .camera-feed-badge.live { display:none; }
+
+/* Primary row is visual only: square map and unobstructed camera. Instruments below. */
+.console-layout {
+ grid-template-columns:minmax(0,1fr) minmax(0,.85fr) minmax(220px,.85fr);
+ grid-template-rows:minmax(0,1.75fr) minmax(205px,1fr);
+}
+.console-layout > .console-viewport { grid-column:1;grid-row:1;width:min(100%, calc((100dvh - 90px) * .635 - 10px)); }
+.console-layout > .live-camera-panel { grid-column:2 / 4;grid-row:1;align-self:stretch;width:100%;height:100%;aspect-ratio:auto; }
+.console-layout > .drone-status-panel { grid-column:2;grid-row:2; }
+.console-layout > .flight-trend-panel { grid-column:3;grid-row:2;height:100%;align-self:stretch; }
+.console-layout > .console-control-desk { grid-column:1;grid-row:2; }
+.console-layout > .heading-instrument { display:none; }
+.console-layout > .drone-status-panel { padding:12px 15px;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;align-content:start; }
+.drone-status-panel .drone-status-title { grid-column:1 / 3;padding-bottom:7px; }
+.drone-status-panel .drone-status-title p,
+.drone-status-panel .console-drone,
+.drone-status-panel .console-battery > span,
+.drone-status-panel .console-signal { display:none; }
+.drone-status-panel .console-state { grid-column:1 / 3;padding:0 0 7px; }
+.drone-status-panel .console-battery { grid-column:1 / 3;padding:0;border:0; }
+.drone-status-panel .console-battery > div > strong { font-size:22px; }
+.drone-status-panel .console-meter { margin:5px 0 0;height:3px; }
+.drone-status-panel .primary-flight-readouts { grid-column:1 / 3;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:4px 0; }
+.drone-status-panel .primary-flight-readouts span { font-size:9px; }
+.drone-status-panel .primary-flight-readouts strong,
+.drone-status-panel .primary-flight-readouts > div:nth-child(n+3) strong { font-size:23px;letter-spacing:-.7px; }
+.drone-status-panel .primary-flight-readouts small { font-size:9px; }
+.drone-status-panel .parameter-attitude { grid-column:1 / 3;padding:7px 0 0; }
+.drone-status-panel .parameter-attitude span { margin-bottom:4px; }
+.drone-status-panel .parameter-attitude strong { font-size:18px; }
+@media(max-height:760px) {
+ .console-layout {grid-template-rows:minmax(0,1.65fr) minmax(220px,1fr);gap:10px;}
+ .console-layout > .console-viewport {width:min(100%, calc((100dvh - 70px) * .62 - 10px));}
+ .console-layout > .drone-status-panel {padding:10px 12px;gap:6px 12px;}
+ .drone-status-panel .primary-flight-readouts strong,
+ .drone-status-panel .primary-flight-readouts > div:nth-child(n+3) strong {font-size:20px;}
+}
+.console-layout > .flight-trend-panel { height:55%;align-self:start; }
+.console-layout > .heading-instrument { display:flex;grid-column:3;grid-row:2;align-self:end;height:42%;padding:7px 12px; }
+
+.console-layout .operator-compass .compass-header > strong {font-size:24px;}
+.console-layout .operator-compass .heading-coordinates {margin-top:3px;}
+
+/* Aligned visual row with a dedicated vertical altitude instrument. */
+.console-layout {
+ grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(150px,.45fr);
+ grid-template-rows:minmax(0,1.75fr) minmax(220px,1fr);
+ gap:14px;
+}
+.console-layout > .console-viewport {grid-column:1;grid-row:1;width:100%;height:100%;aspect-ratio:auto;}
+.console-layout {grid-template-columns:minmax(0,1fr) minmax(0,1.05fr) minmax(150px,.42fr);}
+.console-layout > .live-camera-panel {grid-column:2;grid-row:1;}
+.console-layout > .altitude-gauge-panel {grid-column:3;grid-row:1;}
+.console-layout > .console-control-desk {grid-column:1;grid-row:2;}
+.console-layout > .drone-status-panel {grid-column:2;grid-row:2;}
+.console-layout > .flight-trend-panel {grid-column:3;grid-row:2;height:100%;align-self:stretch;}
+.console-layout > .heading-instrument {display:none;}
+.altitude-gauge-panel {display:flex;flex-direction:column;padding:18px 16px;min-height:0;}
+.altitude-gauge-heading > span {display:block;font-size:12px;color:#bcb4c6;}
+.altitude-gauge-heading > strong {display:block;font-size:34px;font-weight:500;letter-spacing:-1px;margin-top:12px;font-variant-numeric:tabular-nums;}
+.altitude-gauge-heading small {font-size:13px;color:#9f95ac;}
+.altitude-gauge-body {display:flex;justify-content:center;gap:15px;flex:1;min-height:0;margin:23px 0 18px;}
+.altitude-gauge-labels {display:flex;flex-direction:column;justify-content:space-between;text-align:right;font-size:10px;color:#98909f;padding:0;}
+.altitude-gauge-track {position:relative;width:29px;border:1px solid #ffffff12;background:repeating-linear-gradient(to top,transparent 0,transparent calc(5% - 1px),#ffffff12 calc(5% - 1px),#ffffff12 5%),#131216;border-radius: var(--radius);}
+.altitude-gauge-fill {position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,#6c597c,#cbb6dd);border-radius: var(--radius);opacity:.8;}
+.altitude-gauge-track > i {position:absolute;left:-6px;right:-6px;height:2px;background:#eee3f7;transform:translateY(1px);}
+.altitude-gauge-condition {font-size:9px;color:#a39aaa;line-height:1.4;}
+.altitude-gauge-panel.is-stale .altitude-gauge-body {opacity:.45;}
+@media(max-height:760px) {
+ .console-layout {gap:12px;grid-template-rows:minmax(0,1.6fr) minmax(220px,1fr);}
+ .altitude-gauge-panel {padding:13px 12px;}
+ .altitude-gauge-heading > strong {font-size:29px;margin-top:8px;}
+ .altitude-gauge-body {margin:16px 0 12px;}
+}
+.console-layout {
+ container-type:size;
+ grid-template-columns:min(40cqw, calc((100cqh - 14px) * .636)) minmax(0,1fr) 155px;
+ grid-template-rows:min(40cqw, calc((100cqh - 14px) * .636)) minmax(0,1fr);
+}
+@media(max-height:760px) {
+ .console-layout {grid-template-columns:min(38cqw,calc((100cqh - 12px) * .60)) minmax(0,1fr) 140px;grid-template-rows:min(38cqw,calc((100cqh - 12px) * .60)) minmax(0,1fr);}
+}
+.flight-console {container-type:size;}
+.console-layout {container-type:normal;}
+/* Selected route inspection and obvious planning action. */
+.console-control-desk .desk-top {gap:10px;margin-bottom:10px;}
+.console-control-desk .console-plan-button {display:flex;align-items:center;justify-content:center;gap:7px;background:#cdbadc;color:#211a27;border:1px solid #dfcfe9;border-radius: var(--radius);padding:9px 12px;font-size:11px;font-weight:600;white-space:nowrap;}
+.console-control-desk .console-plan-button:hover {background:#e0d0ec;}
+.console-control-desk .desk-body {grid-template-columns:minmax(0,1fr) 125px;gap:12px;}
+.console-control-desk .mission-summary h2 {white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:15px;line-height:1.25;margin:0 0 6px;}
+.selected-mission-state {font-size:10px!important;color:#cbb9db!important;}
+.selected-waypoints {margin:8px 0;}
+.selected-waypoints table {width:100%;border-collapse:collapse;text-align:right;font-size:10px;font-variant-numeric:tabular-nums;}
+.selected-waypoints th {color:#99909f;font-weight:400;font-size:8px;padding:0 3px 5px;}
+.selected-waypoints td {padding:4px 3px;border-top:1px solid #ffffff0a;color:#ddd5e5;}
+.selected-waypoints th:first-child,.selected-waypoints td:first-child {text-align:left;}
+.selected-waypoints .pagination {padding:3px 0;margin:0;min-height:22px;font-size:8px;}
+.selected-waypoints .pagination .icon-button {width:22px;height:22px;}
+.console-control-desk .desk-controls {padding-left:12px;justify-content:flex-start;}
+.console-control-desk .selected-start {width:100%;min-height:34px;font-size:10px;padding:8px;gap:5px;border-radius: var(--radius);}
+.console-control-desk .console-mission-select {width:100%;min-height:34px;padding:8px;gap:6px;}
+.console-control-desk .console-mission-select > svg:first-child {width:16px;height:16px;}
+.console-control-desk .desk-controls > p {font-size:9px;line-height:1.5;}
+.console-control-desk .desk-history {margin-top:6px;font-size:9px;}
+/* Notifications overlay the workspace; they never consume layout height. */
+.workspace-notifications {position:fixed;right:22px;top:18px;z-index:100;display:flex;flex-direction:column;gap:9px;width:min(390px,calc(100vw - 110px));pointer-events:none;}
+.workspace-notifications .toast {position:relative;inset:auto;transform:none;width:100%;max-width:none;margin:0;pointer-events:auto;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius: var(--radius);font-size:11px;line-height:1.5;box-shadow:0 8px 30px #0005;}
+.workspace-notifications .toast > svg {flex-shrink:0;}
+.workspace-notifications .toast > span {flex:1;}
+.workspace-notifications .toast .icon-button {flex-shrink:0;width:25px;height:25px;}
+
+/* Telemetry card: identity, battery, primary instruments, measured attitude. */
+.console-layout > .telemetry-card {
+ display:flex;flex-direction:column;gap:10px;padding:14px 16px;
+ background:linear-gradient(135deg,#222427,#1a1c1f);border-color:#ffffff12;
+}
+.telemetry-card .drone-status-title {
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ padding:0;border:0;min-height:25px;flex-shrink:0;
+}
+.telemetry-identity {display:flex;align-items:baseline;gap:9px;}
+.telemetry-card .telemetry-identity h2 {font-size:19px;letter-spacing:-.6px;margin:0;line-height:1;}
+.telemetry-identity > span {font-size:10px;color:#92969e;}
+.telemetry-card .console-state {border:0;padding:0;font-size:9px;}
+.telemetry-card .console-state strong {display:flex;align-items:center;gap:6px;font:500 9px var(--mono);letter-spacing:.4px;background:#ffffff05;border:1px solid #ffffff10;border-radius: var(--radius);padding:5px 7px;}
+.telemetry-card .console-battery {padding:8px 10px;background:#11131670;border:1px solid #ffffff08;border-radius: var(--radius);flex-shrink:0;}
+.telemetry-card .console-battery > div:first-child {font-size:10px;}
+.telemetry-card .console-battery > div > strong {font:500 20px var(--mono);}
+.telemetry-card .source-label {font-size:8px;color:#8e929b;margin-left:4px;}
+.telemetry-card .console-battery > div > strong small {font-size:11px;}
+.telemetry-card .console-meter {height:3px;margin:7px 0 0;background:#ffffff10;}
+.telemetry-card .primary-flight-readouts {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding:3px 0;flex:1;align-items:center;}
+.telemetry-card .primary-flight-readouts > div {min-width:0;padding:0 9px;border-right:1px solid #ffffff0d;gap:7px;}
+.telemetry-card .primary-flight-readouts > div:first-child {padding-left:0;}
+.telemetry-card .primary-flight-readouts > div:last-child {border:0;padding-right:0;}
+.telemetry-card .primary-flight-readouts span {font-size:9px;color:#a1a5ae;white-space:nowrap;}
+.telemetry-card .primary-flight-readouts strong,
+.telemetry-card .primary-flight-readouts > div:nth-child(n+3) strong {font:500 clamp(17px,1.6vw,25px) var(--mono);letter-spacing:-1px;white-space:nowrap;}
+.telemetry-card .primary-flight-readouts small {font:400 9px 'DM Sans',sans-serif;letter-spacing:0;color:#90959e;margin-left:4px;}
+.telemetry-card .parameter-attitude {display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:9px 0 0;border-top:1px solid #ffffff10;flex-shrink:0;}
+.telemetry-card .parameter-attitude > div {display:flex;align-items:baseline;justify-content:space-between;gap:4px;}
+.telemetry-card .parameter-attitude span {font-size:9px;margin:0;color:#9297a1;}
+.telemetry-card .parameter-attitude strong {font:400 14px var(--mono);letter-spacing:-.5px;}
+.telemetry-card .parameter-attitude small {font-size:10px;color:#9297a1;}
+.telemetry-card .console-signal {display:flex;align-items:center;gap:5px;border:0;padding:0;color:#9297a1;font-size:9px;flex-shrink:0;}
+.telemetry-card .console-signal svg {width:11px;height:11px;}
+.telemetry-card.is-stale .primary-flight-readouts strong,
+.telemetry-card.is-stale .parameter-attitude strong {color:#b7a98f;}
+@media(max-height:760px) {
+ .console-layout > .telemetry-card {padding:11px 12px;gap:7px;}
+ .telemetry-card .console-battery {padding:6px 9px;}
+ .telemetry-card .parameter-attitude {padding-top:7px;}
+}
+
+/* UAV parameters and trend share a true 3:2 split independent of the visual row. */
+.telemetry-history-section {grid-column:2 / 4;grid-row:2;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;min-height:0;min-width:0;overflow:hidden;}
+.telemetry-history-section > .telemetry-tiles-panel {display:flex;flex-direction:column;padding:13px 14px;gap:10px;min-width:0;min-height:0;}
+.uav-section-header {display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;}
+.uav-section-header h2 {font-size:18px;font-weight:600;letter-spacing:-.6px;margin:0;}
+.uav-condition {display:flex;align-items:center;gap:6px;font-size:9px;color:#aaa3b0;text-transform:capitalize;}
+.uav-condition i {width:6px;height:6px;background:#8e9396;border-radius: var(--radius);}
+.uav-condition.stale i {background:#dda46b;}
+.telemetry-tile-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:8px;flex:1;min-height:0;}
+.telemetry-tile {display:flex;flex-direction:column;justify-content:space-between;min-width:0;min-height:0;padding:10px;background:#ffffff04;border:1px solid #ffffff0a;border-radius: var(--radius);}
+.telemetry-tile > span {font-size:10px;color:#b1a8bb;line-height:1.3;}
+.telemetry-tile > span > small {display:block;font-size:8px;color:#82778e;margin-top:2px;}
+.telemetry-tile > strong {font-size:clamp(19px,2vw,29px);font-weight:500;letter-spacing:-.8px;white-space:nowrap;line-height:1.2;font-variant-numeric:tabular-nums;}
+.telemetry-tile > strong > small {font-size:10px;color:#a499b1;letter-spacing:0;margin-left:3px;}
+.telemetry-tile.is-stale > strong {color:#c1b2a0;}
+.telemetry-history-section > .flight-trend-panel {height:100%;min-width:0;min-height:0;}
+@media(max-height:760px) {
+ .telemetry-history-section {gap:12px;}
+ .telemetry-history-section > .telemetry-tiles-panel {padding:10px;gap:8px;}
+ .telemetry-tile {padding:8px 6px;}
+ .telemetry-tile > strong {font-size:21px;}
+ .telemetry-tile > span {font-size:9px;}
+}
+.telemetry-tile > span {font-size:12px;font-weight:600;color:#c9c1d2;}
+.telemetry-tile > span > small {font-size:9px;font-weight:400;}
+.empty-telemetry-graph {width:100%;min-height:0;flex:1;}
+.empty-telemetry-graph svg {width:100%;height:100%;display:block;}
+@media(max-height:760px) {.telemetry-tile > span {font-size:11px;font-weight:600;}}
+/* Shared corner token and a precise altitude ruler instead of a filled range bar. */
+.altitude-gauge-body {position:relative;flex:1;min-height:0;display:block;margin:24px 0;}
+.altitude-ruler {position:relative;height:100%;width:100%;}
+.altitude-ruler::before {content:'';position:absolute;top:0;bottom:0;left:52%;width:1px;background:#ffffff22;}
+.altitude-ruler-tick {position:absolute;left:52%;right:0;display:flex;align-items:center;gap:9px;transform:translateY(50%);}
+.altitude-ruler-tick > i {width:10px;height:1px;background:#77717e;flex-shrink:0;}
+.altitude-ruler-tick.major > i {width:18px;background:#c1b7cb;}
+.altitude-ruler-tick > span {font-size:10px;font-variant-numeric:tabular-nums;color:#aaa0b4;}
+.altitude-ruler-pointer {position:absolute;right:48%;display:flex;align-items:center;transform:translateY(50%);}
+.altitude-ruler-pointer > span {padding:5px 7px;background:#d0bfdc;color:#221b2a;border-radius:var(--radius);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;}
+.altitude-ruler-pointer > i {width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:6px solid #d0bfdc;}
+.altitude-limit-label {font-size:10px;color:#bbb1c6;margin-bottom:7px;}
+/* Stacked navigation instruments, with a conventional circular compass. */
+.app-shell .sidebar,.app-shell:has(.flight-console) .sidebar {width:60px;padding-left:8px;padding-right:8px;}
+.app-shell .workspace-main,.app-shell:has(.flight-console) .workspace-main {margin-left:60px;}
+.navigation-instrument-stack {grid-column:3;grid-row:1;display:grid;grid-template-rows:minmax(130px,.85fr) minmax(0,1.15fr);gap:14px;min-width:0;min-height:0;}
+.navigation-instrument-stack > .operator-compass {display:flex;height:100%;padding:10px;gap:4px;}
+.navigation-instrument-stack .compass-header {gap:5px;}
+.navigation-instrument-stack .compass-header > span {font-size:10px;}
+.navigation-instrument-stack .compass-header > strong {font-size:18px;}
+.navigation-instrument-stack .compass-body {display:flex;flex:1;min-height:0;}
+.navigation-instrument-stack .compass-body > svg {display:block;width:100%;height:100%;max-height:125px;max-width:125px;min-width:0;}
+.navigation-instrument-stack .compass-details,.navigation-instrument-stack .heading-coordinates {display:none;}
+.navigation-instrument-stack > .altitude-gauge-panel {height:100%;padding:10px 12px;}
+.navigation-instrument-stack .altitude-gauge-heading > strong {font-size:25px;margin-top:5px;}
+.navigation-instrument-stack .altitude-gauge-body {margin:14px 0;}
+.navigation-instrument-stack .altitude-gauge-condition,.navigation-instrument-stack .altitude-limit-label {font-size:8px;}
+@media(max-height:760px) {.navigation-instrument-stack {gap:12px;grid-template-rows:minmax(115px,.85fr) minmax(0,1.15fr);} .navigation-instrument-stack .compass-body > svg {max-height:90px;} .navigation-instrument-stack .altitude-gauge-heading > strong {font-size:22px;}}
+
+/* Compass is a freestanding instrument, never a hidden card body. */
+.console-layout .navigation-instrument-stack > .operator-compass {
+ display:flex;align-items:center;justify-content:center;background:transparent;border:0;box-shadow:none;padding:0;overflow:visible;
+}
+.console-layout .navigation-instrument-stack .operator-compass .compass-body {
+ display:flex;width:100%;height:100%;flex:1;align-items:center;justify-content:center;min-height:0;
+}
+.console-layout .navigation-instrument-stack .operator-compass .compass-body > svg {
+ display:block;width:100%;height:100%;max-width:155px;max-height:155px;aspect-ratio:1;flex-shrink:0;
+}
+@media(max-height:760px) {.console-layout .navigation-instrument-stack .operator-compass .compass-body > svg {max-width:115px;max-height:115px;}}
+
+/* Slim navigation rail leaves more room for the onboard image. */
+.console-layout {grid-template-columns:min(40cqw, calc((100cqh - 14px) * .636)) minmax(0,1fr) 120px;}
+.navigation-instrument-stack {grid-template-rows:116px minmax(0,1fr);gap:10px;}
+.console-layout .navigation-instrument-stack > .operator-compass {padding:0;}
+.console-layout .navigation-instrument-stack .operator-compass .compass-body > svg {max-width:116px;max-height:116px;}
+.navigation-instrument-stack > .altitude-gauge-panel {padding:12px 10px;}
+.navigation-instrument-stack .altitude-gauge-heading > strong {font-size:25px;}
+.navigation-instrument-stack .altitude-gauge-body {margin:18px 0;}
+.navigation-instrument-stack .altitude-ruler::before,
+.navigation-instrument-stack .altitude-ruler-tick {left:50%;}
+.navigation-instrument-stack .altitude-ruler-pointer {right:50%;}
+.navigation-instrument-stack .altitude-ruler-tick {gap:5px;}
+.navigation-instrument-stack .altitude-ruler-tick.major > i {width:14px;}
+@media(max-height:760px) {
+ .console-layout {grid-template-columns:min(38cqw,calc((100cqh - 12px) * .60)) minmax(0,1fr) 108px;}
+ .navigation-instrument-stack {grid-template-rows:98px minmax(0,1fr);gap:8px;}
+ .console-layout .navigation-instrument-stack .operator-compass .compass-body > svg {max-width:98px;max-height:98px;}
+ .navigation-instrument-stack > .altitude-gauge-panel {padding:10px 8px;}
+ .navigation-instrument-stack .altitude-gauge-body {margin:14px 0;}
+}
+/* Saved route library and editor share one bounded planning workspace. */
+.mission-planning-workspace {display:grid;grid-template-columns:minmax(250px,.7fr) minmax(0,1.65fr);gap:16px;flex:1;min-height:0;overflow:hidden;}
+.saved-plans-panel {display:flex;flex-direction:column;padding:16px;min-height:0;overflow:hidden;}
+.saved-plans-header {display:flex;flex-direction:column;gap:12px;margin-bottom:15px;flex-shrink:0;}
+.saved-plans-header h1 {font-size:20px;font-weight:500;letter-spacing:-.6px;margin:0;}
+.saved-plans-header .search-box {width:100%;}
+.saved-plans-panel .mission-collection {flex:1;min-height:0;display:flex;flex-direction:column;}
+.saved-plans-panel .mission-cards {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:12px;flex:1;min-height:0;}
+.saved-plans-panel .mission-card {position:relative;padding:0;background:transparent;border:0;min-height:0;overflow:hidden;}
+.mission-tile-select {display:flex;flex-direction:column;width:100%;height:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer;}
+.saved-plans-panel .mission-mini-map {width:100%;height:auto;flex:1;min-height:0;overflow:hidden;border:1px solid #ffffff10;border-radius:var(--radius);margin:0;}
+.saved-plans-panel .mission-mini-map .world-map,.saved-plans-panel .mission-mini-map .world-map > svg {width:100%;height:100%;min-height:0;}
+.saved-plans-panel .mission-card h3 {font-size:12px;line-height:1.4;font-weight:500;margin:8px 0 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;}
+.mission-tile-actions {position:absolute;top:7px;right:7px;display:flex;gap:4px;}
+.mission-tile-actions .icon-button {background:#1c1b22e8;border:1px solid #ffffff20;width:27px;height:27px;color:#ded5e8;}
+.mission-tile-select:hover .mission-mini-map {border-color:#cdbadc;}
+.mission-planning-workspace .planner-page {height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.mission-planning-workspace .planner-page > .page-title {margin-bottom:12px;flex-shrink:0;}
+.mission-planning-workspace .planner-page .page-title h1 {font-size:21px;margin:6px 0;}
+.mission-planning-workspace .planner-page .page-title p {font-size:10px;max-width:350px;}
+.mission-planning-workspace .planner-layout {grid-template-columns:minmax(0,1fr) 245px;gap:12px;flex:1;min-height:0;}
+.mission-planning-workspace .planner-sidebar {width:auto;min-height:0;}
+.mission-planning-workspace .planner-map .world-map {min-height:0;flex:1;}
+.mission-planning-workspace .planner-map .world-map > svg {min-height:0;height:100%;}
+@media(max-width:1250px) {.mission-planning-workspace {grid-template-columns:245px minmax(0,1fr);gap:12px;} .mission-planning-workspace .planner-layout {grid-template-columns:minmax(0,1fr) 220px;gap:10px;} .saved-plans-panel {padding:12px;}}
+/* Planner uses the same uncluttered map chrome as flight operations. */
+.app-shell:has(.mission-planning-workspace) .topbar {display:none;}
+.app-shell:has(.mission-planning-workspace) .content {max-height:100dvh;padding:16px 20px;}
+.mission-planning-workspace .planner-map {position:relative;}
+.mission-planning-workspace .planner-map .map-footer,
+.mission-planning-workspace .planner-map .map-compass {display:none;}
+.mission-planning-workspace .planner-map .map-tools {position:absolute;top:auto;left:auto;right:14px;bottom:14px;display:flex;flex-direction:row;align-items:center;gap:0;padding:4px;border:1px solid #ffffff24;border-radius:var(--radius);background:#202125f2;box-shadow:0 4px 18px #0004;z-index:8;}
+.mission-planning-workspace .planner-map .map-tools > button {width:32px;height:32px;padding:0;border:0;border-radius:var(--radius);display:grid;place-items:center;background:transparent;color:#d5d2da;}
+.mission-planning-workspace .planner-map .map-tools > button:hover {background:#ffffff12;color:white;}
+.mission-planning-workspace .planner-page > .page-title {justify-content:flex-end;margin-bottom:10px;min-height:36px;}
+
+/* Compact square editor with a matching-width details strip underneath. */
+.mission-planning-workspace .planner-page {container-type:size;}
+.mission-planning-workspace .planner-layout {
+ display:grid;grid-template-columns:minmax(0,1fr) 220px;
+ grid-template-rows:minmax(0,1fr);align-items:start;
+}
+.mission-planning-workspace .planner-sidebar {display:contents;}
+.mission-planning-workspace .planner-map {
+ grid-column:1;grid-row:1;width:min(100%,calc(100cqh - 190px));aspect-ratio:1;height:auto;min-height:0;justify-self:center;
+}
+.mission-planning-workspace .planner-map .world-map {width:100%;height:100%;flex:none;}
+.mission-planning-workspace .planner-map .world-map > svg {width:100%;height:100%;}
+.mission-planning-workspace .mission-details {
+ grid-column:1;grid-row:1;align-self:start;justify-self:center;
+ width:min(100%,calc(100cqh - 190px));margin-top:calc(min(100cqw - 232px,100cqh - 190px) + 12px);
+ display:grid;grid-template-columns:minmax(0,1fr) 105px;gap:10px 12px;padding:14px;
+ height:auto;min-height:0;
+}
+.mission-planning-workspace .mission-details > .panel-heading {display:none;}
+.mission-planning-workspace .mission-details > label {padding:0;margin:0;font-size:10px;gap:6px;display:flex;flex-direction:column;color:#b8adbf;}
+.mission-planning-workspace .mission-details > label:first-of-type {grid-column:1;grid-row:1;}
+.mission-planning-workspace .mission-details > label:nth-of-type(2) {grid-column:1 / 3;grid-row:2;}
+.mission-planning-workspace .mission-details > label:nth-of-type(3) {grid-column:2;grid-row:1;position:relative;}
+.mission-planning-workspace .mission-details label .muted {position:absolute;right:0;top:0;font-size:8px;}
+.mission-planning-workspace .mission-details input {height:34px;min-height:34px;padding:7px 10px;font-size:12px;background:#ffffff04;border:1px solid #ffffff14;}
+.mission-planning-workspace .waypoint-panel {grid-column:2;grid-row:1;margin:0;height:auto;min-height:0;align-self:start;}
+@media(max-width:1250px) {.mission-planning-workspace .planner-layout {grid-template-columns:minmax(0,1fr) 195px;} .mission-planning-workspace .mission-details {margin-top:calc(min(100cqw - 205px,100cqh - 190px) + 12px);}}
+.mission-planning-workspace .planner-layout {grid-template-rows:auto auto;align-content:start;row-gap:12px;}
+.mission-planning-workspace .mission-details {grid-row:2;margin-top:0;}
+.mission-planning-workspace .waypoint-panel {grid-row:1 / 3;}
+/* 4:6 library/editor split, complete square route previews and compact defaults. */
+.mission-planning-workspace {grid-template-columns:minmax(0,4fr) minmax(0,6fr);}
+.saved-plans-panel .mission-cards {grid-template-rows:repeat(2,minmax(0,1fr));align-items:start;}
+.saved-plans-panel .mission-card {height:100%;display:flex;flex-direction:column;}
+.saved-plans-panel .mission-tile-select {justify-content:flex-start;}
+.saved-plans-panel .mission-mini-map {aspect-ratio:1;flex:none;width:min(100%,calc((100dvh - 185px) / 2 - 35px));height:auto;align-self:center;}
+.saved-plans-panel .mission-mini-map .world-map > svg {aspect-ratio:1;object-fit:contain;}
+.saved-plans-panel .mission-card h3 {text-align:center;}
+.mission-tile-actions {right:calc(max(0px,(100% - ((100dvh - 185px) / 2 - 35px)) / 2) + 7px);}
+.mission-planning-workspace .planner-layout {grid-template-columns:minmax(0,1fr) 190px;}
+.mission-planning-workspace .mission-details {grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+.mission-planning-workspace .mission-details > label:first-of-type {grid-column:1 / 3;grid-row:1;}
+.mission-planning-workspace .mission-details > label:nth-of-type(2) {grid-column:1;grid-row:2;position:relative;}
+.mission-planning-workspace .mission-details > label:nth-of-type(3) {grid-column:2;grid-row:2;position:relative;}
+.mission-planning-workspace .mission-details input {background:#ffffff06;border:1px solid #ffffff1a;border-radius:var(--radius);font-size:12px;}
+.mission-planning-workspace .mission-details input:focus {border-color:#bba5cc;outline:none;box-shadow:none;}
+.mission-planning-workspace .mission-details input:disabled {font-size:10px;color:#8d8298;opacity:1;}
+@media(max-width:1250px) {.mission-planning-workspace {grid-template-columns:minmax(0,4fr) minmax(0,6fr);} .mission-planning-workspace .planner-layout {grid-template-columns:minmax(0,1fr) 175px;}}
+/* Planner alignment: one shared map width and gap, no centred floating panels. */
+.mission-planning-workspace .planner-page {--planner-gap:14px;}
+.mission-planning-workspace .planner-layout {
+ grid-template-columns:minmax(0,1fr) 190px;
+ grid-template-rows:auto auto;
+ gap:var(--planner-gap);
+ align-items:start;
+ align-content:start;
+}
+.mission-planning-workspace .planner-map,
+.mission-planning-workspace .mission-details {
+ width:100%;max-width:none;justify-self:stretch;margin:0;
+}
+.mission-planning-workspace .planner-map {height:auto;aspect-ratio:1;}
+.mission-planning-workspace .mission-details {align-self:start;padding:14px;}
+.mission-planning-workspace .planner-page > .page-title {display:grid;grid-template-columns:minmax(0,1fr) 190px;column-gap:var(--planner-gap);margin:0 0 var(--planner-gap);width:100%;}
+.mission-planning-workspace .planner-page > .page-title > button {grid-column:2;width:100%;justify-content:center;}
+.mission-planning-workspace .waypoint-panel {width:100%;margin:0;align-self:start;}
+@media(max-width:1250px) {
+ .mission-planning-workspace .planner-page {--planner-gap:12px;}
+ .mission-planning-workspace .planner-layout,
+ .mission-planning-workspace .planner-page > .page-title {grid-template-columns:minmax(0,1fr) 175px;}
+}
+/* Explicit bounded rows prevent the map from covering mission inputs. */
+.mission-planning-workspace .planner-layout {
+ --editor-map-size:min(calc(100cqw - 204px),calc(100cqh - 205px));
+ grid-template-columns:var(--editor-map-size) minmax(165px,1fr);
+ grid-template-rows:var(--editor-map-size) 145px;
+ gap:14px;align-content:start;justify-content:start;min-height:0;
+}
+.mission-planning-workspace .planner-map {
+ grid-column:1;grid-row:1;width:100%;height:100%;aspect-ratio:1;min-height:0;max-height:100%;margin:0;overflow:hidden;
+}
+.mission-planning-workspace .planner-map .world-map {position:absolute;inset:0;width:100%;height:100%;min-height:0;max-height:100%;}
+.mission-planning-workspace .planner-map .world-map > svg {height:100%;min-height:0;max-height:100%;}
+.mission-planning-workspace .mission-details {
+ grid-column:1;grid-row:2;position:relative;inset:auto;transform:none;margin:0;width:100%;height:145px;min-height:0;
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto;gap:10px 12px;padding:12px;align-self:stretch;background:var(--panel);
+}
+.mission-planning-workspace .mission-details > label {position:relative;min-height:0;}
+.mission-planning-workspace .mission-details > label:first-of-type {display:flex;grid-column:1 / 3;grid-row:1;}
+.mission-planning-workspace .mission-details > label:nth-of-type(2) {grid-column:1;grid-row:2;}
+.mission-planning-workspace .mission-details > label:nth-of-type(3) {grid-column:2;grid-row:2;}
+.mission-planning-workspace .waypoint-panel {grid-column:2;grid-row:1 / 3;}
+@media(max-width:1250px) {
+ .mission-planning-workspace .planner-layout {--editor-map-size:min(calc(100cqw - 187px),calc(100cqh - 205px));grid-template-columns:var(--editor-map-size) minmax(155px,1fr);gap:12px;}
+}
+.mission-planning-workspace .planner-page > .page-title .planner-heading {grid-column:1;grid-row:1;margin:0;font-size:22px;font-weight:500;letter-spacing:-.7px;align-self:center;}
+.mission-planning-workspace .planner-page > .page-title > button {grid-row:1;}
+.mission-planning-workspace .waypoint-list {display:flex;flex-direction:column;gap:10px;list-style:none;padding:12px;margin:0;overflow:hidden;}
+.mission-planning-workspace .waypoint-editor {margin:0;padding:10px;background:#ffffff03;border:1px solid #ffffff10;border-radius:var(--radius);}
+.mission-planning-workspace .waypoint-editor-top {display:flex;align-items:center;gap:4px;margin-bottom:9px;}
+.mission-planning-workspace .waypoint-editor-top strong {font-size:10px;flex:1;}
+.mission-planning-workspace .waypoint-index {display:none;}
+.mission-planning-workspace .waypoint-editor-top .icon-button {width:22px;height:22px;}
+.mission-planning-workspace .coordinate-inputs {gap:6px;}
+.mission-planning-workspace .coordinate-inputs input {height:30px;min-height:30px;padding:5px;font-size:11px;}
+.mission-planning-workspace .waypoint-panel .panel-heading {padding:12px;}
+.mission-planning-workspace .waypoint-navigation {margin:0;padding:7px 12px;font-size:10px;}
+.mission-planning-workspace .waypoint-panel .panel-heading {padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.mission-planning-workspace .waypoint-panel .panel-heading h2 {margin:0;padding:0;text-align:left;font-size:14px;font-weight:600;letter-spacing:-.2px;}
+.mission-planning-workspace .waypoint-empty {padding:16px;font-size:11px;line-height:1.6;}
+/* User-approved exception: waypoint contents scroll; the workspace stays fixed. */
+.mission-planning-workspace .waypoint-panel {height:100%;max-height:100%;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+.mission-planning-workspace .waypoint-panel .panel-heading {flex-shrink:0;}
+.mission-planning-workspace .waypoint-list {flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#766781 transparent;}
+.mission-planning-workspace .waypoint-list::-webkit-scrollbar {display:block;width:5px;}
+.mission-planning-workspace .waypoint-list::-webkit-scrollbar-thumb {background:#766781;border-radius:var(--radius);}
+.mission-planning-workspace .waypoint-editor {flex-shrink:0;}
+.mission-planning-workspace .waypoint-list {position:relative;}
+/* Reserve the full form height before sizing the square map. */
+.mission-planning-workspace .planner-layout {
+ --editor-form-height:158px;
+ --editor-map-size:min(calc(100cqw - 204px),calc(100cqh - 238px));
+ grid-template-rows:var(--editor-map-size) var(--editor-form-height);
+}
+.mission-planning-workspace .mission-details {
+ height:var(--editor-form-height);min-height:var(--editor-form-height);padding:16px;
+ grid-template-rows:minmax(0,1fr) minmax(0,1fr);row-gap:12px;column-gap:12px;
+ border:1px solid #ffffff14;overflow:visible;
+}
+.mission-planning-workspace .mission-details > label {font-size:11px;font-weight:500;line-height:1.3;gap:7px;justify-content:flex-start;}
+.mission-planning-workspace .mission-details input {height:34px;min-height:34px;width:100%;margin:0;line-height:1.3;box-sizing:border-box;}
+.mission-planning-workspace .mission-details label .muted {font-size:9px;line-height:1.3;font-weight:400;}
+@media(max-width:1250px) {.mission-planning-workspace .planner-layout {--editor-map-size:min(calc(100cqw - 187px),calc(100cqh - 238px));}}
+/* Library and editor share their full viewport height and bottom baseline. */
+.mission-planning-workspace {align-items:stretch;--tile-gap:8px;}
+.saved-plans-panel {height:100%;min-height:0;}
+.saved-plans-panel .mission-collection {overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#766781 transparent;}
+.saved-plans-panel .mission-collection::-webkit-scrollbar {display:block;width:5px;}
+.saved-plans-panel .mission-collection::-webkit-scrollbar-thumb {background:#766781;border-radius:var(--radius);}
+.saved-plans-panel .mission-cards {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-rows:max-content;gap:var(--tile-gap);align-content:start;flex:none;overflow:visible;}
+.saved-plans-panel .mission-card {height:auto;min-height:0;overflow:visible;}
+.saved-plans-panel .mission-mini-map {width:100%;aspect-ratio:1;height:auto;}
+.saved-plans-panel .mission-tile-actions {right:7px;}
+.saved-plans-panel .mission-card h3 {margin:7px 0 8px;}
+.mission-planning-workspace .planner-page {height:100%;}
+.mission-planning-workspace .planner-layout {
+ --editor-map-size:min(calc(100cqw - 204px),calc(100cqh - 220px));
+ grid-template-columns:var(--editor-map-size) minmax(165px,1fr);
+ grid-template-rows:minmax(0,1fr) 158px;
+ height:100%;min-height:0;align-content:stretch;
+}
+.mission-planning-workspace .planner-map {width:var(--editor-map-size);height:var(--editor-map-size);max-height:100%;align-self:start;}
+.mission-planning-workspace .mission-details {align-self:end;height:158px;}
+.mission-planning-workspace .waypoint-panel {height:100%;min-height:0;align-self:stretch;}
+@media(max-width:1250px) {.mission-planning-workspace .planner-layout {--editor-map-size:min(calc(100cqw - 187px),calc(100cqh - 220px));grid-template-columns:var(--editor-map-size) minmax(155px,1fr);}}
+/* Map-preview actions form one tray; destructive actions are consistently red. */
+.mission-tile-actions {display:flex;align-items:center;gap:0;padding:4px;background:#202125f2;border:1px solid #ffffff24;border-radius:var(--radius);box-shadow:0 4px 14px #0004;}
+.mission-tile-actions .icon-button {width:28px;height:28px;background:transparent;border:0;box-shadow:none;}
+.mission-tile-actions .icon-button + .icon-button {border-left:1px solid #ffffff14;}
+.mission-tile-actions .icon-button:hover {background:#ffffff0d;}
+.app-shell button.danger-action,
+.app-shell button:has(svg.lucide-trash-2),
+.app-shell button:has(svg.lucide-trash) {color:#ef8585;}
+.app-shell button.danger-action:hover,
+.app-shell button:has(svg.lucide-trash-2):hover,
+.app-shell button:has(svg.lucide-trash):hover {color:#ffaaaa;background:#d652521a;}
+/* Scroll stays available without visible scrollbar chrome. */
+html body * {scrollbar-width:none!important;}
+html body *::-webkit-scrollbar {display:none!important;width:0!important;height:0!important;}
+/* Compact waypoint rows: selected identity, quiet tools and aligned metre inputs. */
+.mission-planning-workspace .waypoint-list {padding:10px;gap:8px;}
+.mission-planning-workspace .waypoint-editor {padding:9px;border:1px solid #ffffff0a;background:#ffffff04;box-shadow:none;}
+.mission-planning-workspace .waypoint-editor.selected {border-color:#bba0d066;background:#cdbadc08;}
+.mission-planning-workspace .waypoint-editor-top {margin-bottom:8px;gap:2px;}
+.waypoint-focus {display:flex;align-items:center;gap:7px;flex:1;padding:0;border:0;background:transparent;color:#c9c0d2;font-size:10px;text-align:left;cursor:pointer;}
+.waypoint-focus > span {display:grid;place-items:center;width:22px;height:22px;background:#cdbadc12;color:#d3bfe3;border-radius:var(--radius);font-size:10px;font-variant-numeric:tabular-nums;}
+.mission-planning-workspace .waypoint-editor-top .icon-button {width:22px;height:22px;background:transparent;}
+.mission-planning-workspace .coordinate-inputs {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;}
+.mission-planning-workspace .coordinate-inputs label {display:flex;flex-direction:column;gap:4px;min-width:0;}
+.mission-planning-workspace .coordinate-inputs label > span {display:flex;justify-content:space-between;font-size:9px;color:#a79aaf;}
+.mission-planning-workspace .coordinate-inputs label small {font-size:8px;color:#766e7d;}
+.mission-planning-workspace .coordinate-inputs input {width:100%;height:29px;min-height:29px;background:#12111466;border:1px solid #ffffff10;border-radius:var(--radius);font-size:11px;padding:5px 6px;font-variant-numeric:tabular-nums;}
+.mission-planning-workspace .coordinate-inputs input:focus {outline:none;border-color:#b79bc8;box-shadow:none;}
+/* Two-line waypoint editor with one consistent action tray. */
+.mission-planning-workspace .waypoint-editor {padding:9px;}
+.waypoint-action-tray {display:flex;align-items:center;gap:0;padding:2px;background:#14121880;border:1px solid #ffffff12;border-radius:var(--radius);}
+.waypoint-action-tray .icon-button {border:0;border-radius:var(--radius);}
+.mission-planning-workspace .coordinate-inputs {grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px;}
+.mission-planning-workspace .coordinate-inputs label {display:grid;grid-template-columns:22px minmax(0,1fr) 20px;align-items:center;gap:4px;}
+.mission-planning-workspace .coordinate-inputs label > span {display:contents;}
+.mission-planning-workspace .coordinate-inputs label small {grid-column:3;grid-row:1;text-align:right;}
+.mission-planning-workspace .coordinate-inputs label input {grid-column:2;grid-row:1;height:27px;min-height:27px;padding:4px;font-size:10px;}
+/* Compact waypoint typography matches the section's sans-serif heading. */
+.mission-planning-workspace .waypoint-list {gap:7px;padding:10px;}
+.mission-planning-workspace .waypoint-editor {padding:8px 9px;}
+.mission-planning-workspace .waypoint-editor-top {margin-bottom:6px;}
+.mission-planning-workspace .waypoint-focus {font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;gap:7px;}
+.mission-planning-workspace .waypoint-focus > span {width:21px;height:21px;font-family:inherit;font-size:10px;}
+.mission-planning-workspace .waypoint-action-tray {padding:2px;}
+.mission-planning-workspace .waypoint-action-tray .icon-button {width:21px;height:21px;}
+.mission-planning-workspace .coordinate-inputs {gap:5px 9px;}
+.mission-planning-workspace .coordinate-inputs label {grid-template-columns:30px minmax(0,1fr) 19px;gap:4px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:0;}
+.mission-planning-workspace .coordinate-inputs label > span {font-family:inherit;font-size:10px;font-weight:500;letter-spacing:0;}
+.mission-planning-workspace .coordinate-inputs label small {font-family:inherit;font-size:9px;font-weight:400;letter-spacing:0;}
+.mission-planning-workspace .coordinate-inputs label input {height:25px;min-height:25px;padding:4px 6px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:0;}
+.app-shell .mission-planning-workspace .waypoint-action-tray button.danger-action,
+.app-shell .mission-planning-workspace .waypoint-action-tray button.danger-action > svg {color:#ef7474;stroke:#ef7474;}
+.app-shell .mission-planning-workspace .waypoint-action-tray button.danger-action:hover {color:#ff9c9c;background:#d652521a;}
+/* Single compact parameter row with inset border labels. */
+.mission-planning-workspace .coordinate-inputs {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding-top:5px;}
+.mission-planning-workspace .coordinate-inputs label {position:relative;display:block;min-width:0;height:33px;}
+.mission-planning-workspace .coordinate-inputs label > span {position:absolute;left:6px;top:-6px;display:block;z-index:1;padding:0 3px;background:#202124;color:#f3f0f6;font-family:'DM Sans',sans-serif;font-size:9px;font-weight:500;line-height:12px;letter-spacing:0;}
+.mission-planning-workspace .coordinate-inputs label > span small {display:none;}
+.mission-planning-workspace .coordinate-inputs label input {display:block;width:100%;height:33px;min-height:33px;margin:0;padding:8px 4px 4px;font-size:11px;text-align:center;color:#f4f0f8;background:transparent;border:1px solid #ffffff20;}
+.mission-planning-workspace .coordinate-inputs label::after {content:'m';position:absolute;right:4px;bottom:3px;font:7px 'DM Sans',sans-serif;color:#bcb5c4;pointer-events:none;}
+.mission-planning-workspace .coordinate-inputs label:last-child::after {content:'m/s';}
+.mission-planning-workspace .waypoint-focus {color:#f3f0f6;}
+/* Clean numeric fields without browser stepper chrome. */
+input[type='number'] {-moz-appearance:textfield;appearance:textfield;}
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {-webkit-appearance:none;margin:0;}
+.mission-planning-workspace .coordinate-inputs label input {font-size:11px;padding:8px 21px 4px 5px;text-align:center;}
+.mission-planning-workspace .coordinate-inputs label::after {font-size:11px;line-height:1;right:5px;bottom:8px;color:#d8d1df;}
+.mission-planning-workspace .coordinate-inputs label:last-child input {padding-right:25px;}
+/* Mission defaults share waypoint border labels and unit alignment. */
+.mission-planning-workspace .mission-details > label {position:relative;display:block;padding-top:0;height:40px;align-self:center;}
+.mission-planning-workspace .mission-details .field-border-label {position:absolute;left:9px;top:-7px;z-index:1;padding:0 4px;background:var(--panel);color:#f3f0f6;font:500 11px 'DM Sans',sans-serif;line-height:14px;}
+.mission-planning-workspace .mission-details input {height:40px;min-height:40px;padding:11px 12px 7px;background:transparent;border:1px solid #ffffff20;font-family:'DM Sans',sans-serif;font-size:12px;color:#f4f0f8;}
+.mission-planning-workspace .mission-details input[type='number'] {padding-right:38px;}
+.mission-planning-workspace .mission-details .field-unit {position:absolute;right:10px;bottom:11px;font:400 12px 'DM Sans',sans-serif;color:#d8d1df;pointer-events:none;}
+.mission-planning-workspace .planner-page > .page-title > .planner-save-icon {width:38px;height:38px;min-height:38px;justify-self:end;padding:0;display:grid;place-items:center;}
+/* Flight records: clear hierarchy, readable outcomes and one report action. */
+.app-shell:has(.flight-history-screen) .topbar {display:none;}
+.app-shell:has(.flight-history-screen) .content {max-height:100dvh;padding:22px 24px;}
+.flight-history-screen {display:flex;flex-direction:column;gap:18px;flex:1;min-height:0;}
+.history-heading {display:flex;align-items:center;justify-content:space-between;gap:15px;flex-shrink:0;}
+.history-heading h1 {font-size:25px;font-weight:500;letter-spacing:-.8px;margin:0 0 7px;}
+.history-heading > div > span {font-size:12px;color:#aaa0b5;}
+.history-summary-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;flex-shrink:0;}
+.history-summary-grid > div {border:1px solid #ffffff10;background:var(--panel);border-radius:var(--radius);padding:17px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px;}
+.history-summary-grid span {font-size:12px;color:#b3a9bf;}
+.history-summary-grid strong {font-size:29px;font-weight:500;font-variant-numeric:tabular-nums;}
+.history-records {flex:1;min-height:0;overflow:hidden;}
+.history-record-list {height:100%;overflow-y:auto;overscroll-behavior:contain;padding:6px 18px;}
+.history-record {display:grid;grid-template-columns:40px minmax(0,1fr) 100px 125px 115px;gap:18px;align-items:center;padding:20px 0;border-bottom:1px solid #ffffff0b;}
+.history-record:last-child {border-bottom:0;}
+.history-record-icon {display:grid;place-items:center;width:38px;height:38px;background:#cdbadc0c;color:#ba9fce;border-radius:var(--radius);}
+.history-record-name {min-width:0;}
+.history-record-name h2 {font-size:15px;font-weight:500;letter-spacing:-.2px;margin:0 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.history-record-name > span {font-size:11px;color:#9c92a8;}
+.history-duration > span {display:block;font-size:10px;color:#9c92a8;margin-bottom:5px;}
+.history-duration > strong {font-size:16px;font-weight:500;font-variant-numeric:tabular-nums;}
+.history-report-button {display:flex;align-items:center;justify-content:center;gap:7px;padding:10px;border:1px solid #ffffff18;border-radius:var(--radius);background:transparent;color:#e5d9ed;font-size:11px;cursor:pointer;}
+.history-report-button:hover {background:#ffffff08;border-color:#b59aca;}
+.history-record .badge {font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:0;justify-self:start;}
+@media(max-width:1200px) {.history-record {grid-template-columns:34px minmax(0,1fr) 85px 110px 105px;gap:12px;}}
+/* Report uses the same readable records and tile system as flight history. */
+.app-shell .report-modal {width:min(1050px,calc(100vw - 90px));height:min(720px,calc(100dvh - 48px));max-height:calc(100dvh - 48px);padding:24px;gap:16px;background:var(--panel);border:1px solid #ffffff16;border-radius:var(--radius);}
+.app-shell .report-top {gap:16px;align-items:flex-start;}
+.app-shell .report-top h2 {font-size:24px;line-height:1.2;font-weight:500;letter-spacing:-.7px;margin:0 0 8px;max-width:800px;}
+.app-shell .report-top p {font-size:12px;color:#a99eb4;margin:0;}
+.report-demo-tag {display:inline-block;margin-bottom:8px;font-size:11px;color:#cbb8d9;}
+.app-shell .report-status {display:flex;align-items:center;gap:12px;padding:0;min-height:30px;}
+.app-shell .report-status > span {font-size:11px;line-height:1.5;color:#b7aabd;}
+.app-shell .report-status .text-button {margin-left:auto;font-family:'DM Sans',sans-serif;font-size:11px;gap:7px;white-space:nowrap;}
+.app-shell .report-status .badge {font-family:'DM Sans',sans-serif;letter-spacing:0;font-size:10px;}
+.app-shell .report-metrics {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+.app-shell .report-metrics > div {padding:15px;background:#ffffff04;border:1px solid #ffffff0c;border-radius:var(--radius);}
+.app-shell .report-metrics > div > span {font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:0;color:#bfb3ca;}
+.app-shell .report-metrics strong {font-size:28px;font-weight:500;letter-spacing:-.8px;margin-top:10px;}
+.app-shell .report-tabs {display:flex;gap:4px;padding:4px;background:#0002;border:1px solid #ffffff0a;border-radius:var(--radius);}
+.app-shell .report-tabs button {font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;letter-spacing:0;padding:10px 16px;border-radius:var(--radius);}
+.app-shell .report-tabs button.selected {background:#cdbadc1c;color:#e9d9f5;}
+.app-shell .report-grid {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:16px;flex:1;min-height:0;}
+.app-shell .report-grid > .world-map {height:100%;min-height:0;border:1px solid #ffffff12;border-radius:var(--radius);}
+.app-shell .report-grid .map-footer,.app-shell .report-grid .map-compass {display:none;}
+.app-shell .report-grid > div:not(.world-map) {padding:14px;border:1px solid #ffffff10;border-radius:var(--radius);background:#ffffff02;min-height:0;}
+.app-shell .report-chart-tabs button {font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:0;}
+.report-integrity-warning {padding:10px 12px;background:#d49d4d0c;border:1px solid #d49d4d30;border-radius:var(--radius);font-size:11px;color:#d5b584;flex-shrink:0;}
+.app-shell .report-records {flex:1;min-height:0;overflow-y:auto;padding:0;}
+.app-shell .report-records h3 {font-size:15px;font-weight:500;margin:0 0 12px;}
+.app-shell .command-timeline > div {padding:15px 12px;gap:12px;border-bottom:1px solid #ffffff0d;}
+.app-shell .command-timeline > div > span:first-child {font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:0;}
+.app-shell .command-timeline small {font-size:11px;color:#9e92aa;}
+.command-error {grid-column:1 / -1;margin:0;font-size:11px;color:#e78b8b;}
+.app-shell .incident-line {padding:14px;font-size:12px;line-height:1.6;border:1px solid #ffffff10;border-radius:var(--radius);margin:0 0 8px;}
+@media(max-height:760px) {.app-shell .report-modal {padding:18px;gap:12px;} .app-shell .report-metrics > div {padding:11px;} .app-shell .report-metrics strong {font-size:23px;} .app-shell .report-top h2 {font-size:21px;}}
+.app-shell .history-report-button {background:#cdbadc1c;border-color:#bba2cd55;color:#eddef8;font-weight:500;}
+.app-shell .history-report-button:hover {background:#cdbadc30;border-color:#cdbadc88;}
+.app-shell .report-modal .report-metrics,
+.app-shell .report-modal .report-tabs {background:transparent;border:0;box-shadow:none;padding:0;}
+.app-shell .report-modal .report-tabs {gap:8px;}
+/* Selected waypoints: clean, readable table in both themes. */
+.console-control-desk .selected-waypoints {border:1px solid #ffffff12;border-radius:var(--radius);overflow:hidden;margin:10px 0;}
+.console-control-desk .selected-waypoints table {background:transparent;font-family:'DM Sans',sans-serif;}
+.console-control-desk .selected-waypoints thead {background:#cdbadc10;}
+.console-control-desk .selected-waypoints th {font:500 10px 'DM Sans',sans-serif;letter-spacing:0;color:#bfb1cb;padding:7px 6px;background:transparent;}
+.console-control-desk .selected-waypoints td {font:500 12px 'DM Sans',sans-serif;font-variant-numeric:tabular-nums;color:#eee5f5;padding:7px 6px;border-color:#ffffff0a;}
+.console-control-desk .selected-waypoints tbody tr:nth-child(even) {background:#ffffff03;}
+.console-control-desk .selected-waypoints .pagination {padding:5px 6px;background:transparent;font:10px 'DM Sans',sans-serif;border-top:1px solid #ffffff0a;}
+/* Unified system health and incident workspace. */
+.app-shell:has(.system-health-screen) .topbar {display:none;}
+.app-shell:has(.system-health-screen) .content {max-height:100dvh;padding:22px 24px;}
+.system-health-screen {display:flex;flex-direction:column;gap:18px;flex:1;min-height:0;}
+.system-health-heading {display:flex;justify-content:space-between;align-items:center;}
+.system-health-heading h1 {font-size:25px;font-weight:500;letter-spacing:-.8px;margin:0;}
+.health-tiles {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;}
+.health-tiles > div {padding:17px;}
+.health-tiles span {display:block;color:#aaa0b6;font-size:12px;margin-bottom:12px;}
+.health-tiles strong {font-size:23px;font-weight:500;letter-spacing:-.5px;}
+.health-content {display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);gap:16px;flex:1;min-height:0;}
+.health-incidents {display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+.health-section-heading {display:flex;justify-content:space-between;align-items:center;padding:18px;border-bottom:1px solid #ffffff0b;}
+.health-content h2 {font-size:16px;font-weight:500;margin:0;}
+.health-incident-list {overflow-y:auto;min-height:0;flex:1;padding:0 18px;}
+.health-incident {display:flex;align-items:flex-start;gap:12px;padding:19px 0;border-bottom:1px solid #ffffff0b;}
+.health-incident > svg {color:#d5ad75;flex-shrink:0;margin-top:3px;}
+.health-incident > div:first-of-type {flex:1;min-width:0;}
+.health-incident h3 {font-size:13px;font-weight:500;margin:0 0 7px;}
+.health-incident p {font-size:12px;line-height:1.6;color:#b4a8bf;margin:0 0 8px;}
+.health-incident span {font-size:10px;color:#94879f;}
+.health-incident-action {display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+.health-incident-action button {font-size:10px;padding:7px;min-height:30px;}
+.health-configuration {padding:18px;overflow-y:auto;}
+.health-configuration dl {margin:15px 0 0;}
+.health-configuration dl > div {padding:14px 0;display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid #ffffff0b;}
+.health-configuration dt {font-size:12px;color:#a79aaf;}
+.health-configuration dd {font-size:12px;margin:0;text-align:right;overflow-wrap:anywhere;}
+.health-demo {display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+.health-demo h3 {width:100%;font-size:13px;}

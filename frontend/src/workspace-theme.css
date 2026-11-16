@@ -40,7 +40,7 @@
   transform: none;
   background: #090a0a;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius);
   width: 37px;
   height: 29px;
   color: #ebeced;
@@ -72,7 +72,7 @@
   min-height: 43px;
   padding: 0;
   border: 0;
-  border-radius: 9px;
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,7 +120,7 @@
   padding: 9px 12px;
   width: max-content;
   max-width: 190px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: #e3e5e5;
   color: #212323;
   font-size: 11px;
@@ -155,7 +155,7 @@
   font: 6px var(--mono);
   color: #edc88b;
   background: #353238;
-  border-radius: 3px;
+  border-radius: var(--radius);
   padding: 1px 3px;
 }
 .app-shell .sidebar-bottom {
@@ -251,7 +251,7 @@
 }
 .app-shell .button {
   font-size: 11px;
-  border-radius: 7px;
+  border-radius: var(--radius);
   min-height: 36px;
   padding: 9px 14px;
   font-weight: 500;
@@ -284,7 +284,7 @@
 .app-shell .panel {
   background: #1c1e1f;
   border: 1px solid #2c3030;
-  border-radius: 18px;
+  border-radius: var(--radius);
   box-shadow: none;
 }
 .app-shell .panel-heading {
@@ -312,7 +312,7 @@
 .app-shell .badge {
   font: 6px var(--mono);
   letter-spacing: 0.5px;
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 5px 7px;
 }
 .app-shell .badge.green {
@@ -338,7 +338,7 @@
 .app-shell textarea {
   background: #171919;
   border: 1px solid #3f4445;
-  border-radius: 7px;
+  border-radius: var(--radius);
   padding: 11px 12px;
   color: #dddfdf;
   font-size: 12px;
@@ -377,7 +377,7 @@
 .app-shell .search-box {
   background: #1a1c1d;
   border: 1px solid #35393a;
-  border-radius: 7px;
+  border-radius: var(--radius);
   padding: 0 12px;
   width: 225px;
   color: #7b8486;
@@ -399,7 +399,7 @@
 .app-shell .mission-card {
   border: 1px solid #313435;
   background: #1d1f1f;
-  border-radius: 17px;
+  border-radius: var(--radius);
   padding: 18px;
   transition: border-color 0.15s;
 }
@@ -416,7 +416,7 @@
 }
 .app-shell .mission-mini-map {
   border: 1px solid #3c4142;
-  border-radius: 10px;
+  border-radius: var(--radius);
   margin-bottom: 20px;
   overflow: hidden;
   background: #1e2020;
@@ -461,7 +461,7 @@
 .app-shell .empty-state > svg {
   background: #252728;
   border: 1px solid #434748;
-  border-radius: 14px;
+  border-radius: var(--radius);
   color: #b0b5b6;
   padding: 13px;
 }
@@ -532,7 +532,7 @@
   color: #acb2b3;
   background: #2e3131;
   padding: 5px;
-  border-radius: 4px;
+  border-radius: var(--radius);
 }
 .app-shell .coordinate-inputs label {
   font-size: 6px;
@@ -607,7 +607,7 @@
   color: #6e7577;
 }
 .app-shell .alert-icon {
-  border-radius: 11px;
+  border-radius: var(--radius);
   border-color: #9f7db925;
   background: #875ca808;
   color: #aa8bc1;
@@ -639,7 +639,7 @@
   padding: 25px 25px 10px;
 }
 .app-shell .integration-path > span {
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: #252728;
   border-color: #3e4344;
   color: #9ca2a3;
@@ -680,7 +680,7 @@
 .app-shell .report-modal {
   background: #1b1d1e;
   border-color: #45494a;
-  border-radius: 20px;
+  border-radius: var(--radius);
   padding: 28px;
 }
 .app-shell .report-top h2 {
@@ -704,7 +704,7 @@
 }
 .app-shell .report-metrics {
   border-color: #3e4344;
-  border-radius: 11px;
+  border-radius: var(--radius);
   margin-bottom: 24px;
 }
 .app-shell .report-metrics > div {
@@ -724,7 +724,7 @@
   margin-top: 12px;
 }
 .app-shell .report-grid > .world-map {
-  border-radius: 11px;
+  border-radius: var(--radius);
   border-color: #45494a;
 }
 .app-shell .report-data-note {
@@ -836,7 +836,7 @@
   .app-shell .sidebar .nav-item {
     height: 37px;
     min-height: 37px;
-    border-radius: 7px;
+    border-radius: var(--radius);
   }
   .app-shell .sidebar .nav-item > svg {
     width: 17px;
@@ -892,7 +892,7 @@
     font-size: 10px;
   }
   .app-shell .panel {
-    border-radius: 15px;
+    border-radius: var(--radius);
   }
   .app-shell .panel-heading {
     padding: 16px;
@@ -926,7 +926,7 @@
   }
   .app-shell .mission-card {
     padding: 16px;
-    border-radius: 15px;
+    border-radius: var(--radius);
   }
   .app-shell .mission-card h3 {
     font-size: 17px;
@@ -1018,7 +1018,7 @@
   }
   .app-shell .report-modal {
     padding: 19px;
-    border-radius: 15px;
+    border-radius: var(--radius);
   }
   .app-shell .report-top h2 {
     font-size: 23px;

@@ -1,3 +1,4 @@
+import droneIdentity from '../../../shared/config/drone.json' with { type: 'json' };
 import { randomUUID, createHash } from 'node:crypto';
 import {
   Mission,
@@ -379,8 +380,9 @@ export async function dashboardSnapshot(repository, gateway, userId) {
     storage: repository.kind,
     world: WORLD,
     drone: {
-      id: 'drone-01',
-      name: 'Atlas 01',
+      id: droneIdentity.id,
+      code: droneIdentity.code,
+      name: droneIdentity.code,
       connected: gateway.connected,
       lastSeen: gateway.lastSeen,
       source: gateway.mode,

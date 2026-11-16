@@ -1,40 +1,26 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { AuthService } from '../src/infrastructure/auth.js';
-
-test('pairing codes contain letters/digits, are single-use, and newer codes supersede old ones', () => {
-  const auth = new AuthService({ simulatorToken: 'test-secret' });
-  assert.throws(() => auth.verifyBridge('Bearer wrong'), { code: 'INVALID_BRIDGE_CREDENTIAL' });
-  auth.verifyBridge('Bearer test-secret');
-  const first = auth.requestPairing();
-  const second = auth.requestPairing();
-  assert.throws(() => auth.pair(first.code), { code: 'INVALID_PAIRING_CODE' });
-  assert.match(second.code, /^[A-Z0-9]{4}$/);
-  assert.match(second.code, /[A-Z]/);
-  assert.match(second.code, /[0-9]/);
-  const issued = auth.pair(second.code);
-  assert.equal(issued.token.length, 64);
-  assert.throws(() => auth.pair(second.code), { code: 'INVALID_PAIRING_CODE' });
-  assert.equal(
-    auth.session({ headers: { cookie: `drone_session=${issued.token}` } }).user.id,
-    'operator-01',
-  );
-  auth.logout({ headers: { cookie: `drone_session=${issued.token}` } });
-  assert.equal(auth.session({ headers: { cookie: `drone_session=${issued.token}` } }), null);
+test('permanent code works repeatedly and across service restarts; sessions remain random', () => {
+ const auth = new AuthService({simulatorToken:'test-secret'});
+ assert.throws(()=>auth.verifyBridge('Bearer wrong'),{code:'INVALID_BRIDGE_CREDENTIAL'});
+ const first=auth.requestPairing();
+ assert.equal(first.code,'BMBL');
+ assert.equal(first.expiresAt,null);
+ const a=auth.pair('bmbl'), b=auth.pair('BMBL');
+ assert.notEqual(a.token,b.token);
+ assert.equal(a.token.length,64);
+ assert.ok(new AuthService({simulatorToken:'test-secret'}).pair(first.code).token);
+ auth.logout({headers:{cookie:`drone_session=${a.token}`}});
+ assert.equal(auth.session({headers:{cookie:`drone_session=${a.token}`}}),null);
 });
-
-test('expired codes, exhausted guess budget and expired sessions cannot authorize control', () => {
-  let now = 1_000_000;
-  const auth = new AuthService({ simulatorToken: 'test-secret', now: () => now });
-  const expired = auth.requestPairing();
-  now += 120001;
-  assert.throws(() => auth.pair(expired.code), { code: 'INVALID_PAIRING_CODE' });
-  const exhausted = auth.requestPairing();
-  for (let i = 0; i < 5; i++)
-    assert.throws(() => auth.pair('ZZZZ'), { code: 'INVALID_PAIRING_CODE' });
-  assert.throws(() => auth.pair(exhausted.code), { code: 'INVALID_PAIRING_CODE' });
-  const valid = auth.requestPairing();
-  const { token } = auth.pair(valid.code);
-  now += 8 * 60 * 60 * 1000 + 1;
-  assert.equal(auth.session({ headers: { cookie: `drone_session=${token}` } }), null);
+test('invalid guesses are throttled for one minute and operator sessions expire',()=>{
+ let now=1000000;
+ const auth=new AuthService({simulatorToken:'test-secret',now:()=>now});
+ for(let i=0;i<5;i++) assert.throws(()=>auth.pair('ZZZZ'),{code:'INVALID_PAIRING_CODE'});
+ assert.throws(()=>auth.pair('BMBL'),{code:'PAIRING_RATE_LIMIT'});
+ now+=60001;
+ const {token}=auth.pair('BMBL');
+ now+=8*60*60*1000+1;
+ assert.equal(auth.session({headers:{cookie:`drone_session=${token}`}}),null);
 });

@@ -9,11 +9,13 @@ import { DomainError, invariant } from '../../domain/model.js';
 import { dashboardSnapshot } from '../../application/services.js';
 
 const waypoint = z
-  .object({ x: z.number().finite(), y: z.number().finite(), altitude: z.number().finite() })
+  .object({ x: z.number().finite(), y: z.number().finite(), altitude: z.number().finite(), speed: z.number().finite().min(0.2).max(2).optional() })
   .strict();
 const missionInput = z
   .object({
     name: z.string().min(1).max(80),
+    defaultSpeed: z.number().finite().min(0.2).max(2).optional(),
+    defaultAltitude: z.number().finite().min(2).max(15).optional(),
     description: z.string().max(500).optional(),
     waypoints: z.array(waypoint).max(20),
     revision: z.number().int().positive().optional(),

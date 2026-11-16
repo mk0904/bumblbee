@@ -11,6 +11,7 @@ test('production SQL repository persists domain snapshots and rolls back failed 
   await db.exec(
     await readFile(new URL('../../migrations/001_initial.sql', import.meta.url), 'utf8'),
   );
+  await db.exec(await readFile(new URL('../../migrations/002_mission_speed.sql', import.meta.url), 'utf8'));
   const client = { query: (sql, values) => db.query(sql, values), release() {} };
   const pool = {
     query: client.query,
@@ -36,8 +37,11 @@ test('production SQL repository persists domain snapshots and rolls back failed 
     const flightService = new FlightService(repository, gateway, () => {});
     const mission = await missionService.save('operator-01', {
       name: 'SQL survey',
-      waypoints: [{ x: 5, y: 6, altitude: 7 }],
+      defaultSpeed: 0.7,
+      waypoints: [{ x: 5, y: 6, altitude: 7, speed: 0.5 }],
     });
+    assert.equal((await db.query('SELECT speed_mps FROM waypoints WHERE mission_id=$1',[mission.id])).rows[0].speed_mps,0.5);
+    await assert.rejects(db.query('UPDATE waypoints SET speed_mps=3 WHERE mission_id=$1',[mission.id]));
     const command = await flightService.start(
       'operator-01',
       { missionId: mission.id, revision: 1 },

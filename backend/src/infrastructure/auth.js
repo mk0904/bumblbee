@@ -1,12 +1,12 @@
-import { randomBytes, createHash, timingSafeEqual, randomInt } from 'node:crypto';
+import droneIdentity from '../../../shared/config/drone.json' with { type: 'json' };
+import { randomBytes, createHash, timingSafeEqual } from 'node:crypto';
 import { DomainError, invariant } from '../domain/model.js';
 
 const digest = (token) => createHash('sha256').update(token).digest('hex');
-const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 /** Bridge bootstrap credential stays on the simulator host; short codes only establish sessions. */
 export class AuthService {
   #sessions = new Map();
-  #pairings = new Map();
+  #attemptWindow = 0;
   #pairingAttempts = 0;
   constructor({ secure = false, simulatorToken, now = Date.now }) {
     this.secure = secure;
@@ -26,32 +26,18 @@ export class AuthService {
     );
   }
   requestPairing() {
-    for (const [key, entry] of this.#pairings)
-      if (entry.expires < this.now()) this.#pairings.delete(key);
-    // Only the latest bootstrap request remains active for this single-drone installation.
-    const previous = new Set(this.#pairings.keys());
-    this.#pairings.clear();
-    this.#pairingAttempts = 0;
-    let code;
-    do {
-      code = Array.from({ length: 4 }, () => alphabet[randomInt(alphabet.length)]).join('');
-    } while (!/[A-Z]/.test(code) || !/[0-9]/.test(code) || previous.has(digest(code)));
-    const expiresAt = new Date(this.now() + 120000).toISOString();
-    this.#pairings.set(digest(code), { expires: Date.parse(expiresAt) });
-    return { code, expiresAt, droneId: 'drone-01' };
+    return { code: droneIdentity.code, expiresAt: null, droneId: droneIdentity.id };
   }
   pair(code) {
-    this.#pairingAttempts++;
-    if (this.#pairingAttempts > 5) this.#pairings.clear();
-    const key = digest(code.toUpperCase()),
-      entry = this.#pairings.get(key);
-    if (!entry || entry.expires < this.now())
-      throw new DomainError(
-        'INVALID_PAIRING_CODE',
-        'Code is invalid or expired. Request a new code from your bridge.',
-        401,
-      );
-    this.#pairings.delete(key);
+    if (this.now() - this.#attemptWindow >= 60000) {
+      this.#attemptWindow = this.now();
+      this.#pairingAttempts = 0;
+    }
+    invariant(this.#pairingAttempts < 5, 'PAIRING_RATE_LIMIT', 'Too many attempts. Try again in one minute.', 429);
+    if (digest(code.toUpperCase()) !== digest(droneIdentity.code)) {
+      this.#pairingAttempts++;
+      throw new DomainError('INVALID_PAIRING_CODE', 'Drone code is incorrect. Check the code configured on your Webots setup.', 401);
+    }
     return this.issueSession();
   }
   issueSession() {

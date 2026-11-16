@@ -3,6 +3,7 @@
 @import '@fontsource/dm-sans/latin-600.css';
 @import '@fontsource/ibm-plex-mono/latin-400.css';
 @import '@fontsource/ibm-plex-mono/latin-500.css';
+:root { --radius: 8px; }
 :root {
   font-family: 'DM Sans', sans-serif;
   color: #e0e1e3;
@@ -75,7 +76,7 @@ textarea {
   background: #141415;
   color: #e4e5e7;
   border: 1px solid #373a3d;
-  border-radius: 7px;
+  border-radius: var(--radius);
   padding: 10px 12px;
   font-size: 13px;
 }
@@ -107,7 +108,7 @@ small {
   justify-content: center;
   gap: 9px;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--radius);
   padding: 10px 15px;
   font-size: 12px;
   font-weight: 600;
@@ -151,7 +152,7 @@ small {
   background: none;
   border: 0;
   color: #989ca0;
-  border-radius: 4px;
+  border-radius: var(--radius);
 }
 .icon-button:hover:not(:disabled) {
   color: #e6e7e8;
@@ -161,7 +162,7 @@ small {
   width: 5px;
   height: 5px;
   background: var(--accent);
-  border-radius: 50%;
+  border-radius: var(--radius);
   position: absolute;
   right: 4px;
   top: 3px;
@@ -196,7 +197,7 @@ small {
   display: inline-block;
   width: 6px;
   height: 6px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: #cdbadc;
   box-shadow: 0 0 7px #cdbadc20;
   flex-shrink: 0;
@@ -209,7 +210,7 @@ small {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 4px 7px;
   font: 8px var(--mono);
   letter-spacing: 0.6px;
@@ -219,7 +220,7 @@ small {
 .badge > span {
   width: 4px;
   height: 4px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: currentColor;
 }
 .badge.green {
@@ -265,7 +266,7 @@ small {
   width: 32px;
   height: 32px;
   border: 1px solid #6a6e73;
-  border-radius: 9px;
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -280,7 +281,7 @@ small {
   align-items: center;
   gap: 9px;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: #1e1f20;
   margin: 29px 0 30px;
   padding: 11px 8px;
@@ -289,7 +290,7 @@ small {
   height: 27px;
   width: 27px;
   background: #35383b;
-  border-radius: 5px;
+  border-radius: var(--radius);
   display: grid;
   place-items: center;
   font-size: 13px;
@@ -326,7 +327,7 @@ small {
   gap: 11px;
   background: none;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--radius);
   color: #999da1;
   padding: 12px;
   margin: 3px 0;
@@ -350,7 +351,7 @@ small {
   color: #b99ecd;
   font: 9px var(--mono);
   padding: 2px 5px;
-  border-radius: 3px;
+  border-radius: var(--radius);
 }
 .sidebar-bottom {
   margin-top: auto;
@@ -359,7 +360,7 @@ small {
 .connection-card {
   padding: 13px 10px;
   border: 1px solid #35383b70;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: #1e1f202e;
   margin-bottom: 18px;
 }
@@ -399,7 +400,7 @@ small {
 .operator-avatar {
   height: 30px;
   width: 30px;
-  border-radius: 50%;
+  border-radius: var(--radius);
   background: #35373a;
   border: 1px solid #52565a;
   display: grid;
@@ -522,7 +523,7 @@ small {
   padding: 17px 19px 14px;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius);
   min-width: 0;
 }
 .stat-card:hover {
@@ -577,7 +578,7 @@ small {
 }
 .panel {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--panel);
   overflow: hidden;
 }
@@ -631,7 +632,7 @@ small {
   width: 33px;
   height: 33px;
   border: 1px solid #4a4d50;
-  border-radius: 6px;
+  border-radius: var(--radius);
   background: #27292b;
 }
 .live-map-info strong {
@@ -706,7 +707,7 @@ small {
   display: flex;
   flex-direction: column;
   border: 1px solid #4f5357;
-  border-radius: 4px;
+  border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 4px 12px #0003;
 }
@@ -933,7 +934,7 @@ small {
   width: 30px;
   display: grid;
   place-items: center;
-  border-radius: 6px;
+  border-radius: var(--radius);
   border: 1px solid #3e4043;
   color: #969ba0;
   background: #26282a;
@@ -1014,7 +1015,7 @@ small {
 .segmented span {
   font: 8px var(--mono);
   background: #35373a;
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 3px 5px;
 }
 .search-box {
@@ -1024,7 +1025,7 @@ small {
   width: 230px;
   border: 1px solid #36383b;
   background: #1a1b1c;
-  border-radius: 6px;
+  border-radius: var(--radius);
   padding: 0 10px;
 }
 .search-box input {
@@ -1045,7 +1046,7 @@ small {
 .mission-card {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius);
   overflow: hidden;
   padding: 16px;
 }
@@ -1062,7 +1063,7 @@ small {
 }
 .mission-mini-map {
   border: 1px solid #3a3c3f;
-  border-radius: 5px;
+  border-radius: var(--radius);
   overflow: hidden;
   pointer-events: none;
   margin-bottom: 17px;
@@ -1133,7 +1134,7 @@ small {
   padding: 14px;
   box-sizing: content-box;
   border: 1px solid #494c4f;
-  border-radius: 14px;
+  border-radius: var(--radius);
   background: #252729;
 }
 .empty-state h3 {
@@ -1206,7 +1207,7 @@ small {
   color: #b0b3b6;
   border: 1px solid #505458;
   background: #2c2e30;
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 4px;
 }
 .waypoint-editor strong {
@@ -1300,7 +1301,7 @@ td small {
   width: 42px;
   height: 42px;
   border: 1px solid #a98ac030;
-  border-radius: 8px;
+  border-radius: var(--radius);
 }
 .alert-item > div {
   flex: 1;
@@ -1368,7 +1369,7 @@ td small {
 }
 .integration-path > span {
   border: 1px solid var(--line);
-  border-radius: 5px;
+  border-radius: var(--radius);
   padding: 11px 15px;
   text-align: center;
   width: 90%;
@@ -1413,7 +1414,7 @@ td small {
   max-width: 100%;
   background: #1a1b1d;
   border: 1px solid #484b4e;
-  border-radius: 12px;
+  border-radius: var(--radius);
   padding: 26px;
   box-shadow: 0 20px 80px #0008;
 }
@@ -1447,7 +1448,7 @@ td small {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--line);
-  border-radius: 7px;
+  border-radius: var(--radius);
   margin-bottom: 22px;
 }
 .report-metrics > div {
@@ -1474,7 +1475,7 @@ td small {
 }
 .report-grid > .world-map {
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: var(--radius);
 }
 .report-grid > .world-map > svg {
   height: 100%;
@@ -1529,7 +1530,7 @@ td small {
   background: #2d2f31;
   border: 1px solid #777d83;
   color: #d4d5d7;
-  border-radius: 8px;
+  border-radius: var(--radius);
   box-shadow: 0 5px 30px #0006;
   padding: 13px 15px;
   font-size: 12px;
@@ -1553,7 +1554,7 @@ td small {
   color: #bba1ce;
   padding: 12px 15px;
   margin-bottom: 20px;
-  border-radius: 6px;
+  border-radius: var(--radius);
   font-size: 12px;
 }
 .loading-page {
@@ -1627,7 +1628,7 @@ td small {
   bottom: 80px;
   right: -40px;
   border: 1px dashed #72777c44;
-  border-radius: 50%;
+  border-radius: var(--radius);
   display: grid;
   place-items: center;
   color: #a3a7ab;
@@ -1637,7 +1638,7 @@ td small {
   content: '';
   position: absolute;
   border: 1px solid #72777c33;
-  border-radius: 50%;
+  border-radius: var(--radius);
   inset: 25px;
 }
 .login-orbit:after {
@@ -2250,7 +2251,7 @@ td small {
 .sidebar .brand-symbol {
   width: 37px;
   height: 37px;
-  border-radius: 11px;
+  border-radius: var(--radius);
   border-color: #505459;
   transform: none;
   background: #272429;
@@ -2264,7 +2265,7 @@ td small {
   padding: 16px 0;
   margin: 8px 0;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--radius);
 }
 .sidebar .nav-item svg {
   width: 20px;
@@ -2311,7 +2312,7 @@ td small {
 .panel,
 .stat-card {
   border-color: #2d2f33;
-  border-radius: 13px;
+  border-radius: var(--radius);
   background: #1b1c1f;
 }
 .stat-card:hover {
@@ -2363,7 +2364,7 @@ td small {
   grid-template-columns: 1.28fr 1fr;
 }
 .button {
-  border-radius: 7px;
+  border-radius: var(--radius);
 }
 .primary {
   box-shadow: none;
@@ -2389,14 +2390,14 @@ td small {
 .map-label {
   background: #1c1a1eb3;
   border: 1px solid #46535760;
-  border-radius: 4px;
+  border-radius: var(--radius);
   padding: 6px 8px;
   top: 13px;
   left: 13px;
   backdrop-filter: blur(8px);
 }
 .mission-card {
-  border-radius: 12px;
+  border-radius: var(--radius);
   background: #1b1c1f;
   border-color: #343137;
 }
@@ -2462,7 +2463,7 @@ td small {
 .pairing-visual {
   position: relative;
   border: 1px solid #3e3a41;
-  border-radius: 22px;
+  border-radius: var(--radius);
   overflow: hidden;
   min-height: 590px;
   background: #221f24;
@@ -2529,7 +2530,7 @@ td small {
   border: 1px solid #4b5756;
   background: #29262c;
   color: #cdbadc;
-  border-radius: 13px;
+  border-radius: var(--radius);
   width: 52px;
   height: 52px;
   margin-bottom: 28px;
@@ -2808,7 +2809,7 @@ td small {
   max-width: 100%;
   padding: 28px;
   border: 1px solid #485456;
-  border-radius: 13px;
+  border-radius: var(--radius);
   background: #252227;
   margin: auto;
   box-shadow: 0 20px 80px #0008;

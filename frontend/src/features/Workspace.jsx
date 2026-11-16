@@ -1,4 +1,4 @@
-import { Pagination, usePages } from '../components/Pagination.jsx';
+import { ThemeToggle } from '../components/ThemeToggle.jsx';
 import { FlightConsole } from './FlightConsole.jsx';
 import { Modal } from '../components/Modal.jsx';
 import { useEffect, useState } from 'react';
@@ -14,23 +14,20 @@ import {
   Compass,
   FileText,
   LayoutDashboard,
-  ListFilter,
   LogOut,
   Map,
   Plus,
   Radio,
-  RefreshCw,
   Settings2,
   ShieldCheck,
   Signal,
   TriangleAlert,
   Wifi,
-  WifiOff,
   X,
 } from 'lucide-react';
 import { api, requestKey } from '../lib/api.js';
-import { terminal, date } from '../lib/format.js';
-import { Badge, PanelHeading, Empty } from '../components/ui.jsx';
+import { terminal, date, duration } from '../lib/format.js';
+import { Badge, Empty } from '../components/ui.jsx';
 import { useDashboard } from '../lib/use-dashboard.js';
 
 import { Planner } from './Planner.jsx';
@@ -40,6 +37,7 @@ import { Report } from './Report.jsx';
 export function Workspace({ user: _user, onLogout }) {
   const { data, connection, error, refresh } = useDashboard(onLogout);
   const [page, setPage] = useState('overview'),
+    [selectedMissionId, setSelectedMissionId] = useState(null),
     [editor, setEditor] = useState(null),
     [busy, setBusy] = useState(false),
     [toast, setToast] = useState(null),
@@ -70,8 +68,6 @@ export function Workspace({ user: _user, onLogout }) {
       setBusy(false);
     }
   };
-  const historyPages = usePages(data?.flights ?? [], 4);
-  const alertPages = usePages(data ? [...data.alerts].reverse() : [], 3);
   const active = data?.flights.find((f) => !terminal(f.state)),
     sample = active?.latest;
   const stale = sample ? Date.now() - Date.parse(sample.receivedAt) > 3000 : false;
@@ -152,8 +148,7 @@ export function Workspace({ user: _user, onLogout }) {
             ['overview', LayoutDashboard, 'Overview'],
             ['missions', Map, 'Mission planner'],
             ['history', Clock3, 'Flight history'],
-            ['alerts', Bell, 'Alerts'],
-            ['system', Settings2, 'System'],
+            ['system', Settings2, 'System & alerts'],
           ].map(([id, Icon, label]) => (
             <button
               key={id}
@@ -187,26 +182,7 @@ export function Workspace({ user: _user, onLogout }) {
               <Signal size={12} /> {connection === 'live' ? 'LIVE CHANNEL' : 'RECONNECTING'}
             </span>
           </div>
-          <button
-            className="operator-profile"
-            aria-label="Disconnect control session"
-            title="Disconnect control session"
-            onClick={() =>
-              act(async () => {
-                await api('/auth/logout', { method: 'POST' });
-                onLogout();
-              })
-            }
-          >
-            <span className="operator-avatar">
-              <Radio size={14} />
-            </span>
-            <span>
-              <strong>Control session</strong>
-              <small>Disconnect</small>
-            </span>
-            <LogOut size={15} />
-          </button>
+          <ThemeToggle />
         </div>
       </aside>
       <div className="workspace-main">
@@ -228,14 +204,14 @@ export function Workspace({ user: _user, onLogout }) {
           <div className="topbar-right">
             <span className="environment-tag">
               <Box size={12} />
-              {data.mode === 'demo' ? 'DEMO ENVIRONMENT' : 'WEBOTS ENVIRONMENT'}
+              {data.mode === 'demo' ? 'Demo mode' : 'Webots'}
             </span>
             <span className="topbar-separator" />
             <button
               className="icon-button"
               title="View alerts"
               aria-label="View alerts"
-              onClick={() => navigate('alerts')}
+              onClick={() => navigate('system')}
             >
               <Bell size={17} />
               {openAlerts.length > 0 && <i />}
@@ -246,41 +222,22 @@ export function Workspace({ user: _user, onLogout }) {
           </div>
         </header>
         <main className="content">
-          {error && (
-            <div className="error-banner" role="alert">
-              <WifiOff size={16} />
-              {error}
+          {page === 'missions' ? (
+            <div className="mission-planning-workspace">
+              <section className="saved-plans-panel panel">
+                <div className="saved-plans-header"><h1>Mission plans</h1></div>
+                <MissionCards missions={data.missions} filter={filter} onNew={() => setEditor({})} onEdit={setEditor} onSelect={mission => {setSelectedMissionId(mission.id);navigate('overview');}} onArchive={archive} />
+              </section>
+              <Planner key={editor?.id ?? 'new'} mission={editor?.id ? editor : null} busy={busy} onClose={() => setEditor({})} onSave={input => act(async () => {
+                await api(editor?.id ? `/missions/${editor.id}` : '/missions', {method:editor?.id ? 'PATCH' : 'POST',body:input});
+                setEditor(null);
+              },'Mission saved')} />
             </div>
-          )}
-          {connection !== 'live' && (
-            <div className="warning-banner">
-              <RefreshCw size={15} />
-              Live channel reconnecting. Last received data may be outdated.
-            </div>
-          )}
-          {editor ? (
-            <Planner
-              key={editor.id ?? 'new'}
-              mission={editor.id ? editor : null}
-              busy={busy}
-              onClose={() => setEditor(null)}
-              onSave={(input) =>
-                act(async () => {
-                  await api(editor.id ? `/missions/${editor.id}` : '/missions', {
-                    method: editor.id ? 'PATCH' : 'POST',
-                    body: input,
-                  });
-                  setEditor(null);
-                  setPage('missions');
-                }, 'Mission saved')
-              }
-            />
           ) : (
             <>
-              {page !== 'overview' && (
+              {page !== 'overview' && page !== 'history' && page !== 'system' && (
                 <div className="page-title">
                   <div>
-                    <span className="eyebrow">GROUND CONTROL / ATLAS 01</span>
                     <h1>
                       {
                         {
@@ -328,6 +285,7 @@ export function Workspace({ user: _user, onLogout }) {
               {page === 'overview' && (
                 <FlightConsole
                   data={data}
+                  selectedMission={data.missions.find(m => m.id === selectedMissionId)}
                   active={active}
                   sample={sample}
                   stale={stale}
@@ -335,6 +293,7 @@ export function Workspace({ user: _user, onLogout }) {
                   pending={pending}
                   commands={commands}
                   onCommand={command}
+                  onStart={start}
                   onMissions={() => navigate('missions')}
                   onHistory={() => navigate('history')}
                   onNewMission={() => {
@@ -355,263 +314,48 @@ export function Workspace({ user: _user, onLogout }) {
                   }
                 />
               )}
-              {page === 'missions' && (
-                <>
-                  <div className="list-toolbar">
-                    <div className="segmented">
-                      <button className="selected">
-                        All missions <span>{data.missions.length}</span>
-                      </button>
-                    </div>
-                    <label className="search-box">
-                      <ListFilter size={15} />
-                      <input
-                        aria-label="Filter missions"
-                        placeholder="Filter missions…"
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                      />
-                    </label>
-                  </div>
-                  <MissionCards
-                    missions={data.missions}
-                    filter={filter}
-                    onNew={() => setEditor({})}
-                    onEdit={setEditor}
-                    onStart={start}
-                    onArchive={archive}
-                    disabled={busy || Boolean(active) || !data.drone.connected}
-                  />
-                </>
-              )}
               {page === 'history' && (
-                <section className="panel history-panel">
-                  <PanelHeading number="01" title="Recorded flights">
-                    <span className="panel-subtitle">{data.flights.length} SESSIONS</span>
-                  </PanelHeading>
-                  {data.flights.length ? (
-                    <div className="table-wrap">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>MISSION</th>
-                            <th>STARTED</th>
-                            <th>SOURCE</th>
-                            <th>STATUS</th>
-                            <th>REPORT</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {historyPages.items.map((f) => (
-                            <tr key={f.id}>
-                              <td>
-                                <strong>{f.snapshot.name}</strong>
-                                <small>
-                                  {f.id.slice(0, 8)} · revision {f.snapshot.revision}
-                                </small>
-                              </td>
-                              <td>{date(f.startedAt)}</td>
-                              <td>
-                                <span className="source-label">{f.adapter}</span>
-                              </td>
-                              <td>
-                                <Badge
-                                  tone={
-                                    f.state === 'COMPLETED'
-                                      ? 'green'
-                                      : terminal(f.state)
-                                        ? 'amber'
-                                        : 'neutral'
-                                  }
-                                >
-                                  {f.state}
-                                </Badge>
-                              </td>
-                              <td>
-                                <button
-                                  className="text-button"
-                                  disabled={busy}
-                                  onClick={() => showReport(f)}
-                                >
-                                  Open report <ArrowUpRight size={14} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <Empty icon={FileText} title="No recorded flights">
-                      Complete your first mission to start building a flight history.
-                    </Empty>
-                  )}
-                  <Pagination pages={historyPages} label="Flights" />
-                </section>
-              )}
-              {page === 'alerts' && (
-                <section className="panel">
-                  <PanelHeading number="01" title="Incident log">
-                    <Badge tone={openAlerts.length ? 'amber' : 'green'}>
-                      {openAlerts.length} OPEN
-                    </Badge>
-                  </PanelHeading>
-                  {data.alerts.length ? (
-                    <div className="alert-list">
-                      {alertPages.items.map((a) => (
-                        <div className={`alert-item ${a.severity}`} key={a.id}>
-                          <span className="alert-icon">
-                            <TriangleAlert size={20} />
-                          </span>
-                          <div>
-                            <h3>
-                              {a.title}
-                              <Badge tone={a.status === 'OPEN' ? 'amber' : 'neutral'}>
-                                {a.status}
-                              </Badge>
-                            </h3>
-                            <p>{a.message}</p>
-                            <small>
-                              {date(a.createdAt)} · {a.flightId.slice(0, 8)}
-                            </small>
-                          </div>
-                          {a.status === 'OPEN' && (
-                            <button
-                              className="button secondary"
-                              disabled={busy}
-                              onClick={() =>
-                                act(
-                                  () => api(`/alerts/${a.id}/acknowledgement`, { method: 'POST' }),
-                                  'Alert acknowledged',
-                                )
-                              }
-                            >
-                              <Check size={14} /> Acknowledge
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <Empty icon={ShieldCheck} title="No incidents recorded">
-                      Low battery and missing telemetry incidents will appear here.
-                    </Empty>
-                  )}
-                  <Pagination pages={alertPages} label="Alerts" />
+                <section className="flight-history-screen" aria-label="Flight history">
+                  <div className="history-heading"><div><h1>Flight history</h1><span>{data.flights.length} recorded flights</span></div><button className="button secondary" onClick={() => navigate('missions')}><Plus size={15} />Plan a mission</button></div>
+                  <div className="history-summary-grid">
+                    <div><span>Total flights</span><strong>{data.flights.length}</strong></div>
+                    <div><span>Completed</span><strong>{data.flights.filter(f=>f.state === 'COMPLETED').length}</strong></div>
+                    <div><span>Interrupted / failed</span><strong>{data.flights.filter(f=>['FAILED','INTERRUPTED'].includes(f.state)).length}</strong></div>
+                  </div>
+                  <div className="panel history-records">
+                    {data.flights.length ? <div className="history-record-list">{data.flights.map(f=><article className="history-record" key={f.id}>
+                      <div className="history-record-icon"><FileText size={21}/></div>
+                      <div className="history-record-name"><h2>{f.snapshot.name}</h2><span>{date(f.startedAt)}{f.adapter === 'demo' ? ' · Demo' : ''}</span></div>
+                      <div className="history-duration"><span>Flight time</span><strong>{f.latest ? duration(f.latest.simulationTime) : '—'}</strong></div>
+                      <Badge tone={f.state === 'COMPLETED' ? 'green' : terminal(f.state) ? 'amber' : 'neutral'}>{f.state.replaceAll('_',' ')}</Badge>
+                      <button className="history-report-button" aria-label={`Open report for ${f.snapshot.name}`} disabled={busy} onClick={()=>showReport(f)}>View report<ArrowUpRight size={15}/></button>
+                    </article>)}</div> : <Empty icon={FileText} title="No flights yet">Your recorded missions will appear here.</Empty>}
+                  </div>
                 </section>
               )}
               {page === 'system' && (
-                <div className="system-grid">
-                  <section className="panel system-panel">
-                    <PanelHeading number="01" title="Connection & environment" />
-                    <dl>
-                      {[
-                        ['Drone', 'Atlas 01 / drone-01'],
-                        [
-                          'Execution adapter',
-                          data.mode === 'demo'
-                            ? 'Demo — kinematic test adapter'
-                            : 'Webots external agent',
-                        ],
-                        ['Simulator link', data.drone.connected ? 'Connected' : 'Disconnected'],
-                        ['Dashboard channel', connection],
-                        ['Storage', data.storage],
-                        ['Coordinate frame', data.world.frame],
-                        ['World', data.world.id],
-                        ['Telemetry rate', '5 Hz target'],
-                        ['Flight bounds', 'X/Y ±50 m · altitude 2–15 m'],
-                      ].map(([k, v]) => (
-                        <div key={k}>
-                          <dt>{k}</dt>
-                          <dd>{v}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </section>
-                  <div>
-                    <section className="panel system-panel">
-                      <PanelHeading number="02" title="Connection path" />
-                      <div className="integration-path">
-                        <span>Dashboard</span>
-                        <ChevronDown size={16} />
-                        <span>Mission gateway</span>
-                        <ChevronDown size={16} />
-                        <span>Simulator adapter</span>
-                        <ChevronDown size={16} />
-                        <span className="selected">
-                          {data.mode === 'demo' ? 'Demo execution' : 'Webots bridge'}
-                        </span>
-                      </div>
-                      <p>
-                        Webots flight physics and controller integration remain unverified. Demo
-                        motion is generated on the backend, not in this dashboard.
-                      </p>
-                    </section>
-                    {data.mode === 'demo' && (
-                      <section className="panel system-panel demo-tools">
-                        <PanelHeading number="03" title="Demo controls" />
-                        <p>Test alert and connection behaviour using the labelled demo adapter.</p>
-                        <div className="demo-actions">
-                          <button
-                            className="button secondary"
-                            disabled={busy || !active || !data.drone.connected}
-                            onClick={() =>
-                              act(
-                                () =>
-                                  api('/demo/inject', {
-                                    method: 'POST',
-                                    body: { kind: 'battery' },
-                                  }),
-                                'Synthetic battery set to 18%',
-                              )
-                            }
-                          >
-                            <Battery size={14} /> Low battery
-                          </button>
-                          <button
-                            className="button secondary"
-                            disabled={busy}
-                            onClick={() =>
-                              act(
-                                () =>
-                                  api('/demo/inject', {
-                                    method: 'POST',
-                                    body: {
-                                      kind: data.drone.connected ? 'disconnect' : 'reconnect',
-                                    },
-                                  }),
-                                'Demo link updated',
-                              )
-                            }
-                          >
-                            {data.drone.connected ? <WifiOff size={14} /> : <Wifi size={14} />}{' '}
-                            {data.drone.connected ? 'Disconnect' : 'Reconnect'}
-                          </button>
-                        </div>
-                        <small>
-                          Demo disconnect suspends test execution. This is not a verified Webots
-                          watchdog.
-                        </small>
-                      </section>
-                    )}
+                <section className="system-health-screen" aria-label="System and alerts">
+                  <div className="system-health-heading"><h1>System & alerts</h1><button aria-label="Disconnect control session" className="button secondary" onClick={()=>act(async()=>{await api('/auth/logout',{method:'POST'});onLogout();})}><LogOut size={14}/>Disconnect</button></div>
+                  <div className="health-tiles">
+                    {[['UAV',data.drone.code ?? 'BMBL'],['Simulator',data.drone.connected ? 'Connected' : 'Offline'],['Live channel',connection === 'live' ? 'Connected' : 'Reconnecting'],['Open incidents',openAlerts.length]].map(([label,value])=><div className="panel" key={label}><span>{label}</span><strong>{value}</strong></div>)}
                   </div>
-                </div>
+                  <div className="health-content">
+                    <section className="panel health-incidents"><div className="health-section-heading"><h2>Incidents</h2><Badge tone={openAlerts.length?'amber':'green'}>{openAlerts.length} open</Badge></div>
+                      <div className="health-incident-list">{data.alerts.length ? [...data.alerts].reverse().map(a=><article className="health-incident" key={a.id}><TriangleAlert size={18}/><div><h3>{a.title}</h3><p>{a.message}</p><span>{date(a.createdAt)}</span></div><div className="health-incident-action"><Badge tone={a.status==='OPEN'?'amber':'neutral'}>{a.status}</Badge>{a.status==='OPEN' && <button className="button secondary" disabled={busy} onClick={()=>act(()=>api(`/alerts/${a.id}/acknowledgement`,{method:'POST'}),'Alert acknowledged')}><Check size={13}/>Acknowledge</button>}</div></article>) : <Empty icon={ShieldCheck} title="No incidents">Battery and connection incidents appear here.</Empty>}</div>
+                    </section>
+                    <section className="panel health-configuration"><h2>Connection details</h2><dl>{[['Runtime',data.mode==='demo'?'Demo adapter':'Webots'],['Storage',data.storage],['World',data.world.id],['Coordinate frame',data.world.frame],['Flight area','X/Y ±50 m'],['Altitude range','2–15 m']].map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+                      {data.mode==='demo' && <div className="health-demo"><h3>Demo controls</h3><button className="button secondary" disabled={busy||!active||!data.drone.connected} onClick={()=>act(()=>api('/demo/inject',{method:'POST',body:{kind:'battery'}}),'Synthetic battery set to 18%')}><Battery size={14}/>Low battery</button><button className="button secondary" disabled={busy} onClick={()=>act(()=>api('/demo/inject',{method:'POST',body:{kind:data.drone.connected?'disconnect':'reconnect'}}),'Demo link updated')}><Wifi size={14}/>{data.drone.connected?'Disconnect':'Reconnect'}</button></div>}
+                    </section>
+                  </div>
+                </section>
               )}
             </>
           )}
-          <footer className="workspace-footer">
-            <span>
-              <Compass size={12} /> BUMBL.BEE MISSION CONTROL
-            </span>
-            <span>
-              {data.mode === 'demo'
-                ? 'Demo adapter · not a physical drone or Webots flight'
-                : 'Webots mode · controller integration requires verification'}
-              <span className="footer-dot">·</span>WORLD_LOCAL_V1
-            </span>
-          </footer>
+
         </main>
       </div>
+      <div className="workspace-notifications" aria-label="Notifications">
+        {(error || connection !== 'live') && <ConnectionNotification key={error || connection} message={error ? `Connection issue: ${error}. Retrying automatically.` : 'Live connection interrupted. Reconnecting; displayed data may be outdated.'} />}
       {toast && (
         <div
           className={`toast ${toast.error ? 'error' : ''}`}
@@ -628,6 +372,7 @@ export function Workspace({ user: _user, onLogout }) {
           </button>
         </div>
       )}
+      </div>
       {report && <Report report={report} onClose={() => setReport(null)} />}
       {confirmation && (
         <Modal title={confirmation.title} onClose={() => setConfirmation(null)}>
@@ -655,4 +400,10 @@ export function Workspace({ user: _user, onLogout }) {
       )}
     </div>
   );
+}
+
+function ConnectionNotification({ message }) {
+  const [dismissed, setDismissed] = useState(false);
+  if (dismissed) return null;
+  return <div className="toast error connection-notification" role="alert"><TriangleAlert size={17} /><span>{message}</span><button className="icon-button" aria-label="Dismiss connection notification" onClick={() => setDismissed(true)}><X size={15} /></button></div>;
 }

@@ -62,3 +62,10 @@ for (const Rule of [LowBatteryRule, StaleTelemetryRule]) {
     assert.deepEqual(new AlertEngine([new Rule()]).evaluate(sample, context), [result]);
   });
 }
+
+test('mission defaults and incoming-leg speed are validated and snapshotted',()=>{
+ const m=Mission.create({name:'Speed route',defaultSpeed:0.6,waypoints:[{x:2,y:3,altitude:4},{x:4,y:6,altitude:4,speed:1.5}]},'operator-01',new Date().toISOString());
+ assert.equal(m.snapshot().waypoints[0].speed,0.6);
+ assert.equal(m.snapshot().waypoints[1].speed,1.5);
+ for(const speed of [0,2.1,NaN]) assert.throws(()=>new Waypoint({x:0,y:0,altitude:3,speed},0));
+});

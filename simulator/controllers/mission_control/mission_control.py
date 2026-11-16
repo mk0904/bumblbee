@@ -17,6 +17,21 @@ def clamp(v, low, high):
     return min(high, max(low, v))
 
 
+def angle_error(target, current):
+    """Shortest signed angular difference, including the +/-pi crossing."""
+    return math.atan2(math.sin(target-current), math.cos(target-current))
+
+
+def next_heading(current, desired, seconds, rate=0.35):
+    return current + clamp(angle_error(desired, current), -rate*seconds, rate*seconds)
+
+
+def desired_velocity(target, pos, speed):
+    desired = [0.2*(target[i]-pos[i]) for i in (0, 1)]
+    magnitude = math.hypot(*desired)
+    return [v*speed/magnitude for v in desired] if magnitude > speed else desired
+
+
 def validate(command, state, flight):
     if datetime.fromisoformat(command['expiresAt'].replace('Z', '+00:00')) <= datetime.now(timezone.utc):
         raise ValueError('Command expired')
@@ -32,6 +47,9 @@ def validate(command, state, flight):
         for p in points:
             if not all(isinstance(p[k], (int, float)) and not isinstance(p[k], bool) and math.isfinite(p[k]) for k in ('x', 'y', 'altitude')):
                 raise ValueError('Non-finite coordinate')
+            speed = p.get('speed', 1)
+            if isinstance(speed, bool) or not isinstance(speed, (int, float)) or not math.isfinite(speed) or not 0.2 <= speed <= 2:
+                raise ValueError('Waypoint speed outside 0.2–2 m/s')
             if abs(p['x']) > 50 or abs(p['y']) > 50 or not 2 <= p['altitude'] <= 15:
                 raise ValueError('Waypoint outside bounds')
     elif command['flightId'] != flight or (command['action'], state) not in (
@@ -83,6 +101,7 @@ class MissionController:
         self.reason = None
         self.started_at = 0
         self.horizontal = [0.0, 0.0]
+        self.heading = 0.0
 
     def result(self, identity, status, error=None):
         payload = {'commandId': identity, 'status': status}
@@ -125,17 +144,20 @@ class MissionController:
                 self.flight, self.points = c['flightId'], c['snapshot']['waypoints']
                 self.start, self.index, self.sequence = identity, 0, 0
                 self.reason = None
+                self.heading = attitude[2]
                 self.started_at = self.robot.getTime()
                 self.target = [pos[0], pos[1], self.points[0]['altitude']]
                 self.db.execute('INSERT INTO flights VALUES (?,?)', (self.flight, 'ACTIVE'))
                 self.db.commit()
                 self.state = 'TAKING_OFF' 
             elif c['action'] == 'PAUSE':
+                self.heading = attitude[2]
                 self.target = list(pos)
                 self.state = 'PAUSED'
             elif c['action'] == 'RESUME':
                 self.state = 'EXECUTING'
             else:
+                self.heading = attitude[2]
                 self.state = 'LANDING'
                 self.target = list(pos)
                 self.pending = identity
@@ -220,9 +242,12 @@ class MissionController:
                 if self.pending:
                     self.result(self.pending, 'FAILED', self.reason)
                 continue
-            # PD horizontal position hold transformed into the body frame; yaw held at zero.
-            ax = clamp(0.3*(self.target[0]-pos[0])-1.5*velocity[0], -0.6, 0.6)
-            ay = clamp(0.3*(self.target[1]-pos[1])-1.5*velocity[1], -0.6, 0.6)
+            # PD position hold in the measured body frame; slew-limited route heading.
+            # Speed belongs to the incoming leg ending at the current waypoint.
+            limit = self.points[self.index].get('speed', 1) if self.state == 'EXECUTING' else 1
+            desired = desired_velocity(self.target, pos, limit)
+            ax = clamp(1.5*(desired[0]-velocity[0]), -0.6, 0.6)
+            ay = clamp(1.5*(desired[1]-velocity[1]), -0.6, 0.6)
             self.horizontal[0] += clamp(ax-self.horizontal[0], -0.008, 0.008)
             self.horizontal[1] += clamp(ay-self.horizontal[1], -0.008, 0.008)
             ax, ay = self.horizontal
@@ -231,7 +256,11 @@ class MissionController:
             left = -ax*math.sin(yaw)+ay*math.cos(yaw)
             r = 50*clamp(roll,-1,1)+gyro[0]+left
             p = 30*clamp(pitch,-1,1)+gyro[1]-forward
-            y = clamp(-yaw*0.8-gyro[2]*0.2,-1,1)
+            if self.state == 'EXECUTING':
+                dx, dy = self.target[0]-pos[0], self.target[1]-pos[1]
+                if math.hypot(dx, dy) > 1.2:
+                    self.heading = next_heading(self.heading, math.atan2(dy, dx), self.dt/1000)
+            y = clamp(angle_error(self.heading, yaw)*0.8-gyro[2]*0.2,-1,1)
             vertical = 3*clamp(self.target[2]-pos[2]+0.6,-1,1)**3
             thrust = 68.5+vertical
             for motor, value in zip(self.motors, (thrust-y+p-r, -(thrust+y+p+r), -(thrust+y-p-r), thrust-y-p+r)):

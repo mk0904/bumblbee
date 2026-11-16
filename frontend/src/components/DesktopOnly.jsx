@@ -40,7 +40,6 @@ export function DesktopOnly({ children }) {
           ? 'Open bumbl.bee on a desktop or laptop. Phones and tablets are not supported.'
           : 'Expand this window to at least 1100 × 650 to open the flight console.'}
       </p>
-      <span>Desktop flight operations · no scrolling</span>
     </main>
   );
 }

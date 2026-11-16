@@ -33,7 +33,7 @@ test('API authenticates and enforces CSRF, validation and persistent mission edi
     .expect(200);
   assert.match(pairing.body.code, /^[A-Z0-9]{4}$/);
   assert.match(pairing.body.code, /[A-Z]/);
-  assert.match(pairing.body.code, /[0-9]/);
+  assert.equal(pairing.body.code, 'BMBL');
   const login = await agent
     .post('/api/pairing/claim')
     .set('Origin', context.config.origin)
@@ -43,7 +43,7 @@ test('API authenticates and enforces CSRF, validation and persistent mission edi
     .post('/api/pairing/claim')
     .set('Origin', context.config.origin)
     .send({ code: pairing.body.code })
-    .expect(401);
+    .expect(200);
   const token = login.body.csrf;
   const body = { name: 'API mission', waypoints: [{ x: 1, y: 2, altitude: 8 }] };
   await agent.post('/api/missions').send(body).expect(403);

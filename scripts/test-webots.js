@@ -70,6 +70,7 @@ if (process.argv.includes('--inspect')) {
     x: launch.x > 30 ? launch.x - 8 : launch.x + 8,
     y: launch.y > 30 ? launch.y - 6 : launch.y + 6,
     altitude: 3,
+    speed: process.argv.includes('--speed') ? 0.5 : 1,
   };
   const mission = await request('/missions', {
     name: 'Webots automated acceptance',
@@ -115,7 +116,8 @@ if (process.argv.includes('--inspect')) {
       !landed &&
       flight.state === 'EXECUTING' &&
       !waiting &&
-      flight.latest.x > 3
+      flight.latest.x > 3 &&
+      (!process.argv.includes('--yaw') || Math.abs(flight.latest.yaw) > 0.35)
     ) {
       await request(`/flights/${flightId}/commands`, { action: 'LAND' });
       landed = true;

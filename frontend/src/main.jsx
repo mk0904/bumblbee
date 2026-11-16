@@ -6,6 +6,10 @@ import './styles.css';
 import './workspace-theme.css';
 import './desktop-layout.css';
 import './pairing.css';
+import './light-theme.css';
+import { applyTheme, readTheme } from './lib/theme.js';
+
+applyTheme(readTheme());
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

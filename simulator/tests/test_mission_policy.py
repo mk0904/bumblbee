@@ -4,7 +4,8 @@ import sys
 from pathlib import Path
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'controllers/mission_control'))
-from mission_control import validate
+from mission_control import validate, angle_error, next_heading, desired_velocity
+import math
 from transport import validate_command_envelope
 from uuid import uuid4
 
@@ -14,6 +15,20 @@ class MissionPolicyTest(unittest.TestCase):
             expiresAt=(datetime.now(timezone.utc)+timedelta(seconds=10)).isoformat(),
             snapshot=dict(worldId='training-ground-v1', frame='WORLD_LOCAL_V1',
                           waypoints=[dict(x=4, y=3, altitude=3)]))
+
+    def test_leg_speed_limits_and_approach_slowdown(self):
+        self.assertAlmostEqual(math.hypot(*desired_velocity([30,40,3],[0,0,3],0.5)),0.5)
+        self.assertLess(math.hypot(*desired_velocity([0.1,0,3],[0,0,3],1)),0.1)
+        for speed in (0, 3, float('nan'), True):
+            c=copy.deepcopy(self.command)
+            c['snapshot']['waypoints'][0]['speed']=speed
+            with self.assertRaises(ValueError): validate(c,'IDLE',None)
+
+    def test_heading_wrap_and_rate_limit(self):
+        self.assertAlmostEqual(angle_error(math.radians(-179), math.radians(179)), math.radians(2))
+        self.assertAlmostEqual(next_heading(0, math.pi/2, 0.1), 0.035)
+        self.assertAlmostEqual(next_heading(0.02, 0.025, 0.1), 0.025)
+        self.assertAlmostEqual(next_heading(0, -math.pi/2, 0.1), -0.035)
 
     def test_transport_envelope_rejects_malformed_commands(self):
         c = dict(self.command, id=str(uuid4()), flightId=str(uuid4()))
