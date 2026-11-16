@@ -1,5 +1,7 @@
 # ADR-006 — Desktop-only viewport
 
+> Current interpretation: Internal list scrolling is allowed by later user direction; the outer page remains fixed.
+
 Date: 2026-11-16. Status: accepted by user direction.
 
 ## Decision

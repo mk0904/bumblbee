@@ -8,7 +8,7 @@ Build a small, working drone mission-control platform connected to Webots. Demon
 - docs/ENGINEERING.md: architecture, LLD, contracts, database, testing, rubric traceability.
 - docs/IMPLEMENTATION.md: actual classes, implemented APIs/schema, rubric mapping and outstanding integration gates.
 - docs/BUILD_PLAN.md: implementation order, milestone exit evidence, verification and evaluation checklist.
-- Record changes to approved scope or architecture in those documents and a decision record. Initial documents describe proposed design, not implemented capabilities.
+- Record changes to approved scope or architecture in those documents and a decision record. Current documentation describes the implemented system; historical proposals are retained under docs/archive/development.
 
 ## Stack and boundaries
 - React + JavaScript frontend; Node.js + Express in plain JavaScript backend; PostgreSQL with pg and versioned SQL migrations; Python Webots controller/bridge.

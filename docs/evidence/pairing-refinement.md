@@ -46,3 +46,9 @@ Validation: lint, 13 frontend tests and production build passed. Browser checked
 Updated entry composition with a graphite map surface, porcelain connection panel, larger editorial headline, softer panel corners and a saturated blue primary action. Decorative console accents now use cool blue tones; warning/status colors retain their purpose. No control logic changed.
 
 Lint, 13 frontend tests and production build passed. Live browser verification was blocked by a localhost connection refusal; no new screenshot is presented as verified evidence.
+
+Launch map coverage: pairing opts into SVG `xMidYMid slice` so the canonical square map fills the rectangular left panel without letterboxing or stretching. Interactive operational maps retain their full square extent. Lint, 15 frontend tests and production build passed.
+
+### Drone launch artwork
+
+Replaced decorative launch map with a generated matte-black quadcopter product image, stored locally in frontend/src/assets/drone-launch.png. Image fills the left panel with a text-legibility gradient; operational maps remain canonical. Browser verified screenshot screenshots/pairing/drone-hero.png. Lint, 15 frontend tests and production build passed. Artwork is decorative, not simulator footage.

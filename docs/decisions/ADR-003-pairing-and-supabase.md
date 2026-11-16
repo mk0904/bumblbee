@@ -1,5 +1,7 @@
 # ADR-003: Short-code pairing and Supabase repository
 
+> Current interpretation: Pairing-code lifetime is superseded by ADR-014; database decisions remain applicable.
+
 Status: pairing implemented; hosted database connectivity pending.
 
 User requested no login/signup and a four-character code obtained from the Python bridge. Replace password login with a bridge-issued pairing flow. No public registration or password storage is needed.

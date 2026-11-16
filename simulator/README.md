@@ -18,8 +18,7 @@ The dashboard map is a telemetry view, not the source of drone motion.
 4. Run `simulator/run-webots.sh`. It prepends the virtual environment to PATH so
    Webots' `python3` resolves to this interpreter. Uses local port 1250.
 5. Enter the bridge's four-character terminal code at http://127.0.0.1:5174/.
-   If expired, request another with
-   `simulator/.venv/bin/python simulator/bridge/pair.py --env-file backend/.env`.
+   The configured installation code is permanent (BMBL by default); it does not expire.
 6. Plan/save/start a route; watch Webots and dashboard together. Start with a small
    route at 3 m. Pause sets a position-hold target, Resume restores the next
    waypoint, Land descends at the current position. Completion requires touchdown
@@ -83,11 +82,10 @@ The saved Viewpoint uses `follow "SDSE Mavic"` with a close Tracking Shot. It
 follows drone translation while keeping a stable world orientation. Use the
 Webots View → Follow Object submenu to switch modes; Restore Viewpoint returns
 to the saved close view. This camera does not alter physics or sensor telemetry.
-A dashboard camera stream remains unimplemented and needs a separate bounded
-image transport; telemetry alone does not transmit images.
+The onboard dashboard camera uses a separate bounded image transport; telemetry alone does not transmit images.
 
 ## Onboard dashboard camera — FR-16 / ADR-008
-The world now mounts a 640×360 onboard Camera. Select **Camera** beside Mission view
+The world now mounts a 640×360 onboard Camera. View the camera beside the map in the flight console
 in the console. Main thread copies BGRA every 200 ms simulation time; the separate
 `CameraStream` worker compresses JPEG quality 65 and sends at most 5 FPS wall time.
 The one-slot raw-frame queue replaces old frames, and the image socket waits for
